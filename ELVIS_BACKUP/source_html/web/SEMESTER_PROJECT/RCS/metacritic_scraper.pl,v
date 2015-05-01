@@ -1,0 +1,1865 @@
+head	1.31;
+access;
+symbols;
+locks
+	dittma75:1.31; strict;
+comment	@# @;
+
+
+1.31
+date	2014.12.08.16.25.52;	author dittma75;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2014.12.08.16.07.05;	author dittma75;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2014.07.21.18.25.25;	author dittma75;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2014.07.21.18.09.54;	author dittma75;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2014.05.07.02.48.14;	author dittma75;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2014.05.06.21.30.18;	author dittma75;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2014.05.06.20.56.09;	author dittma75;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2014.05.06.07.04.24;	author dittma75;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2014.05.06.05.57.10;	author dittma75;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2014.05.06.05.47.37;	author dittma75;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2014.05.06.02.47.22;	author dittma75;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2014.05.06.00.55.31;	author dittma75;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2014.05.05.21.08.23;	author dittma75;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2014.05.05.15.01.48;	author dittma75;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2014.05.05.01.36.26;	author dittma75;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2014.05.05.00.08.00;	author dittma75;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2014.05.04.17.44.38;	author dittma75;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2014.05.04.14.55.04;	author dittma75;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2014.05.03.22.02.22;	author dittma75;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2014.05.03.03.16.06;	author dittma75;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.05.03.02.30.44;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.05.02.22.43.47;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.05.01.00.57.11;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.04.30.23.07.39;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.04.30.04.19.30;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.04.29.14.38.54;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.04.22.14.22.19;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.04.18.19.43.20;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.04.18.18.16.09;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.04.17.14.27.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@metacritic_scraper.pl replaces metacritic_scraper.cgi.
+Added headers and HTML to Metacritic data.
+@
+
+
+1.31
+log
+@Changed exit(1) to more appropriate die method.
+@
+text
+@#! /usr/bin/perl -w
+#
+# Kevin Dittmar and Anthony Ratliff
+# 6 May 2014
+# Scrape the Metacritic data for the given game
+# and generate HTML to be used by the PHP file
+# index.php to display the game's data.
+
+use strict;
+use warnings;
+use CGI;
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+
+#HTML::Entities information from:
+#http://search.cpan.org/dist/HTML-Parser/lib/HTML/Entities.pm
+#Used to correctly parse special HTML characters in summaries
+#and reviews.
+use HTML::Entities;
+
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+
+if (defined($ARGV[0]))
+{
+    $agent->get($ARGV[0]);
+}
+else
+{
+    die "Requires a valid Metacritic page URL.";
+}
+
+my $cgi = CGI->new;
+my $stream = HTML::TokeParser->new(\$agent->{content});
+my $tag = $stream->get_tag();
+
+#Make sure that we don't get stuck in an infinite loop.
+my $timeout_counter = 1000;
+&scrapeMetacritic();
+
+#Scrape the Metacritic site for useful game data.
+sub scrapeMetacritic()
+{
+    my @@critic_data = &parseCriticData();
+    my $critic_score = $critic_data[0];
+    my $critic_ratings = $critic_data[1];
+
+    my @@user_data = &parseUserData();
+    my $user_score = $user_data[0];
+    my $user_ratings = $user_data[1];
+    
+    my $summary = &getSummary();
+    
+    my $game_info = &getGameInfo();
+    
+    #We should differentiate between a score of 0
+    #and no critic scores at all.
+    my $c_score_text;
+    if ($critic_ratings == 0)
+    {
+        $c_score_text = "TBD";
+    }
+    else
+    {
+        $c_score_text = $critic_score."/100";
+    }
+
+    #We should differentiate between a score of 0
+    #and no user scores at all.
+    my $u_score_text;
+    if ($user_ratings == 0)
+    {
+        $u_score_text = "TBD";
+    }
+    else
+    {
+        $u_score_text = $user_score."/10";
+    }
+
+    print '<table id="score">', "\n",
+          "<caption>Scoring Information</caption>\n",
+          "<tr><td>Critic Ratings:</td><td>".$critic_ratings."</td></tr>\n",
+          "<tr><td>Average Critic Score:</td><td>".$c_score_text."</td></tr>\n",
+          "<tr><td>User Ratings:</td><td>".$user_ratings."</td></tr>\n",
+          "<tr><td>Average User Score:</td><td>".$u_score_text."</td></tr>\n",
+          "</table>\n<br/>\n";
+
+    print $game_info;
+
+    print $summary;
+
+    print &getCriticReviews();
+    print &getUserReviews();
+    
+    &determineScore($critic_score, $user_score);
+}
+
+#Scrape the critic rating data, including the number of ratings
+#and the average rating score, and return them.
+#
+#Returns an array containing ($critic_score, $critic_ratings).
+sub parseCriticData()
+{
+    my $critic_score = 0;
+    my $critic_ratings = 0;
+    #The average critic rating is in a div with the "label" class.
+    $tag = $stream->get_tag("div");
+    while(!$tag->[1]{class} or
+          ($tag->[1]{class} and $tag->[1]{class} ne "label"))
+    {
+        $tag = $stream->get_tag("div");
+        &timeout();
+    }
+    #If the span tag exists, it has an itemprop of "ratingValue" and holds
+    #the average critic rating for the game.
+    $tag = $stream->get_tag("span");
+    if ($tag->[1]{itemprop} and ($tag->[1]{itemprop} eq "ratingValue"))
+    {
+        $critic_score = $stream->get_trimmed_text;
+    }   
+    #There aren't enough critic ratings yet.             
+    else
+    {
+        $critic_score = 0;
+    }
+    #The count of critic reviews is in the span tag after the next a tag.
+    $tag = $stream->get_tag("a");
+    $tag = $stream->get_tag("span");
+    $critic_ratings = $stream->get_trimmed_text;
+    
+    return ($critic_score, $critic_ratings);
+}
+
+#Scrape the user rating data, including the number of ratings
+#and the average rating score, and return them.
+#
+#Returns the an array containing ($user_score, $user_ratings).
+sub parseUserData()
+{
+    my $user_score = 0;
+    my $user_ratings = 0;
+    while (!$tag->[1]{class} or
+           ($tag->[1]{class} and $tag->[1]{class} ne "details side_details"))
+    {
+        $tag = $stream->get_tag("div");
+        &timeout();
+    }
+    #The next tag after the div with class "details side_details" will have
+    #a class "score_summary" if the user score is defined.
+    $tag = $stream->get_tag();
+    if ($tag->[1]{class} and $tag->[1]{class} eq "score_summary")
+    {
+        #The average user review for the game is in the div tag after an a tag
+        #with a class named metascore_anchor.
+        while (!$tag->[1]{class} or
+               ($tag->[1]{class} and $tag->[1]{class} ne "metascore_anchor"))
+        {
+            $tag = $stream->get_tag("a");
+            &timeout();
+        }
+        $tag = $stream->get_tag("div");
+        
+        $user_score = $stream->get_trimmed_text;
+
+        #The number of user reviews are in a span tag whose class is "desc".
+        while (!$tag->[1]{class} or
+               ($tag->[1]{class} and $tag->[1]{class} ne "desc"))
+        {
+            $tag = $stream->get_tag("span");
+            &timeout();
+        }
+        #If there isn't a placeholder of "No user score yet", get the
+        #number of user ratings.
+        if ($stream->get_trimmed_text ne "No user score yet")
+        {
+            $tag = $stream->get_tag("a");
+            $user_ratings = $stream->get_trimmed_text;
+            #Remove the word "Ratings" from the end of the number.
+            $user_ratings =~ s/ Ratings//g;
+        }
+        #There are no ratings.
+        else
+        {
+            $user_ratings = 0;
+        }
+    }
+    #The game doesn't even have a User Ratings section on its page.
+    else
+    {
+        $user_score = 0;
+        $user_ratings = 0;
+    }
+    return ($user_score, $user_ratings);
+}
+
+#Scrape and return the summary for the game in a p tag if it exists.
+sub getSummary()
+{
+    my $summary = "";
+    while (!$tag->[1]{class} or
+           ($tag->[1]{class} and $tag->[1]{class} ne "summary_details"))
+    {
+        $tag = $stream->get_tag("ul");
+        &timeout();
+    }
+    #If the summary section exists, it is in the next list item tag,
+    #which has the class "summary_detail product_summary".
+    $tag = $stream->get_tag("li");
+    if ($tag->[1]{class} and 
+        $tag->[1]{class} eq "summary_detail product_summary")
+    {
+        #Two span tags after the ul tag with the class "summary_details" will
+        #have the itemprop "description" if a summary for the game exists on the
+        #page.
+        $tag = $stream->get_tag("span");
+        $tag = $stream->get_tag("span");
+
+        if ($tag->[1]{itemprop} and $tag->[1]{itemprop} eq "description")
+        {
+            #The description for the game is in a span tag within the description
+            #span tag if it is short enough that it doesn't need an "Expand" link
+            #on Metacritic.
+            $tag = $stream->get_tag("span");
+            $summary = $stream->get_trimmed_text;
+            #If the summary is too long, it is split into two span tags after the
+            #description span tag.  Therefore, summary is empty right now and
+            #needs to be filled from the text in the next two span tags.
+            if ($summary eq "")
+            {
+                $tag = $stream->get_tag("span");
+                $summary = $stream->get_trimmed_text;
+                $tag = $stream->get_tag("span");
+                $summary .= " ".$stream->get_trimmed_text;
+            }
+            return $cgi->p("Summary:  ".encode_entities($summary))."\n";
+        }
+        #The game doesn't have a summary on its Metacritic page.
+        else
+        {
+            return $cgi->p("No summary available.")."\n";
+        }
+    }
+    #The game doesn't even have a summary section on its Metacritic page.
+    else
+    {
+        return $cgi->p("No summary available.")."\n";
+    }
+}
+
+#Scrape and return the game info, including developer, genre, and ESRB
+#rating in a table where applicable.  These fields are list items in 
+#an unordered list.
+sub getGameInfo()
+{
+    my $game_info = "";
+    #The list of game information starts in the list item whose class list
+    #contains the class named "summary_detail developer".
+    #Perl index function from:
+    #http://stackoverflow.com/questions/7011524/perl-if-string-contains-text
+    while (!$tag->[1]{class} or
+           ($tag->[1]{class} and 
+           (index($tag->[1]{class}, "summary_detail") == -1)))
+    {
+        $tag = $stream->get_tag("li");
+        &timeout();
+    }
+    
+    #The information list ends when the next li tag is a score counter
+    #for the game reviews.
+    while (!$tag->[1]{class} or
+           ($tag->[1]{class} and 
+           ($tag->[1]{class} ne "summary_detail more")))
+    {
+        #It isn't necessary to print the link to GameFAQs or the genres
+        #from Metacritic, since the genres are usually "Sci-fi" or "Modern"
+        #for no good reason.
+        if ($tag->[1]{class} and 
+            $tag->[1]{class} ne "summary_detail product_cheats" and
+            $tag->[1]{class} ne "summary_detail product_genre")
+        {
+            #The information in the game information list is in two parts.
+            #There is a span tag for the descriptor and a span tag for the
+            #information.
+
+            #First comes the information descriptor.
+            $tag = $stream->get_tag("span");
+            my $descriptor = $stream->get_trimmed_text;
+        
+            #Then comes the data that matches the descriptor.
+            $tag = $stream->get_tag("span");
+            my $data = $stream->get_trimmed_text;
+
+            #Add the descriptor and information to the table.
+            $game_info .= "<tr><td>".$descriptor."</td><td>".$data."</td></tr>\n";
+        }
+        $tag = $stream->get_tag("li");
+        &timeout();
+    }
+    if ($game_info ne "")
+    {
+        return '<table id="game_data">'.
+               "\n<caption>Game Information</caption>\n".
+                $game_info."</table>\n";
+    }
+    else
+    {
+        return $cgi->p("No game information available.");
+    }
+}
+
+#Returns the critic review data, including the reviewer, the score,
+#the date reviewed, and the summary all wrapped in their own divs.
+#Each div has an id and a class to make it easier to page through them
+#with JavaScript.
+sub getCriticReviews()
+{
+    my $result = "";
+    my $counter = 0;
+    my $id = "";
+    #Infinite loop until return.
+    while (0 == 0)
+    {
+        #Find the next critic review div.
+        while (!$tag->[1]{class} or
+               ($tag->[1]{class} and $tag->[1]{class} ne "review_critic"))
+        {
+            #If we didn't find a critic review div, but we found the div
+            #for the next review section, break out of function - finished
+            #critic reviews.
+            if ($tag->[1]{class} and
+                $tag->[1]{class} eq "module reviews_module user_reviews_module")
+            {
+                return $result;
+            }
+            #We didn't find a critic review or the end of the reviews, so
+            #keep going.
+            $tag = $stream->get_tag("div");
+            &timeout();
+        }
+        if ($counter == 0)
+        {
+            &generateButtons("critic");
+        }
+        
+        #Add the next critic review to the list.
+        $result .= &parseReview("critic", $counter);
+        
+        #Increment counter.
+        $counter++;
+    }
+}
+
+#Returns the user review data, including the reviewer, the score,
+#the date reviewed, and the summary all wrapped in their own divs.
+#Each div has an id and a class to make it easier to page through them
+#with JavaScript.
+sub getUserReviews()
+{
+    my $result = "";
+    my $counter = 0;
+    my $id = "";
+    my $review = "";
+    #Infinite loop until return.
+    while (0 == 0)
+    {
+        #Find the next critic review div.
+        while (!$tag->[1]{class} or
+               ($tag->[1]{class} and $tag->[1]{class} ne "review_critic"))
+        {
+            #If we didn't find a user review div, but we found the div
+            #for the providers box at the bottom, then we should return
+            #the reviews.  This is okay since user reviews are the last
+            #thing that we need to get.
+            if ($tag->[1]{id} and $tag->[1]{id} eq "providers")
+            {
+                return $result;
+            }
+            #We didn't find a critic review or the end of the reviews, so
+            #keep going.
+            $tag = $stream->get_tag("div");
+            &timeout();
+        }
+        if ($counter == 0)
+        {
+           &generateButtons("user");
+        }
+
+        #Parse the next user review and add it to the list.
+        $result .= &parseReview("user", $counter); 
+
+        #Increment counter.
+        $counter++;
+        &timeout();
+    }
+}
+
+#Return the data for the next critic review or user review on the page.
+sub parseReview()
+{
+    #Critic reviews are out of 100; user reviews are out of 10.
+    my ($type, $counter) = @@_;
+    my $max_score;
+    my $css_data;
+    if ($type eq "critic")
+    {
+        $max_score = 100;
+        $css_data = 'id="critic'.$counter.'" class="critic_review ';
+    }
+    else
+    {
+        $max_score = 10;
+        $css_data = 'id="user'.$counter.'" class="user_review ';
+    }
+    my $review = "";
+    #Reviewer name is text for the next a tag.
+    $tag = $stream->get_tag("a");
+    $review .= "Reviewer:  ".$stream->get_trimmed_text."<br/>\n";
+    #Review score and/or Date Reviewed may not be present for old entries.
+    while (!$tag->[1]{class} or
+           ($tag->[1]{class} and $tag->[1]{class} ne "review_body"))
+    {
+        if ($tag->[1]{class} and $tag->[1]{class} eq "date")
+        {
+            #Review date is text in the div tag with class "date".
+            $review .= "Date Reviewed:  ".$stream->get_trimmed_text."<br/>\n";
+        }
+        if ($tag->[1]{class} and $tag->[1]{class} eq "review_grade")
+        {
+            #Review score out of 10 is text in the div after
+            #the div with class "review_grade".
+            $tag = $stream->get_tag("div");
+            my $score = $stream->get_trimmed_text;
+            $review .= "Rating:  ".$score."/".$max_score."<br/>\n";
+            $css_data .= &interpretScore($score/$max_score);
+        }
+        $tag = $stream->get_tag("div");
+        &timeout();
+    }
+    #Review summary might be in the div with class "review_body".
+    my $summary = $stream->get_trimmed_text;
+    if ($summary eq "")
+    {
+        #It's not in the div, maybe it's in the next span.
+        $tag = $stream->get_tag("span");
+        $summary = $stream->get_trimmed_text;
+        
+        #If the review is a two-part review collapsed, it is
+        #separated across the next two span tags.
+        if ($summary eq "")
+        {
+            $tag = $stream->get_tag("span");
+            $summary = $stream->get_trimmed_text;
+            $tag = $stream->get_tag("span");
+            $summary .= " ".$stream->get_trimmed_text;
+        }
+    }
+    $review .= $cgi->p("Review:  ".encode_entities($summary));
+    return "<div ".$css_data.">\n".$review."\n</div>\n";
+}
+
+#Generates the buttons for paging through reviews.
+sub generateButtons()
+{
+    #The buttons can be for paging through user reviews or critic reviews.
+    my ($review_type) = @@_;
+    #CGI button information from:
+    #http://perldoc.perl.org/CGI.html
+    print "<br/>\n";
+    print $cgi->button(-name=>'last_'.lc($review_type).'_review',
+                       -class=>'previous button',
+                       -value=>'Previous '.ucfirst($review_type).' Review',
+                       -onClick=>"last".ucfirst($review_type)."Review();");
+    print "\n";
+    print $cgi->button(-name=>'next_'.lc($review_type).'_review',
+                       -class=>'next button',
+                       -value=>'Next '.ucfirst($review_type).' Review',
+                       -onClick=>"next".ucfirst($review_type)."Review();");
+    print "\n<br/>\n";
+}
+
+#Interprets the score based on the ratio.
+#Less than half of the available points is bad,
+#between 50% and 75% of the available points is average,
+#and more than 75% of the available points is good.
+#
+#Note:  Each case needs to end the double-quote for the
+#HTML class string.
+sub interpretScore()
+{
+    my ($ratio) = @@_;
+    if ($ratio > .75)
+    {
+        return 'good_score"';
+    }
+    elsif ($ratio > .5)
+    {
+        return 'average_score"';
+    }
+    else
+    {
+        return 'bad_score"';
+    }
+}
+
+#Determines an aggregate score between 0 and 100 for use in
+#generating a recommendation with JavaScript.
+sub determineScore()
+{
+    my ($critic_score, $user_score) = @@_;
+    #Since critic scores are out of 100 points and user scores
+    #are out of 10 points, make the user score match the critic
+    #score by multipllying by 10.
+    $user_score *= 10;
+    
+    my $judgment_score;
+
+    #Don't use the user score if it's 0.
+    if ($critic_score != 0 && $user_score == 0)
+    {
+        $judgment_score = $critic_score;
+    }
+    #Don't use the critic score if it's 0.
+    elsif ($user_score != 0 && $critic_score == 0)
+    {
+        $judgment_score = $user_score
+    }
+    #Either both scores are defined, or neither is defined.  Either
+    #way, this formula will produce the right result.
+    else
+    {    
+        $judgment_score = ($critic_score + $user_score) / 2;
+    }
+    print "<br/>\n", $cgi->div({-id=>'aggregate_score'},$judgment_score), "\n";
+}
+
+#Monitors the timeout counter to see if a loop is taking
+#too long.
+sub timeout()
+{
+    $timeout_counter--;
+    if ($timeout_counter <= 0)
+    {
+        #$timeout_counter = 1000;
+        #last;
+        die("Problem with Metacritic webpage; stopped.");
+    }
+}
+@
+
+
+1.30
+log
+@Added exit() system call to the end of timeout to try to keep
+the Perl scripts from pegging the elvis server to death.
+@
+text
+@d545 1
+a545 1
+        exit(1);
+@
+
+
+1.29
+log
+@Fixed the ad-box problem the right way by making the
+scraper search for the providers list at the bottom, which
+should never change.
+@
+text
+@d543 3
+a545 2
+        $timeout_counter = 1000;
+        last;
+@
+
+
+1.28
+log
+@Fixed problem with terminating user reviews list.
+@
+text
+@d371 4
+a374 2
+            #for the ad box at the bottom, then we should return the reviews.
+            if ($tag->[1]{class} and $tag->[1]{class} eq "YAD")
+@
+
+
+1.27
+log
+@Final commit.  Added headers.
+@
+text
+@d372 1
+a372 1
+            if ($tag->[1]{class} and $tag->[1]{class} eq "OUTBRAIN")
+@
+
+
+1.26
+log
+@Added some clarity and HTML tags for organization.
+@
+text
+@d3 2
+a4 1
+# Written by Kevin Dittmar 5 May 2014
+d30 1
+a30 1
+    $agent->get("http://www.metacritic.com/game/pc/goat-simulator");
+@
+
+
+1.25
+log
+@Fixed absence of information messages.
+@
+text
+@d16 2
+d465 1
+d467 1
+a467 1
+                       -class=>'previous',
+d472 1
+a472 1
+                       -class=>'next',
+@
+
+
+1.24
+log
+@Now prints absence of information messages.
+@
+text
+@d237 1
+a237 1
+            return $cgi->p("Summary:  No summary available.")."\n";
+d243 1
+a243 1
+        return $cgi->p("Summary:  No summary available.")."\n";
+d304 1
+a304 1
+        return "No game information available.";
+@
+
+
+1.23
+log
+@Formatted the scraped data a little more nicely.  Turned
+print statements in functions into returns so it was easier
+to organize data in any order.
+@
+text
+@d304 1
+a304 1
+        return "";
+@
+
+
+1.22
+log
+@Removed the deprecated printTitle subroutine.
+@
+text
+@d41 9
+a49 2
+    my $critic_score = &parseCriticData();
+    my $user_score = &parseUserData();
+d51 37
+a87 2
+    &printSummary();
+    &printGameInfo();
+d96 1
+a96 1
+#and the average rating score, and print them in p tags.
+d98 1
+a98 2
+#Prints the data it scrapes as a side effect.
+#Returns $critic_score for use in the determineScore() subroutine.
+a116 1
+        print $cgi->p("Average Critic Score:  ".$critic_score."/100"), "\n";
+d121 1
+a121 1
+        print $cgi->p("Average Critic Score:  TBD"), "\n";
+d128 1
+a128 2
+    print $cgi->p("Critic Ratings:  ".$critic_ratings), "\n";
+    return $critic_score;
+d132 1
+a132 1
+#and the average rating score, and print them in p tags.
+d134 1
+a134 2
+#Prints the data it scrapes as a side effect.
+#Returns the user_score for use in the determineScore() subroutine.
+a160 10
+        #The user score is marked, but there aren't enough ratings yet.
+        if ($user_score eq "tbd")
+        {
+            print $cgi->p("Average User Score:  TBD"), "\n";
+        }
+        #The user score has enough ratings to make a judgment.
+        else
+        {
+            print $cgi->p("Average User Score:  ".$user_score."/10"), "\n";
+        }
+d169 1
+a169 1
+        #If there isn't a placeholder of "No user score yet", print the
+d175 2
+a176 1
+            print $cgi->p("User Ratings:  ".$user_ratings), "\n";        
+d181 1
+a181 1
+            print $cgi->p("User Ratings:  0"), "\n";
+d187 2
+a188 2
+        print $cgi->p("Average User Score:  TBD"), "\n";
+        print $cgi->p("User Ratings:  0"), "\n";
+d190 1
+a190 1
+    return $user_score;
+d193 2
+a194 2
+#Scrape and print the summary for the game in a p tag.
+sub printSummary()
+d196 1
+d221 1
+a221 1
+            my $summary = $stream->get_trimmed_text;
+d232 1
+a232 1
+            print $cgi->p("Summary:  ".encode_entities($summary)), "\n";
+d237 1
+a237 1
+            print $cgi->p("Summary:  No summary available."), "\n";
+d243 1
+a243 1
+        print $cgi->p("Summary:  No summary available."), "\n";
+d247 4
+a250 3
+#Scrape and print the game info, including developer, genre, and ESRB
+#rating in a table.  These fields are list items in an unordered list.
+sub printGameInfo()
+d298 7
+a304 1
+        print "<table>\n".$game_info."</table>\n";
+@
+
+
+1.21
+log
+@Added HTML::Encode to handle summaries with HTML characters
+in them.
+@
+text
+@a52 15
+#Scrape the title of the game and print it in an h1 tag.
+sub printTitle()
+{
+    #The title is in a span tag with the itemprop "name".
+    $tag = $stream->get_tag("span");
+    while(!$tag->[1]{itemprop} or
+          ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "name"))
+    {
+        $tag = $stream->get_tag("span");
+        &timeout();
+    }
+    my $title = $stream->get_trimmed_text;
+    print $cgi->h1($title), "\n";
+}
+
+@
+
+
+1.20
+log
+@Added timeout failsafe method.
+@
+text
+@d14 4
+d217 1
+a217 1
+            print $cgi->p("Summary:  ".$summary), "\n";
+d236 1
+a236 1
+    my $game_info = "<table>\n";
+d280 4
+a283 1
+    print $game_info."</table>\n";
+d430 1
+a430 1
+    $review .= $cgi->p("Review:  ".$summary);
+@
+
+
+1.19
+log
+@Corrected error where a very small number of reviews
+(those without expand tags) wouldn't print the review text
+correctly.
+@
+text
+@d30 3
+a32 1
+&scrape_metacritic();
+d34 2
+a35 1
+sub scrape_metacritic()
+a36 3
+
+   # &printTitle();
+    
+d58 1
+d79 1
+d116 1
+d119 1
+a119 1
+    ##a class "score_summary" if the user score is defined.
+d129 1
+d150 1
+d182 1
+d242 1
+d274 1
+d306 1
+a333 2
+        #Start stream on a div.
+        #$tag = $stream->get_tag("div");
+d347 1
+d356 1
+a356 2
+        #End the div wrapping for the user review.
+        #$result .= "</div>\n\n";
+d359 1
+d403 1
+d496 1
+a496 1
+        my $judgment_score = ($critic_score + $user_score) / 2;
+d501 11
+a511 1
+
+@
+
+
+1.18
+log
+@Added webline and fixed LOTS of validation errors and warnings.
+@
+text
+@d396 1
+a396 1
+    #Review summary is in the div with class "review_body".
+d400 13
+a412 5
+       $tag = $stream->get_tag("span");
+       $tag = $stream->get_tag("span");
+       $summary = $stream->get_trimmed_text;
+       $tag = $stream->get_tag("span");
+       $summary .= " ".$stream->get_trimmed_text;
+@
+
+
+1.17
+log
+@Handles more special cases, and fixes some errors introduced
+by previous commits.
+@
+text
+@d227 4
+a230 2
+    #The list of game information starts in the list item with the class
+    #"summary_detail developer".
+d232 2
+a233 1
+           ($tag->[1]{class} and $tag->[1]{class} ne "summary_detail developer"))
+d453 2
+d458 23
+a480 3
+    #Since critic scores were scaled to be out of 100 points
+    #across 10 people, the judgment score should be between 0 and 10.
+    my $judgment_score = ($critic_score / 10 + $user_score) / 2;
+@
+
+
+1.16
+log
+@Added CSS classes for good, average, and bad reviews.  Broke the
+scraper up further into functions.  Removed some old commented code.
+@
+text
+@d13 1
+a13 1
+use Data::Dumper;
+d35 1
+a35 1
+    &printTitle();
+d178 5
+a182 7
+    #Two span tags after the ul tag with the class "summary_details" will
+    #have the itemprop "description" if a summary for the game exists on the
+    #page.
+    $tag = $stream->get_tag("span");
+    $tag = $stream->get_tag("span");
+
+    if ($tag->[1]{itemprop} and $tag->[1]{itemprop} eq "description")
+d184 3
+a186 3
+        #The description for the game is in a span tag within the description
+        #span tag if it is short enough that it doesn't need an "Expand" link
+        #on Metacritic.
+d188 3
+a190 5
+        my $summary = $stream->get_trimmed_text;
+        #If the summary is too long, it is split into two span tags after the
+        #description span tag.  Therefore, summary is empty right now and
+        #needs to be filled from the text in the next two span tags.
+        if ($summary eq "")
+d192 3
+d196 17
+a212 3
+            $summary = $stream->get_trimmed_text;
+            $tag = $stream->get_tag("span");
+            $summary .= " ".$stream->get_trimmed_text;
+a213 1
+        print $cgi->p("Summary:  ".$summary), "\n";
+d215 1
+a215 1
+    #The game doesn't have a summary on its Metacritic page.
+d227 2
+a228 2
+    #The list of game information is in a div tag with the class
+    #"details side_details".
+d230 1
+a230 1
+           ($tag->[1]{class} and $tag->[1]{class} ne "details side_details"))
+d232 1
+a232 1
+        $tag = $stream->get_tag("div");
+d234 1
+a234 3
+    #All of the information is in pairs of span tags within li tags,
+    #so start off the loop by getting the next li tag.
+    $tag = $stream->get_tag("li");
+a238 1
+           ($tag->[1]{class} ne "score_count") and
+d241 3
+a243 1
+        #It isn't necessary to print the link to GameFAQs.
+d245 2
+a246 1
+            $tag->[1]{class} ne "summary_detail product_cheats")
+d248 4
+d403 1
+a403 1
+    $review .= $cgi->p("Summary:  ".$summary);
+@
+
+
+1.15
+log
+@Scraper now handles cases where reviews don't have some of the fields,
+like date reviewed.  Buttons are also generated from a subroutine, as are
+the parsed reviews.  This improves code clarity and modularity.
+@
+text
+@a25 2
+#$agent->get("http://www.metacritic.com/game/pc/dark-souls-ii");
+#$agent->get("http://www.metacritic.com/game/pc/bloodrayne-betrayal");
+a28 2
+my $total_ratings = 0;
+my $total_score = 0;
+d30 18
+a47 9
+&printTitle();
+&printCriticData();
+&printUserData();
+&printSummary();
+&printGameInfo();
+
+print &getCriticReviews();
+print &getUserReviews();
+&determineRating();
+d65 4
+a68 1
+sub printCriticData()
+a96 6
+    #The product of the average rating and the number of reviews
+    #is the total score contribution from critics.
+    $total_score += $critic_ratings * $critic_score;
+    #Add the 10 times the number of critic reviews to the total.
+    #Critics count as 10 people because they are professionals.
+    $total_ratings += $critic_ratings * 10;
+d98 1
+d103 4
+a106 1
+sub printUserData()
+d128 1
+d167 1
+a167 5
+    #The product of the average rating and the number
+    #of reviews is the total score contribution from users.
+    $total_score += $user_ratings * $user_score;
+    #Add the number of user reviews to the total.
+    $total_ratings += $user_ratings;
+a283 10
+        #Generate the next critic id and increment the counter. 
+        $id = 'id="critic'.$counter.'"';
+        $counter++;
+        #Wrap the review in a div with the review class.
+        $result .= '<div class="critic_review" '.$id.">\n";
+
+        $result .= &parseReview(100);
+        ##Reviewer name is text for the next a tag.
+        #$tag = $stream->get_tag("a");
+        #$result .= "Reviewer:  ".$stream->get_trimmed_text."<br/>\n";
+d285 2
+a286 3
+        ##Review date is text in the next div tag.
+        #$tag = $stream->get_tag("div");
+        #$result .= "Date Reviewed:  ".$stream->get_trimmed_text."<br/>\n";
+d288 2
+a289 11
+        ##Review score out of 100 is text two divs down.
+        #$tag = $stream->get_tag("div");
+        #$tag = $stream->get_tag("div");
+        #$result .= "Rating:  ".$stream->get_trimmed_text."/100<br/>\n";
+
+        ##Review summary is next div down.
+        #$tag = $stream->get_tag("div");
+        #$result .= $cgi->p("Summary:  ".$stream->get_trimmed_text)."\n";
+        
+        #End the div wrapping for the review.
+        $result .= "</div>\n\n";
+d327 5
+a331 1
+        $id = 'id="user'.$counter.'"';
+a332 6
+        #Wrap the review in a div with the review class.
+        $result .= '<div class="user_review" '.$id.">\n";
+        #Parse the next user review (max score for user reviews is 10).
+        $result .= &parseReview(10); 
+        #End the div wrapping for the user review.
+        $result .= "</div>\n\n";
+d336 1
+d339 14
+a352 2
+    #Critic reviews are out of 100; user reviews are otu of 10.
+    my ($max_score) = @@_;
+d361 15
+a375 13
+       if ($tag->[1]{class} and $tag->[1]{class} eq "date")
+       {
+           #Review date is text in the div tag with class "date".
+           $review .= "Date Reviewed:  ".$stream->get_trimmed_text."<br/>\n";
+       }
+       if ($tag->[1]{class} and $tag->[1]{class} eq "review_grade")
+       {
+           #Review score out of 10 is text in the div after
+           #the div with class "review_grade".
+           $tag = $stream->get_tag("div");
+           $review .= "Rating:  ".$stream->get_trimmed_text."/".$max_score."<br/>\n";
+       }
+       $tag = $stream->get_tag("div");
+d387 2
+a388 2
+    $review .= $cgi->p("Summary:  ".$summary)."\n";
+    return $review;
+d410 25
+a434 1
+sub determineRating()
+d436 1
+d439 1
+a439 1
+    my $judgment_score = $total_score / $total_ratings;
+@
+
+
+1.14
+log
+@Added id to aggregate score printed at the bottom of the page.
+@
+text
+@d279 1
+a279 10
+            #CGI button information from:
+            #http://perldoc.perl.org/CGI.html
+            print $cgi->button(-name=>'last_critic_review',
+                               -class=>'previous',
+                               -value=>'Previous Critic Review',
+                               -onClick=>"lastCriticReview()"), "\n";
+            print $cgi->button(-name=>'next_critic_review',
+                               -class=>'next',
+                               -value=>'Next Critic Review',
+                               -onClick=>"nextCriticReview()"), "\n<br/>\n";
+d287 4
+a290 3
+        #Reviewer name is text for the next a tag.
+        $tag = $stream->get_tag("a");
+        $result .= "Reviewer:  ".$stream->get_trimmed_text."<br/>\n";
+d292 3
+a294 3
+        #Review date is text in the next div tag.
+        $tag = $stream->get_tag("div");
+        $result .= "Date Reviewed:  ".$stream->get_trimmed_text."<br/>\n";
+d296 8
+a303 8
+        #Review score out of 100 is text two divs down.
+        $tag = $stream->get_tag("div");
+        $tag = $stream->get_tag("div");
+        $result .= "Rating:  ".$stream->get_trimmed_text."/100<br/>\n";
+
+        #Review summary is next div down.
+        $tag = $stream->get_tag("div");
+        $result .= $cgi->p("Summary:  ".$stream->get_trimmed_text)."\n";
+d329 2
+a330 2
+            #If we didn't find a critic review div, but we found the div
+            #for the ad box at the bottom, then we should return the reveiws.
+d341 1
+a341 8
+            print $cgi->button(-name=>'last_user_review',
+                               -class=>'previous',
+                               -value=>'Previous User Review',
+                               -onClick=>"lastUserReview()"), "\n";
+            print $cgi->button(-name=>'next_user',
+                               -class=>'next',
+                               -value=>'Next User Review',
+                               -onClick=>"nextUserReview()"), "\n<br/>\n";
+d348 2
+a349 28
+ 
+        #Reviewer name is text for the next a tag.
+        $tag = $stream->get_tag("a");
+        $result .= "Reviewer:  ".$stream->get_trimmed_text."<br/>\n";
+
+        #Review date is text in the next div tag.
+        $tag = $stream->get_tag("div");
+        $result .= "Date Reviewed:  ".$stream->get_trimmed_text."<br/>\n";
+
+        #Review score out of 100 is text two divs down.
+        $tag = $stream->get_tag("div");
+        $tag = $stream->get_tag("div");
+        
+        $result .= "Rating:  ".$stream->get_trimmed_text."/10<br/>\n";
+
+        #Review summary is next div down.
+        $tag = $stream->get_tag("div");
+        $review = $stream->get_trimmed_text;
+        if ($review eq "")
+        {
+            $tag = $stream->get_tag("span");
+            $tag = $stream->get_tag("span");
+            $review = $stream->get_trimmed_text;
+            $tag = $stream->get_tag("span");
+            $review .= " ".$stream->get_trimmed_text;
+        }
+        $result .= $cgi->p("Summary:  ".$review)."\n";
+        
+d353 59
+@
+
+
+1.13
+log
+@Started adding the subroutine for the recommendation system.
+@
+text
+@d146 1
+a146 1
+            print $cgi->p("User Ratings:  ".$user_score), "\n";        
+d401 1
+a401 1
+    print "<br/>\n", $cgi->h1($judgment_score), "\n"
+@
+
+
+1.12
+log
+@Added function to scrape pertinent game information,
+like the developer name and the genre(s).
+@
+text
+@d3 4
+a6 2
+# CGI Basis by D Provine
+# Modified by Kevin Dittmar 10 April 2014
+d31 2
+d42 1
+d44 1
+d55 1
+a55 1
+    print $cgi->h1($title), "\n", $cgi->h2("Metacritic Data"), "\n";
+d58 2
+d62 2
+d76 2
+a77 2
+        my $rating = $stream->get_trimmed_text;
+        print $cgi->p("Average Critic Rating:  ".$rating."/100"), "\n";
+d82 1
+a82 1
+        print $cgi->p("Average Critic Rating:  TBD"), "\n";
+d87 9
+a95 2
+    my $review_count = $stream->get_trimmed_text;
+    print $cgi->p("Critic Reviews:  ".$review_count." Ratings"), "\n";
+d98 2
+d102 2
+d122 1
+a122 1
+        my $user_score = $stream->get_trimmed_text;
+d126 1
+a126 1
+            print $cgi->p("Average User Rating:  TBD"), "\n";
+d131 1
+a131 1
+            print $cgi->p("Average User Rating:  ".$user_score."/10"), "\n";
+d145 2
+a146 1
+            print $cgi->p("User Reviews:  ".$stream->get_trimmed_text), "\n";
+d151 1
+a151 1
+            print $cgi->p("User Reviews:  0 Ratings"), "\n";
+d157 2
+a158 2
+        print $cgi->p("Average User Rating:  TBD"), "\n";
+        print $cgi->p("User Reviews:  0 Ratings"), "\n";
+d160 5
+d167 1
+d207 2
+d249 4
+a260 2
+        #Start stream on a div.
+        #$tag = $stream->get_tag("div");
+d318 4
+d395 10
+@
+
+
+1.11
+log
+@Separated the scraper into clear functions to make it more readable.
+Added else cases to print messages stating that there are no ratings
+or that scores are TBD.
+@
+text
+@d34 1
+a38 1
+
+d177 40
+@
+
+
+1.10
+log
+@Added a lot of special cases to handle pages that lack information.
+A particularly strong special case was the Kerbal Space Program page,
+which lacks most of its information, including basic things like a
+game summary.
+@
+text
+@d28 1
+d30 4
+a33 7
+#The title is in a span tag with the itemprop "name".
+my $tag = $stream->get_tag("span");
+while(!$tag->[1]{itemprop} or
+      ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "name"))
+{
+    $tag = $stream->get_tag("span");
+}
+d35 2
+a36 2
+my $title = $stream->get_trimmed_text;
+print $cgi->h1($title), "\n", $cgi->h2("Metacritic Data"), "\n";
+a37 7
+#The average critic rating is in a div with the "label" class.
+$tag = $stream->get_tag("div");
+while(!$tag->[1]{class} or
+      ($tag->[1]{class} and $tag->[1]{class} ne "label"))
+{
+    $tag = $stream->get_tag("div");
+}
+d39 1
+a39 5
+#If the span tag exists, it has an itemprop of "ratingValue" and holds
+#the average critic rating for the game.
+$tag = $stream->get_tag("span");
+if ($tag->[1]{itemprop} and
+    ($tag->[1]{itemprop} eq "ratingValue"))
+d41 9
+a49 2
+    print $cgi->p("Average Critic Rating:  ".$stream->get_trimmed_text."/100"),
+          "\n";
+d52 1
+a52 7
+#The count of critic reviews is in the span tag after the next a tag.
+$tag = $stream->get_tag("a");
+$tag = $stream->get_tag("span");
+print $cgi->p("Critic Reviews:  ".$stream->get_trimmed_text." Ratings"), "\n";
+
+while (!$tag->[1]{class} or
+       ($tag->[1]{class} and $tag->[1]{class} ne "details side_details"))
+d54 1
+d56 2
+a57 10
+}
+#The next tag after the div with class "details side_details" will have
+#a class "score_summary" if the user score is defined.
+$tag = $stream->get_tag();
+if ($tag->[1]{class} and $tag->[1]{class} eq "score_summary")
+{
+    #The average user review for the game is in the div tag after an a tag
+    #with a class named metascore_anchor.
+    while (!$tag->[1]{class} or
+           ($tag->[1]{class} and $tag->[1]{class} ne "metascore_anchor"))
+d59 1
+a59 1
+        $tag = $stream->get_tag("a");
+d61 4
+a64 4
+
+    $tag = $stream->get_tag("div");
+    my $user_score = $stream->get_trimmed_text;
+    if ($user_score eq "tbd")
+d66 4
+a69 2
+        print $cgi->p("Average User Rating:  TBD"), "\n";
+    }
+d72 1
+a72 1
+        print $cgi->p("Average User Rating:  ".$user_score."/10"), "\n";
+d74 6
+d81 2
+d84 1
+a84 1
+           ($tag->[1]{class} and $tag->[1]{class} ne "desc"))
+d86 45
+a130 1
+        $tag = $stream->get_tag("span");
+d132 2
+a133 2
+
+    if ($stream->get_trimmed_text ne "No user score yet")
+d135 2
+a136 2
+        $tag = $stream->get_tag("a");
+        print $cgi->p("User Reviews:  ".$stream->get_trimmed_text), "\n";
+a138 14
+#The game doesn't even have a User Ratings section on its page.
+else
+{
+    print $cgi->p("User Reviews:  0 Ratings"), "\n";
+}
+while (!$tag->[1]{class} or
+       ($tag->[1]{class} and $tag->[1]{class} ne "summary_details"))
+{
+    $tag = $stream->get_tag("ul");
+}
+#Two span tags after the ul tag with the class "summary_details" will
+#have the itemprop "description" if a summary for the game exists on the page.
+$tag = $stream->get_tag("span");
+$tag = $stream->get_tag("span");
+d140 1
+a140 1
+if ($tag->[1]{itemprop} and $tag->[1]{itemprop} eq "description")
+d142 9
+a150 2
+    #The description for the game is in a span tag within the description span tag
+    #if it is short enough that it doesn't need an expand on Metacritic.
+a151 1
+    my $summary = $stream->get_trimmed_text;
+d153 1
+a153 4
+    #If the summary is too long, it is split into two span tags after the
+    #description span tag.  Therefore, summary is empty right now and needs to 
+    #be filled from the text in the next two span tags.
+    if ($summary eq "")
+d155 3
+d159 17
+a175 3
+        $summary = $stream->get_trimmed_text;
+        $tag = $stream->get_tag("span");
+        $summary .= " ".$stream->get_trimmed_text;
+a176 1
+    print $cgi->p("Summary:  ".$summary), "\n";
+a177 8
+#The game doesn't have a summary on its Metacritic page.
+else
+{
+    print $cgi->p("Summary:  No summary available."), "\n";
+}
+print &getCriticReviews();
+print &getUserReviews();
+
+@
+
+
+1.9
+log
+@Added buttons for the review pagination.
+Scraper now takes a URL for a game as an argument instead of
+using canned URLs.
+@
+text
+@a62 3
+
+#The average user review for the game is in the div tag after an a tag
+#with a class named metascore_anchor.
+d64 1
+a64 1
+       ($tag->[1]{class} and $tag->[1]{class} ne "metascore_anchor"))
+d66 1
+a66 1
+    $tag = $stream->get_tag("a");
+d68 23
+a90 2
+$tag = $stream->get_tag("div");
+print $cgi->p("Average User Rating:  ".$stream->get_trimmed_text."/10"), "\n";
+d92 5
+a96 2
+$tag = $stream->get_tag("a");
+print $cgi->p("User Review:  ".$stream->get_trimmed_text), "\n";
+d98 8
+a105 3
+#The game summary is in a span tag with the itemprop "description".
+while (!$tag->[1]{itemprop} or
+       ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "description"))
+d107 6
+a112 1
+    $tag = $stream->get_tag("span");
+d114 3
+a116 2
+#The description for the game is in a span tag within the description span tag
+#if it is short enough that it doesn't need an expand on Metacritic.
+a117 1
+my $summary = $stream->get_trimmed_text;
+d119 1
+a119 4
+#If the summary is too long, it is split into two span tags after the
+#description span tag.  Therefore, summary is empty right now and needs to 
+#be filled from the text in the next two span tags.
+if ($summary eq "")
+d121 2
+d124 18
+a141 3
+    $summary = $stream->get_trimmed_text;
+    $tag = $stream->get_tag("span");
+    $summary .= " ".$stream->get_trimmed_text;
+a142 2
+print $cgi->p("Summary:  ".$summary), "\n";
+
+d146 1
+d219 1
+d272 2
+a273 2
+        $summary = $stream->get_trimmed_text;
+        if ($summary eq "")
+d277 1
+a277 1
+            $summary = $stream->get_trimmed_text;
+d279 1
+a279 1
+            $summary .= " ".$stream->get_trimmed_text;
+d281 1
+a281 1
+        $result .= $cgi->p("Summary:  ".$summary)."\n";
+@
+
+
+1.8
+log
+@Added ids and classes to the reviews to make them JavaScript
+and CSS accessible.
+@
+text
+@d14 10
+a23 1
+$agent->get("http://www.metacritic.com/game/pc/goat-simulator");
+d106 1
+a106 1
+    my $counter = 1;
+d129 13
+d194 12
+@
+
+
+1.7
+log
+@Scraper now prints the number of critic and user reviews on the page.
+This will be used to determine an overall rating and suggestion for
+the user.
+@
+text
+@d97 2
+d120 6
+d141 4
+a144 1
+        $result .= $cgi->p("Summary:  ".$stream->get_trimmed_text)."\n\n";
+d151 2
+d172 5
+d202 4
+a205 1
+        $result .= $cgi->p("Summary:  ".$summary)."\n\n";
+@
+
+
+1.6
+log
+@Added documentation and working user reviews.
+@
+text
+@d45 2
+a46 1
+    print $cgi->p("Rating:  ".$stream->get_trimmed_text."/100"), "\n";
+d48 19
+@
+
+
+1.5
+log
+@Improved the HTML formatting so it doesn't print in a giant line.
+@
+text
+@d16 1
+d20 1
+d27 1
+a27 1
+#print Dumper($tag);
+d31 1
+d39 2
+d48 1
+d54 2
+a55 1
+#The description for the game is in a span tag within the description span tag.
+d57 1
+d59 11
+a69 1
+print $cgi->p("Summary:  ".$stream->get_trimmed_text), "\n";
+d72 1
+d81 1
+a81 1
+        $tag = $stream->get_tag("div");
+d114 51
+@
+
+
+1.4
+log
+@Wrapped the review scraper in a function to improve readability.
+Added better documentation.
+@
+text
+@d27 1
+a27 1
+print "<h1>", $title, "</h1><h2>Metacritic Data</h2>";
+d40 1
+a40 1
+    print "Rating:  ", $stream->get_trimmed_text, "/100<br/>";
+d51 1
+a51 1
+print "<p>Summary:  ", $stream->get_trimmed_text, "</p><br/>";
+d53 1
+a53 1
+print &getReviews();
+d55 1
+a55 1
+sub getReviews()
+d81 1
+a81 1
+        $result .= "Reviewer:  ".$stream->get_trimmed_text."<br/>";
+d85 1
+a85 1
+        $result .= "Date Reviewed:  ".$stream->get_trimmed_text."<br/>";
+d90 1
+a90 1
+        $result .= "Rating:  ".$stream->get_trimmed_text."/100<br/>";
+d94 1
+a94 1
+        $result .= "<p>Summary:  ".$stream->get_trimmed_text."</p><br/>";
+@
+
+
+1.3
+log
+@Scraper now handles cases where Metacritic data is not complete.
+For example, a game that hasn't come out yet and has no reviews will
+not cause the webpage to enter an infinite fetch loop.
+@
+text
+@d91 4
+@
+
+
+1.2
+log
+@Added code to scrape most of the critic reviews.  It still
+needs to be formatted and scrape the last review.
+@
+text
+@d15 1
+a15 1
+
+a18 8
+#print $cgi->header(-type=>'text/html', -author =>'Kevin Dittmar');
+
+#print $cgi->start_html(-title =>'Metacritic Scraper',
+#    -author => 'dittma75@@students.rowan.edu');#,
+    #-style => [{src => 'webline.css'},{src => 'layout699-.css'},
+    #   {src=>'layout700+.css'}]);
+
+
+d29 7
+d37 2
+a38 2
+while(!$tag->[1]{itemprop} or
+      ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "ratingValue"))
+d40 1
+a40 1
+    $tag = $stream->get_tag("span");
+a42 2
+print "Rating:  ", $stream->get_trimmed_text, "/100<br/>";
+
+d53 1
+a53 7
+#Get start of critic reviews.
+while(!$tag->[1]{class} or
+      ($tag->[1]{class} and 
+       $tag->[1]{class} ne "review critic_review first_review"))
+{
+    $tag = $stream->get_tag("li");
+}
+d55 1
+a55 1
+do
+d57 3
+a59 9
+    #print Dumper($tag), "\n";      
+    #while(!$tag->[1]{class} or
+    #      ($tag->[1]{class} and $tag->[1]{class} ne "review critic_review"))
+    #{
+    #    
+    #}
+    $tag = $stream->get_tag("div");
+    while(!$tag->[1]{class} or
+          ($tag->[1]{class} and $tag->[1]{class} ne "review_critic"))
+d61 27
+d89 2
+d92 1
+a92 11
+    $tag = $stream->get_tag("a");
+    print "Reviewer:  ", $stream->get_trimmed_text, "<br/>";
+    $tag = $stream->get_tag("div");
+    print "Date Reviewed:  ", $stream->get_trimmed_text, "<br/>";
+    $tag = $stream->get_tag("div");
+    $tag = $stream->get_tag("div");
+    print "Rating:  ", $stream->get_trimmed_text, "/100<br/>";
+    $tag = $stream->get_tag("li");
+    $tag = $stream->get_tag("li");
+    $tag = $stream->get_tag("li");
+}until ($tag->[1]{class} eq "review critic_review last_review");
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a36 13
+$tag = $stream->get_tag("img");
+while(!$tag->[1]{class} or
+      ($tag->[1]{class} and $tag->[1]{class} ne "product_image large_image"))
+{
+    $tag = $stream->get_tag("img");
+}
+
+my $src = $tag->[1]{'src'};
+
+my $alt = $title;
+
+print $cgi->img({src => $src, alt => $alt}), "<br/>";
+
+d51 1
+a51 1
+#The description for the game is in a span tag within thedescription span tag.
+a54 1
+#print $cgi->end_html, "\n";
+d56 7
+d64 25
+@

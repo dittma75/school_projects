@@ -1,0 +1,31 @@
+/* webline.css -- nice style for author, validation, and testing line
+ *
+ * Darren Provine
+ * Modified by Kevin Dittmar, 28 January 2014
+ * $Id: webline.css,v 1.1 2014/03/23 03:27:55 dittma75 Exp $
+ */
+
+table#webline {
+    text-align:	center;	
+    width: 100%;
+    color: #3f1a0a;
+    background: #dfdbc3; 
+    border: 1px solid #3f1a0a;
+    border-collapse: collapse;
+}
+
+table#webline tr {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid #3f1a0a;
+}
+
+table#webline tr td {
+    border:  1px solid #3f1a0a;
+    margin: 0px;
+    padding: 0px;
+}
+table#webline tr th{
+	border:	1px solid #3f1a0a;
+}

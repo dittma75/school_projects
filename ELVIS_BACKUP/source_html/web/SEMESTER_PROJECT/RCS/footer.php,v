@@ -1,0 +1,310 @@
+head	1.8;
+access;
+symbols;
+locks
+	dittma75:1.8; strict;
+comment	@# @;
+
+
+1.8
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.05.06.15.20.17;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.05.06.14.45.42;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.05.06.07.04.24;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.06.02.47.22;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.05.05.21.37.42;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.05.05.21.08.23;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.05.04.14.49.50;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the footer that contains credit to the
+sites from which we got our data.
+@
+
+
+1.8
+log
+@Final commit.  Fixed acknowledgement links and added headers.
+@
+text
+@<!--
+    Kevin Dittmar and Anthony Ratliff
+    6 May 2014
+    The acknowledgement footer to Metacritic and GameLengths and
+    the compatibility webline table exist in this file.
+-->
+<div id = "footer">
+    <!-- Compatibilty and testing webline. -->
+    <table id="webline">
+        <tr>
+            <td>
+                <a class="text_link" title="My Home Page" 
+                   href="http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html">
+                   <img src="http://elvis.rowan.edu/~dittma75/web/resources/black_mage.png"
+                        alt="" />
+                    Kevin Dittmar
+                </a>
+                <span> and </span>
+                <a class="text_link" title = "My Home Page"
+                   href="http://elvis.rowan.edu/~ratlif10/web/hw1/hw1.html">
+                    Anthony Ratliff
+                </a>
+            </td>
+            <td>
+                <a href="http://validator.w3.org/check/referer">
+                    <img class="valid_icon"
+                         src="http://elvis.rowan.edu/~dittma75/web/resources/valid-xhtml10.png"
+                         alt="XHTML1.0" />
+                </a>
+            </td>
+            <td>
+                <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+                    <img class="valid_icon"
+                         src="http://elvis.rowan.edu/~dittma75/web/resources/vcss.gif"
+                         alt="CSS 3" />
+                </a>
+            </td>
+            <td>
+                <img class="browser_icon" title="Internet Explorer" 
+                     src="http://elvis.rowan.edu/~dittma75/web/resources/logo_IE.png" 
+                     alt="Internet Explorer" />
+            </td>
+            <td>
+                <img class="browser_icon" title="Mozilla Firefox"
+                     src="http://elvis.rowan.edu/~dittma75/web/resources/logo_FF.png"
+                     alt="Firefox" />
+            </td>
+            <td>
+                <img class="browser_icon" title="Google Chrome"
+                     src="http://elvis.rowan.edu/~dittma75/web/resources/logo_chrome.png" 
+                     alt="Chrome" />
+            </td>
+            <td>
+                <img class="browser_icon" title="Opera"
+                     src="http://elvis.rowan.edu/~dittma75/web/resources/logo_opera.png"
+                     alt="Opera" />
+            </td>
+            <td>
+                <img class="browser_icon" title="Konqueror"
+                     src="http://elvis.rowan.edu/~dittma75/web/resources/logo_konqueror.png"
+                     alt="Konqueror" />
+            </td> 
+            <td><span title="Limited Support">W3M*</span></td>
+            <td><span title="Limited Support">Lynx*</span></td>
+        </tr>
+    </table>
+    <?php
+        echo 'All reviews are property of the original reviewer, 
+            and all data was gathered from
+            <a href="http://www.metacritic.com">www.metacritic.com</a> and 
+            <a href="http://www.gamelengths.com">www.gamelengths.com</a>.';
+    ?>
+</div>
+
+@
+
+
+1.7
+log
+@Added tool tips to tell user that text-based browsers have limited
+support.
+@
+text
+@d1 6
+d70 2
+a71 2
+            <a href="www.metacritic.com">www.metacritic.com</a> and 
+            <a href="www.gamelengths.com">www.gamelengths.com</a>.';
+@
+
+
+1.6
+log
+@Shrunk the footer by removing the header row of the webline and
+the horizontal rule of the footer.
+@
+text
+@d57 2
+a58 2
+            <td>W3M</td>
+            <td>Lynx</td>
+@
+
+
+1.5
+log
+@Added Tony's name to the webline.
+@
+text
+@a4 8
+            <th>Authors</th>
+            <th colspan="2">Validation</th> 
+            <th colspan="7" 
+                title="Some features may not be supported in all browsers.">
+                Compatible Browsers
+            </th>
+        </tr>
+        <tr>
+d12 1
+a12 1
+                <br/>
+d62 1
+a62 3
+        echo '
+            <hr />
+            All reviews are property of the original reviewer, 
+@
+
+
+1.4
+log
+@The whole footer is now wrapped in the footer div.
+@
+text
+@d5 1
+a5 1
+            <th>Name</th>
+d14 1
+a14 1
+                <a class="text_link" title="Link to Homework Listing" 
+d19 5
+@
+
+
+1.3
+log
+@Put the footer below the webline.
+@
+text
+@d1 72
+a72 72
+<!-- Compatibilty and testing webline. -->
+<table id="webline">
+	<tr>
+		<th>Name</th>
+		<th colspan="2">Validation</th> 
+		<th colspan="7" 
+			title="Some features may not be supported in all browsers.">
+			Compatible Browsers
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<a class="text_link" title="Link to Homework Listing" 
+				href="http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html">	
+				<img src="http://elvis.rowan.edu/~dittma75/web/resources/black_mage.png"
+					alt="" /> 
+				Kevin Dittmar
+			</a>
+		</td>
+		<td>
+			<a href="http://validator.w3.org/check/referer">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/valid-xhtml10.png"
+					alt="XHTML1.0" />
+			</a>
+		</td>
+		<td>
+			<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/vcss.gif"
+					alt="CSS 3" />
+			</a>
+		</td>
+		<td>
+			<img class="browser_icon" title="Internet Explorer" 
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_IE.png" 
+				alt="Internet Explorer" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Mozilla Firefox"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_FF.png"
+				alt="Firefox" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Google Chrome"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_chrome.png" 
+				alt="Chrome" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Opera"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_opera.png"
+				alt="Opera" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Konqueror"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_konqueror.png"
+				alt="Konqueror" />
+		</td> 
+		<td>W3M</td>
+		<td>Lynx</td>
+	</tr>
+</table>
+<?php
+    echo '
+    <hr />
+    <div id="footer">
+        All reviews are property of the original reviewer, all box art is property of the developers
+        and publishers of the video game that it portrays, and all data was gathered from
+        <a href="www.metacritic.com">www.metacritic.com</a> and 
+        <a href="www.gamelengths.com">www.gamelengths.com</a>.
+    </div>';
+?>
+@
+
+
+1.2
+log
+@Added webline and fixed LOTS of validation errors and warnings.
+@
+text
+@a0 5
+<?php
+	echo '<hr />All reviews are property of the original reviewer, all box art is property of the developers
+	 and publishers of the video game that it portrays, and all data was gathered from 
+	<a href="www.metacritic.com">www.metacritic.com</a> and <a href="www.howlongtobeat.com">www.howlongtobeat.com</a>.';
+?>
+d63 11
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a4 1
+
+d6 62
+@

@@ -1,0 +1,119 @@
+/* Kevin Dittmar and Anthony Ratliff
+ * 6 May 2014
+ * Styles the main page of the website.
+ */
+
+/* Puts a gray box around the search area, makes
+ * it scale to take up the width of the browser, and
+ * forces it to the top of the page.
+ */
+#search {
+    background-color:   #CCCCCC;
+    top:                0px;
+    width:              100%;
+}
+
+/*Places the recent search links in the top right corner.*/
+#recentsearches {
+    top:        0px;
+    float:      right;
+}
+
+/* Colors all text on the page white with a shadow to give
+ * it depth.
+ * text-shadow information from:
+ * http://www.w3schools.com/css/css3_text_effects.asp
+ */
+#content {
+    color:           white;
+    text-shadow:     2px 2px black;
+}
+
+/*Inactive links are yellow.*/
+#content a {
+    color:  yellow;
+}
+
+/*Links that have the cursor hovering over them turn red.*/
+#content a:hover {
+    color:  red;
+}
+
+/* Puts a picture (my own work) in the background
+ * of the page.
+ * Background image information from:
+ * http://www.w3schools.com/css/css_background.asp
+ */
+body {
+    background-image:   url("dark_background.png");
+    background-color:   black;
+    background-repeat: repeat-x;
+    background-position: 0px 100px;
+    background-attachment: fixed;
+    padding-bottom: 200px;
+}
+
+/* Styles all buttons on the page with a gray border to
+ * give them depth.
+ */
+.button {
+    border-style:   outset;
+    border-width:   2px;
+    border-color:   gray;
+}
+
+/* Make the footer take up the entire width of the browser
+ * and always be placed at the bottom of the screen.
+ */
+#footer {
+    width:              100%;
+    background-color:   #CCCCCC;
+    position:           fixed;
+    bottom:             0px;
+    left:               0px;
+}
+
+/*Hides the field that we use for recommendation calculation.*/
+#aggregate_score {
+    display:    none;
+}
+
+/* Font size information from:
+ * http://www.w3schools.com/cssref/pr_font_font-size.asp
+ */
+.recommendation {
+    font-size:      x-large;
+    text-align:     center;
+    text-shadow:    3px 3px black;
+    clear:both;
+}
+
+/*Really good recommendations are green.*/
+#highlyRecommended {
+    color:  #00FF00;
+}
+
+/*Good recommendations are green.*/
+#recommended {
+    color:  #00FF00;
+}
+
+/*Okay recommendations are yellow.*/
+#mildlyRecommended {
+    color:  yellow;
+}
+
+/*Not great recommendations are yellow.*/
+#notReallyRecommended {
+    color:  yellow;
+}
+
+/*Bad recommendations are red.*/
+#notRecommended {
+    color:  #FF0000;
+}
+
+/*Text for no recommendation is white.*/
+#noRecommendation {
+    color: white;
+}

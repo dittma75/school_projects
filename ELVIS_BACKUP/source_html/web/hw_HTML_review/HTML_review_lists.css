@@ -1,0 +1,51 @@
+/* HTML_review_lists.css -- a style sheet for making the HTML review's
+ * lists more organized.
+ *
+ * Kevin Dittmar
+ */
+
+/* Each list level uses a different symbol for clarity. */
+/* Information on setting the various list symbols came from:
+ *	http://www.w3schools.com/cssref/pr_list-style-type.asp
+ */
+ol li {
+	list-style: upper-roman;
+}
+ol ol li {
+	list-style: decimal;
+}
+ol ul li {
+	list-style: disc;
+}
+ol ul ul li {
+	list-style: square;
+}
+
+/* Information on making a font bold came from:
+ *	 http://www.w3schools.com/css/css_font.asp
+ */
+dl dt { 
+	font-weight: bold;
+}
+/* Taken from webline.css and slightly modified.
+ */
+table#block_tags {
+    width: 500px;
+    color: #3f1a0a;
+    background: #dfdbc3; 
+    border: 1px solid #3f1a0a;
+    border-collapse: collapse;
+}
+
+table#block_tags tr {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid #3f1a0a;
+}
+
+table#block_tags tr td {
+    border:  1px solid #3f1a0a;
+    margin: 0px;
+    padding: 0px;
+}

@@ -1,0 +1,375 @@
+head	1.11;
+access;
+symbols;
+locks
+	dittma75:1.11; strict;
+comment	@# @;
+
+
+1.11
+date	2014.03.25.23.31.25;	author dittma75;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.03.25.22.43.14;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.03.25.13.30.52;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.03.24.20.48.11;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.03.23.18.51.28;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.03.23.05.25.35;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.03.23.05.02.55;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.03.23.04.08.53;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.22.23.45.12;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.22.22.12.35;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.22.19.08.44;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the HTML file that prints points on a
+canvas to graph sunrise and sunset data.
+@
+
+
+1.11
+log
+@Datepicker now starts with today's date as a default.
+@
+text
+@<!DOCTYPE html>
+<!--Created by Darren Provine, 11 March 2014
+	Modified by Kevin Dittmar, 25 March 2014 -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Sunrise/Sunset Data for Glassboro</title>
+    <meta charset="utf-8" />
+    <meta name="Author" content="Darren Provine" />
+    <meta name="Author" content="Kevin Dittmar" />
+    <meta name="generator" content="vi" />
+    <link rel="icon" href="../resources/black_mage.png" />
+    <link rel="stylesheet" href="../resources/webline.css" />
+    <link rel="stylesheet" href="./layout699-.css" />
+    <!-- JQuery stylesheet from:
+         http://stackoverflow.com/questions/820412/downloading-jquery-ui-css-from-googles-cdn-->
+    <link rel="stylesheet" href="../resources/jquery-ui.css"/>
+    <!-- JQuery script inclusion from:  http://api.jqueryui.com/datepicker/-->
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="sunrise.js"> </script>
+    <script type="text/javascript" src="AjaxFunctions.js"> </script>
+</head>
+
+<body>
+<h1>Glassboro Sunrises and Sunsets</h1>
+<p>
+    Each dark grey vertical line represents one day, and the lighter grey 
+    vertical line is the central date for the sunrise/sunset data.
+</p>
+<p>
+    Each dark grey horizontal line represents one hour.  Time progresses
+    on the graph from bottom to top, so sunrise will always be below sunset.
+</p>
+<canvas id="sungraph" width="280" height="360"
+    style="border: 1px solid black;">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+
+<br />
+
+<!-- Datepicker intialization from:
+     http://forum.jquery.com/topic/installing-a-ui-datepicker-->
+<p>Data centered around <input type="text" id="datepicker">.</p>
+
+<script>
+    $('#datepicker').datepicker();
+    $('#datepicker').datepicker('setDate', new Date());
+</script>
+
+<br />
+
+<input type="button" value="Show Sun Times" onclick="drawGraph();" />
+
+<!-- Compatibilty and testing webline. -->
+<table id="webline">
+	<tr>
+		<th>Name</th>
+		<th colspan="2">Validation</th> 
+		<th colspan="6" 
+			title="Some features may not be supported in all browsers.">
+			Compatible Browsers
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<a class="text_link" title="Link to Homework Listing" 
+				href="http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html">	
+				<img src="http://elvis.rowan.edu/~dittma75/web/resources/black_mage.png"
+					alt="" /> 
+				Kevin Dittmar
+			</a>
+		</td>
+		<td>
+			<a href="http://validator.w3.org/check/referer">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/HTML5_Logo.png"
+					alt="HTML5" />
+			</a>
+		</td>
+		<td>
+			<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/vcss.gif"
+					alt="CSS 3" />
+			</a>
+		</td>
+		<td>
+			<img class="browser_icon" title="Internet Explorer" 
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_IE.png" 
+				alt="Internet Explorer" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Mozilla Firefox"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_FF.png"
+				alt="Firefox" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Google Chrome"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_chrome.png" 
+				alt="Chrome" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Opera"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_opera.png"
+				alt="Opera" />
+		</td> 
+		<td>W3M</td>
+		<td>Lynx</td>
+	</tr>
+</table>
+</body>
+</html>
+@
+
+
+1.10
+log
+@Added JQuery stylesheet.
+@
+text
+@d47 1
+@
+
+
+1.9
+log
+@Added datepicker and JQuery.
+@
+text
+@d6 16
+a21 12
+  <title>Sunrise/Sunset Data for Glassboro</title>
+  <meta charset="utf-8" />
+  <meta name="Author" content="Darren Provine" />
+  <meta name="Author" content="Kevin Dittmar" />
+  <meta name="generator" content="vi" />
+  <link rel="icon" href="../resources/black_mage.png" />
+  <link rel="stylesheet" href="../resources/webline.css" />
+  <link rel="stylesheet" href="./layout699-.css" />
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <script type="text/javascript" src="sunrise.js"> </script>
+  <script type="text/javascript" src="AjaxFunctions.js"> </script>
+d26 8
+a33 1
+<p id="date_label"></p>
+d35 1
+a35 1
+        style="border: 1px solid black;">
+d42 2
+a43 2
+	 http://forum.jquery.com/topic/installing-a-ui-datepicker-->
+<p>Date: <input type="text" id="datepicker"></p>
+d46 1
+a46 1
+	$('#datepicker').datepicker();
+d51 1
+a51 3
+<input type="button"
+       value="Show Sun Times"
+       onclick="drawGraph();" />
+@
+
+
+1.8
+log
+@Changed shortcut icon link to icon in compliance with HTML5.
+@
+text
+@d14 2
+d28 1
+a28 23
+<table>
+<tr>
+  <td> Year
+  </td>
+  <td> <input type="text" size="5" id="year" />
+  </td>
+</tr>
+
+<tr>
+  <td> Month
+  </td>
+  <td> <input type="text" size="5" id="month" />
+  </td>
+</tr>
+
+<tr>
+  <td> Day
+  </td>
+  <td> <input type="text" size="5" id="day" />
+  </td>
+</tr>
+
+</table>
+d30 7
+@
+
+
+1.7
+log
+@You can now pick the date, but date validator is needed and
+canvas doesn't clear properly.
+@
+text
+@d11 1
+a11 1
+  <link rel="shortcut icon" href="../resources/black_mage.png" />
+@
+
+
+1.6
+log
+@Updated comments.
+@
+text
+@d20 1
+d25 26
+@
+
+
+1.5
+log
+@Minor tweaks.
+@
+text
+@d2 2
+d6 1
+a6 1
+  <title>Sample Canvas Page</title>
+d19 2
+a20 2
+
+<canvas id="sungraph" width="290" height="360"
+d35 1
+a35 1
+		<th colspan="7" 
+d52 2
+a53 2
+					src="http://elvis.rowan.edu/~dittma75/web/resources/valid-xhtml10.png"
+					alt="XHTML1.0" />
+a81 5
+		</td>
+		<td>
+			<img class="browser_icon" title="Konqueror"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_konqueror.png"
+				alt="Konqueror" />
+@
+
+
+1.4
+log
+@Added webline.
+@
+text
+@d11 1
+@
+
+
+1.3
+log
+@Now calls the drawGraph function instead of drawSuns.
+drawSuns is one function called by drawGraph.  There
+are also setup functions that prepare the graph.
+@
+text
+@d10 1
+d21 1
+d27 62
+@
+
+
+1.2
+log
+@Sunrise webpage now generates data for 29 days of
+sunrise and sunset information with DST.
+@
+text
+@d16 1
+a16 1
+<canvas id="sungraph" width="280" height="360"
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+d9 1
+a9 1
+  <link rel="shortcut icon" href="/~kilroy/Images/KilroyBrick.png" />
+d16 1
+a16 1
+<canvas id="sungraph" width="281" height="360"
+d23 1
+a23 1
+       onclick="drawSuns();" />
+@

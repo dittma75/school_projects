@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>HTML Review</title>
+  <meta charset="utf-8" />
+  <meta name="Author" content="Kevin Dittmar" />
+  <meta name="generator" content="Notepad++" />
+  <link rel="stylesheet" href="HTML_review_lists.css" />
+</head>
+<body>
+
+<h1>HTML Review</h1>
+
+<h2>HTML nesting structure</h2>
+<ul>
+	<li>containers must nest </li>
+    <li>parent elements contain child elements </li>
+	<li>the browser makes a tree of nodes based on the HTML</li>
+</ul>
+
+<ol>
+    <li>
+		Basic Syntax:
+		<ul>
+			<li>
+				All elements (nodes in the final parsed tree) are identified
+				by tags.
+			</li>
+		</ul>
+	</li>
+	<li>
+		Tag Format:
+		<ul>
+			<li>
+				If the node consists of text (such as a paragraph or something)
+				then the tag gets a closing tag:
+				<ul>
+					<li><code>&lt;tag [attribute="value" . . .] >text content&lt;/tag></code></li>
+				</ul>
+			</li>
+
+			<li>
+				If the node contains no text (such as an image), then there is
+				no closing tag:
+				<ul>
+					<li><code>&lt;tag [attribute="value" . . .] /></code></li>
+				</ul>
+			</li>
+
+			<li>all tags inside angle brackets</li>
+			<li>all tag and attribute names in lowercase</li>
+			<li>
+				attributes are  name="value" (space allowed)
+				<ul>
+					<li>value is case-sensitive</li>
+					<li>line breaks in values should be avoided!</li>
+				</ul>
+			</li>
+			<li>
+			unknown tags or attributes are ignored
+				<ul>
+					<li>
+					 (So a misspelled attribute will act as if nothing
+					  was there; use HTML validator to find typos.)
+					</li>
+				</ul>
+			</li>
+			<li>
+				attributes in any order; if omitted, default is used
+				<ul>
+					<li>
+					 (some attributes are required; there's no default
+					  image file for the "img" tag)
+					</li>
+				</ul>
+			</li>
+			<li>all elements accept some attributes, called "core" attributes:</li>
+		</ul>
+	</li>
+</ol>
+<hr />
+<h2> Core Attributes </h2>
+
+<p>
+These are things which specify something about an element in a
+document.
+</p>
+
+<dl>
+      <dt>id: </dt>     <dd>unique name for this element   </dd>
+      <dt>  style:</dt> <dd>CSS instructions for this element   </dd>
+      <dt>  class:</dt> <dd>CSS class name   </dd>
+      <dt>  title:</dt> <dd>sometimes used for browser tool-tips </dd>
+</dl>
+
+<hr />
+
+<h2> HTML Elements </h2>
+
+<p>
+These create a new element in the document's tree.
+</p>
+<ol>
+	<li>
+		Document-Level Elements (top level):
+		<ul>	
+			<li>html</li>
+			<li>head</li>
+			<li>
+				body
+				<ul>
+					<li>(body can contain only block-level elements)</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
+    <li>
+		Elements that go in the head:
+		<dl>
+			<dt>title:</dt> <dd>what goes in the title bar</dd>
+			<dt>base:</dt>  <dd>sets an href for where to start with links</dd>
+			<dt>style:</dt> <dd>CSS instructions for a page (override CSS
+					  instructions linked from outside sources)</dd>
+			<dt>link:</dt> <dd>related documents such as favicons or style sheets</dd>
+			<dt>meta:</dt> <dd>metadata (says something about the data, such as author)</dd>
+			<dt>script:</dt> <dd>JavaScript (either in-page or external)</dd>
+		</dl>
+	</li>
+    <li>
+		Block-Level Elements (act like paragraphs; go in the body):
+		<dl>
+			<dt>p:</dt>		 <dd>paragraphs (cannot contain other blocks)</dd>
+			<dt>h[1-6]:</dt> <dd>headings (think of an outline)</dd>
+			<dt>pre:</dt>    <dd>preformatted block (fixed-width font, no
+					   rejustification, but HTML links and such work)</dd>
+			<dt>div:</dt>    <dd>user-specified block</dd>
+
+			<dt>hr:</dt>     <dd>horizontal rule  (this one is NOT a container!)</dd>
+
+			<dt>lists:</dt>
+			<dd>
+				<dl>
+					<dt>ul, ol:</dt> 
+					<dd>[un]ordered list (list items take "li")</dd>
+
+					<dt>dl:</dt>
+					<dd>definition list (list items are 'dt' and 'dd')</dd>
+
+					<dt>table:</dt>  <dd>makes a grid</dd>
+					<dt>form:</dt>   <dd>get info from user</dd>
+				</dl>
+			</dd>
+			<dt>blockquote:</dt> 
+			<dd>what it says; usually indented (use &lt;p&gt; tags inside)</dd>
+		</dl>
+	</li>
+	<li>
+		Inline Elements (must be inside a block element):
+		<dl>
+			<dt>a:</dt> 
+			<dd>
+				anchor (can be named, may include href) <br/>
+				How you make links:
+				<ol>
+					<li>
+						Use the "href" attribute to specify what
+						the browser should load when clicked.
+						<ul>
+							<li>
+								Do not use "click here" as anchor text.
+							</li>
+							<li>
+								"jump links" let you go to another point on
+								the same page, or go to a new page and skip
+								down to a particular location.
+							</li>
+						</ul>
+					</li>
+					<li>
+						Set an anchor to mark the location:
+						<ul>
+							<li><code>&lt;a name="foo" />  (not a container)</code></li>
+						</ul>
+					</li>
+					<li>
+						Make the link using:
+						<ul>
+							<li><code>&lt;a href="#foo">text&lt;/a></code> (same page)</li>
+						</ul>
+						or:
+						<ul>
+							<li><code>&lt;a href="URL#foo">text&lt;/a></code> (other page)</li>
+						</ul>
+					</li>
+				</ol>
+			</dd>
+
+			<dt>em/strong:</dt> <dd>emphasis/strong emphasis (usually italic/bold)</dd>
+			<dt>sub, sup:</dt>  <dd>subscript/superscript</dd>
+			<dt>code:</dt>      <dd>computer code</dd>
+			<dt>var:</dt>       <dd>variable name</dd>
+			<dt>kbd:</dt>       <dd>text for user input</dd>
+			<dt>samp:</dt>      <dd>sample output</dd>
+			<dt>span:</dt>      <dd>user-defined section of text</dd>
+			<dt>q:</dt>         <dd>in-line quote (try '&lt;q lang="en">' and "fr")</dd>
+			<dt>cite:</dt>		<dd>citations</dd>
+			<dt>dfn:</dt>		<dd>definitions</dd>
+			<dt>var:</dt>       <dd>variables; usually italics</dd>
+			<dt>characters:</dt>
+			<dd>
+				HTML Character Entities; note "&amp;shy;" for soft hyphen, 
+				if you have some really long words that it's okay to break.
+			</dd>
+			<dt>figure:</dt>
+			<dd>container for one or more images with a caption</dd>
+			
+			<dt>figcaption:</dt>
+			<dd>caption for an image or group of images</dd>
+			
+			<dt>non-container elements:</dt>
+			<dd>
+				<dl>
+					<dt>br:</dt>	<dd>line break</dd>
+					<dt>img:</dt>   <dd>pictures (more later)</dd>
+					<dt>Appearance/physical tags (avoid: use CSS instead):</dt>
+					<dd>
+						<ul>
+							<li>b</li> 
+							<li>i</li>
+							<li>center</li>
+							<li>font</li>
+							<li>big</li>
+							<li>small</li>
+							<li>u</li> 
+							<li>tt</li>
+							<li>strike</li>
+						</ul>
+					</dd>
+				</dl>
+			</dd>
+		</dl>
+	</li>
+</ol>
+
+<hr />
+<h2>Some New Block Tags For HTML5</h2>
+<dl>
+	<dt>article:</dt> <dd>the main content of this page</dd>
+    <dt>section:</dt> <dd>part of an article</dd>
+    <dt>nav:</dt>     <dd>navigation menus</dd>
+</dl>
+
+<table id="block_tags">
+	<thead>
+		<tr>
+			<th>OLD WAY: </th>
+			<th>NEW WAY:</th>  
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>&lt;div class="navigation">&lt;/div></code></td>
+			<td><code>&lt;nav>&lt;/nav></code></td>
+		</tr>
+		<tr>
+			<td><code>&lt;div class="article">&lt;/div></code></td>
+			<td><code>&lt;article>&lt;/article></code></td>
+		</tr>
+		<tr>
+			<td>
+				<code>
+					&lt;div class="section">&lt;/div>
+					&lt;section>&lt;/section>
+				</code>
+				<code>
+				<br/>
+					&lt;div class="section">&lt;/div>
+					&lt;section>&lt;/section>
+				</code>
+			</td>
+			<td>
+				<code>
+					&lt;div class="section">&lt;/div>
+					&lt;section>&lt;/section>
+				</code>
+				<br/>
+				<code>
+					&lt;div class="section">&lt;/div>
+					&lt;section>&lt;/section>
+				</code>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<hr />
+<p>
+Browsers tested:
+<a href="http://www.microsoft.com/windows/ie/">IE</a>: Pass,
+<a href="http://www.mozilla.org">Mozilla</a>: Pass,
+<a href="https://www.google.com/intl/en/chrome/browser/">Chrome</a>: Pass,
+<a href="http://www.opera.com/">Opera</a>: Pass,
+<a href="http://www.konqueror.org">Konqueror</a>: Pass,
+<a href="http://w3m.sourceforge.net">W3M</a>: Pass,
+<a href="http://lynx.browser.org">Lynx</a>: Pass.
+</p>
+
+<p>
+Validation links:
+<a href="http://validator.w3.org/check/referer">HTML5</a>,
+<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3"
+   title="No CSS on this page.">
+   CSS3(!)</a>.
+</p>
+
+<p>
+This page created by
+<a href="http://elvis.rowan.edu/~kilroy/web/homework_list.html">Darren
+Provine</a>.
+<br/>
+This page was modified by
+<a href="http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html">Kevin Dittmar</a>.
+</p>
+
+</body>
+</html>

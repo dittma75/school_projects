@@ -1,0 +1,247 @@
+head	1.6;
+access;
+symbols;
+locks
+	dittma75:1.6; strict;
+comment	@# @;
+
+
+1.6
+date	2014.03.06.14.03.10;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.03.06.05.53.06;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.03.06.05.50.59;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.03.22.20.13;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.03.21.40.44;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.03.21.24.18;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Intial commit of webline resources.
+@
+
+
+1.6
+log
+@Tweaked the CSS a little bit - no major changes.
+@
+text
+@#! /usr/bin/perl -w
+
+#Browser compatibility and XHTML 1.0/CSS 3 validation webline.
+#Kevin Dittmar
+#Created 3 March 2014
+use CGI;
+use strict;
+my $dir = 'http://elvis.rowan.edu/~dittma75/web/resources/';
+my $table_cgi = new CGI;
+print $table_cgi->comment("Compatibilty and testing webline."),"\n";
+print $table_cgi->table({-id=>'webline'},
+	$table_cgi->Tr(
+		$table_cgi->th(['Name']),
+		$table_cgi->th({-colspan=>"2"}, ['Valid']),
+		$table_cgi->th({-colspan=>"7"}, ['Tested Browsers'])
+	),
+	$table_cgi->Tr(
+		$table_cgi->td([
+			$table_cgi->a(
+				{
+					-href=>"http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html",
+					-title=>"Link to Homework Listing",
+					-class=>"text_link"
+				},
+				$table_cgi->img(
+					{
+						-src=>$dir."black_mage.png",
+						-alt=>""
+					}
+				),
+				"Kevin Dittmar"
+			),
+			$table_cgi->a(
+				{-href=>"http://validator.w3.org/check/referer"},
+				$table_cgi->img(
+					{
+						-src=>$dir."valid-xhtml10.png",
+						-alt=>"XHTML1.0",
+						-class=>'valid_icon'
+					}
+				)
+			),
+			$table_cgi->a(
+				{-href=>"http://jigsaw.w3.org/css-validator/check/referer?profile=css3"},
+				$table_cgi->img(
+					{
+						-src=>$dir."vcss.gif",
+						-alt=>"CSS 3",
+						-class=>'valid_icon'
+					}
+				)
+			),
+			$table_cgi->img(
+				{
+					-src=>$dir."logo_IE.png",
+					-alt=>"Internet Explorer",
+					-title=>"Internet Explorer",
+					-class=>'browser_icon'
+				}
+			),
+			$table_cgi->img(
+				{
+					-src=>$dir."logo_FF.png",
+					-alt=>"Firefox",
+					-title=>"Mozilla Firefox",
+					-class=>'browser_icon'
+				}
+			),
+			$table_cgi->img(
+				{
+					-src=>$dir."logo_chrome.png",
+					-alt=>"Chrome",
+					-title=>"Google Chrome",
+					-class=>'browser_icon'
+				}
+			),
+			$table_cgi->img(
+				{
+					-src=>$dir."logo_opera.png",
+					-alt=>"Opera",
+					-title=>"Opera",
+					-class=>'browser_icon'
+				}
+			),
+			$table_cgi->img(
+				{
+					-src=>$dir."logo_konqueror.png",
+					-alt=>"Konqueror",
+					-title=>"Konqueror",
+					-class=>'browser_icon'
+				}
+			),
+			"W3M",
+			"Lynx"
+		])
+	)
+);
+@
+
+
+1.5
+log
+@Fixed formatting.
+@
+text
+@d22 1
+a22 1
+					-title=>"Link to the Homework Listing page",
+@
+
+
+1.4
+log
+@Added classes to the browser icons and validation icons
+for easier access for styling.
+@
+text
+@d34 8
+a41 8
+					{-href=>"http://validator.w3.org/check/referer"},
+					$table_cgi->img(
+							{
+									-src=>$dir."valid-xhtml10.png",
+									-alt=>"XHTML1.0",
+									-class=>'valid_icon'
+							}
+					)
+d44 8
+a51 8
+					{-href=>"http://jigsaw.w3.org/css-validator/check/referer?profile=css3"},
+					$table_cgi->img(
+							{
+									-src=>$dir."vcss.gif",
+									-alt=>"CSS 3",
+									-class=>'valid_icon'
+							}
+					)
+@
+
+
+1.3
+log
+@Improved formatting.
+@
+text
+@d38 2
+a39 1
+									-alt=>"XHTML1.0"
+d48 2
+a49 1
+									-alt=>"CSS 3"
+d57 2
+a58 1
+					-title=>"Internet Explorer"
+d65 2
+a66 1
+					-title=>"Mozilla Firefox"
+d73 2
+a74 1
+					-title=>"Google Chrome"
+d81 2
+a82 1
+					-title=>"Opera"
+d89 2
+a90 1
+					-title=>"Konqueror"
+@
+
+
+1.2
+log
+@Added comment before webline.
+@
+text
+@d2 4
+d10 1
+a10 1
+print $table_cgi->comment("Webline for browser compatibility and validation"),"\n";
+d16 1
+a16 1
+		),
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 1
+a6 2
+#print $table_cgi->header(-type=>'text/html', -author=>'Kevin Dittmar');
+#print $table_cgi->start_html('Webline');
+d17 2
+a18 2
+					-href=>"http://elvis.rowan.edu/~dittma75/",
+					-title=>"Link to my home page",
+@

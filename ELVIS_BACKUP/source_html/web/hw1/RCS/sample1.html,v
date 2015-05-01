@@ -1,0 +1,221 @@
+head	2.2;
+access;
+symbols;
+locks
+	kilroy:2.2; strict;
+comment	@# @;
+
+
+2.2
+date	2012.01.18.18.08.39;	author kilroy;	state Exp;
+branches;
+next	2.1;
+
+2.1
+date	2012.01.18.14.03.08;	author kilroy;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2011.01.19.18.02.44;	author kilroy;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2011.01.19.16.09.59;	author kilroy;	state Exp;
+branches;
+next	;
+
+
+desc
+@Sample HTML page.
+@
+
+
+2.2
+log
+@Updated book and flagged IE link
+@
+text
+@<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>Sample Page</title>
+  <meta charset="utf-8" />
+  <meta name="Author" content="Darren Provine" />
+  <meta name="generator" content="vi" />
+  <link rel="shortcut icon" href="/~kilroy/Images/KilroyBrick.png" />
+  <link rel="stylesheet" href="webline.css" />
+</head>
+
+<body>
+
+<p>
+Here is an angle bracket: &lt; <br />
+Here is a semicolon: ; <br />
+Here is an ampersand: &amp; <br />
+C&aelig;sar;
+
+</p>
+
+<hr style="width: 25%; margin-left: 0;" />
+
+<p>
+This is a <strong>(boring)</strong> sample web page.
+</p>
+
+<p>
+The last book I read was <i>Blindsight</i>.
+</p>
+
+<p>
+The Spanish word for orange is <i>anaranjado</i>.
+</p>
+
+<p>
+I did not say he beats his <em>dog</em>. (he beats his cat)<br />
+I did not say he <em>beats</em> his dog. (he feeds his dog)<br />
+I did not say <em>he</em> beats his dog. (his kids do it)<br />
+I did not say he beats <em>his</em> dog. (he beats other dogs)<br />
+</p>
+
+<!-- This is how to put in a comment.  Do NOT try to put a
+     double-hyphen inside a comment. -->
+
+<p>
+This is a pointless edit.
+</p>
+
+<p>
+<i>$Id: sample1.html,v 2.1 2012/01/18 14:03:08 kilroy Exp kilroy $</i>
+</p>
+
+
+<table id="webline">
+  <tr>
+    <td> <a href="http://elvis.rowan.edu/~kilroy/" 
+            title="Link to my home page">
+             <img src="/~kilroy/Images/KilroyBrick.png" alt="" />
+             D. Provine
+         </a>
+    </td>
+
+    <td style="word-spacing:1em;">Valid:
+     <a href="http://validator.w3.org/check/referer">HTML5</a>
+     <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+     CSS3</a>
+    </td>
+
+    <td style="word-spacing:1em;">Tests:
+         <a href=".IEshot.png"
+            title="I Don't Do Windows">IE(!)</a>
+         <a href=".FFshot.png">Mozilla</a>
+         <a href=".WKshot.png">WebKit</a>
+         <a href=".OPshot.png">Opera</a>
+         <a href=".W3Mshot.png">W3M</a>
+         <a href=".LYNXshot.png">Lynx</a>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
+@
+
+
+2.1
+log
+@Copied the HTML5 version over top of the old one.
+@
+text
+@d2 1
+a2 1
+<html lang="en">
+d8 1
+d29 1
+a29 2
+The last book I read was <i>The Android's Dream</i>.
+
+d51 1
+a51 1
+<i>$Id: sample1.html,v 1.2 2011/01/19 18:02:44 kilroy Exp $</i>
+d71 2
+a72 1
+         <a href=".IEshot.png">IE</a>
+@
+
+
+1.2
+log
+@Fixed an HR tag and added a pointless edit.
+@
+text
+@d1 2
+a2 3
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+ "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+d5 1
+a5 2
+  <meta http-equiv="Content-Type"
+        content="application/xhtml+xml; charset=UTF-8" />
+d7 2
+a8 3
+  <meta name="generator" content="GNU Emacs" />
+  <meta name="revision" content=
+  "$Id: sample1.html,v 1.1 2011/01/19 16:09:59 kilroy Exp kilroy $" />
+a49 1
+<hr />
+d51 1
+a51 6
+Browsers tested:
+<a href="http://www.microsoft.com/windows/ie/">IE</a>: (dunno)
+<a href="http://www.mozilla.org">Mozilla</a>: ok,
+<a href="http://www.konqueror.org">Konqueror</a>: ok,
+<a href="http://w3m.sourceforge.net">W3M</a>: ok,
+<a href="http://lynx.browser.org">Lynx</a>: ok.
+d55 25
+a79 25
+<p>
+This page created by
+<a href="http://elvis.rowan.edu/~kilroy/web/homework_list.html">Darren
+Provine</a>.
+</p>
+
+<p>
+<i>$Id: sample1.html,v 1.1 2011/01/19 16:09:59 kilroy Exp kilroy $</i>
+</p>
+
+<p>
+<a href="http://validator.w3.org/check/referer">
+<img style="border:0;width:88px;height:31px"
+       src="http://www.w3.org/Icons/valid-xhtml11"
+       alt="Valid XHTML 1.1!" />
+</a>
+</p>
+
+<p>
+<a href="http://jigsaw.w3.org/css-validator/check/referer">
+<img style="border:0;width:88px;height:31px"
+       src="http://jigsaw.w3.org/css-validator/images/vcss" 
+       alt="Valid CSS!" />
+</a>
+</p>
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d11 1
+a11 1
+  "$Id: sample1.html,v 1.1.1.1 2009/01/26 16:43:33 kilroy Exp $" />
+d49 5
+a53 1
+<hr>
+d71 1
+a71 1
+<i>$Id: sample1.html,v 1.1.1.1 2009/01/26 16:43:33 kilroy Exp $</i>
+@

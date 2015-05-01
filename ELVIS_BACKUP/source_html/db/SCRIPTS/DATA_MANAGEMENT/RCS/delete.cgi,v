@@ -1,0 +1,78 @@
+head	1.2;
+access;
+symbols;
+locks
+	dittma75:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2015.04.29.07.25.08;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.29.02.32.00;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Commit for CGI that deletes the sent entry and prints success.
+@
+
+
+1.2
+log
+@Delete is now more general.
+@
+text
+@#!/usr/bin/perl
+use warnings;
+use strict;
+use CGI;
+require '../db_connect.pl';
+
+my $dbh = getDBH();
+
+my $CGI = new CGI;
+my $type = $CGI->param('type');
+my $ID = $CGI->param('ID');
+my $sql;
+
+if ($type eq 'genre')
+{
+    $sql = "CALL delete_$type(\"$ID\")";
+}
+else
+{
+    $sql = "CALL delete_$type($ID)";
+}
+my $sth = $dbh->prepare($sql);
+#This will throw a warning if warnings are on because it is
+#used only once, but that's fine because DBI is included in db_connect
+$sth->execute or die "SQL ERROR: $DBI::errstr\n";
+print $CGI->header(-type=>'text/html', -author =>'Kevin Dittmar');
+print $CGI->start_html(-title=>"AmazingBooks:  delete_$type: $ID",
+                       -author=>'dittma75@@students.rowan.edu');
+print $CGI->a({-href=>"../$type"."_index.cgi"}, 'Back'), "\n<br/>";
+print "Removal of $type with ID $ID successful.";
+print $CGI->end_html, "\n";
+$sth->finish();
+$dbh->disconnect();
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d12 10
+a21 1
+my $sql = "CALL delete_$type($ID)";
+d30 1
+a30 1
+print "Removal of $type with identifier $ID successful.";
+@

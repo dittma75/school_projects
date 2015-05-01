@@ -1,0 +1,128 @@
+head	1.3;
+access;
+symbols;
+locks
+	dittma75:1.3; strict;
+comment	@# @;
+
+
+1.3
+date	2015.04.30.21.01.19;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2015.04.30.05.55.33;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.29.20.25.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Allows customer to search for books.
+@
+
+
+1.3
+log
+@Added layers of safety for handling bad orders correctly.
+@
+text
+@#!/usr/bin/perl
+use warnings;
+use strict;
+use CGI;
+require 'SCRIPTS/db_connect.pl';
+
+my $dbh = getDBH();
+my $CGI = new CGI;
+my $search = $CGI->param('search');
+#Empty search returns everything.
+if ($search eq '')
+{
+    $search = "%";
+}
+my $sql = "CALL search_book(\"$search\")";
+my $sth = $dbh->prepare($sql);
+#This will throw a warning if warnings are on because it is
+#used only once, but that's fine because DBI is included in db_connect
+$sth->execute or die "SQL ERROR: $DBI::errstr\n";
+print $CGI->header(-type=>'text/html', -author =>'Kevin Dittmar');
+print $CGI->start_html(-title=>'AmazingBooks:  Search Results',
+                       -author=>'dittma75@@students.rowan.edu');
+print $CGI->a({-href=>'./index.html'}, 'Back'), "\n";
+if ($search eq '%')
+{
+    print $CGI->h1("All Available Books"), "\n";
+}
+else
+{
+    print $CGI->h1("Search Results Matching $search"), "\n";
+}
+print '<form action="./place_order.cgi">'."\n";
+print "<table>\n";
+print "<tr>
+        <th>Order?</th>
+        <th>ISBN</th>
+        <th>Title</th>
+        <th>Available?</th>
+        <th>Amount</th>
+</tr>\n";
+my $index = 0;
+while (my @@book = $sth->fetchrow_array)
+{
+    print "<tr>
+        <td><input type=\"checkbox\" name=\"check_$index\" value=\"$book[0]\"></td>
+        <td>$book[0]</td>
+        <td>$book[1]</td>
+        <td>$book[2]</td>
+        <td>".$CGI->textfield("qu_$book[0]",'',20,16)."</td>
+    </tr>\n";
+    $index++;
+}
+print '<tr>
+        <td colspan="2">Payment Type:  '.$CGI->textfield('payment_type','',30,20).'</td>
+        <td colspan="2">Card Number:  '.$CGI->textfield('card_number','',20,16).'</td>
+        <td><input type="submit" value="Place Order"></td>
+    </tr>';
+print "</table>\n";
+print "</form>\n";
+$sth->finish();
+$dbh->disconnect();
+print $CGI->end_html, "\n";
+
+@
+
+
+1.2
+log
+@Added place_order.cgi.
+@
+text
+@d41 1
+d45 1
+a45 1
+        <td><input type=\"checkbox\" name=\"check\" value=\"$book[0]\"></td>
+d51 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d32 1
+d34 7
+a40 1
+print "<tr><th>ISBN</th><th>Title</th><th>Available?</th></tr>\n";
+d43 7
+a49 1
+    print "<tr><td>$book[0]</td><td>$book[1]</td><td>$book[2]</td></tr>\n";
+d51 5
+d57 1
+@

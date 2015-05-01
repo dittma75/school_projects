@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>AmazingBooks</title>
+    <meta charset="utf-8"/>
+    <meta name="Author" content = "Kevin Dittmar" />
+    <meta name="generator" content = "vim"/>
+    <!--
+    <link rel="icon" href="path/to/icon.ext"/>
+    <link rel="stylesheet" href="path/to/file.css"/>-->
+    <!--Make sure mobile devices don't try to scale up-->
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="initial-scale=1.0"/>
+</head>
+
+<body>
+    <p><a href="../../index.html">Back</a></p>
+    <form action="./upload.cgi" method="post"
+          enctype="multipart/form-data">
+    <p>Data File:  <input type="file" name="filename" /></p>
+    <select name="table">
+        <option value="author" selected="selected">Author</option>
+        <option value="book">Book</option>
+        <option value="contains">Contains</option>
+        <option value="customer">Customer</option>
+        <option value="genre">Genre</option>
+        <option value="`in`">In</option>
+        <option value="orders">Orders</option>
+        <option value="publisher">Publisher</option>
+        <option value="wrote">Wrote</option>
+    </select>
+    <p><input type="submit" name="Submit" value="Submit Form" /></p>
+    </form>
+</body>
+</html>

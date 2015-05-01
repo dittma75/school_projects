@@ -1,0 +1,220 @@
+head	1.6;
+access;
+symbols;
+locks
+	dittma75:1.6; strict;
+comment	@# @;
+
+
+1.6
+date	2014.05.07.02.48.14;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.05.06.05.51.18;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.05.15.02.55;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.05.05.01.36.26;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.05.02.22.43.47;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.05.01.00.57.11;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the CSS for game reviews.
+@
+
+
+1.6
+log
+@Improved review borders and styling.
+@
+text
+@/** Kevin Dittmar and Anthony Ratliff
+  * 6 May 2014
+  * CSS to style the Metacritic reviews.
+  */
+
+/*Color average reviews brown with white text.*/
+.average_score {
+    background-color: #904000;
+    color: white;
+}
+
+/*Color bad reviews red with white text.*/
+.bad_score {
+    background-color: #DD0000;
+    color: white;
+}
+
+/*Color good reviews green with white text.*/
+.good_score {
+    background-color: #007700;
+    color: white;
+}
+
+/* Make the next buttons for reviews float on the right.
+ * float property information from:
+ * http://www.w3schools.com/cssref/pr_class_float.asp
+ */
+.next {
+    float: right;
+    margin-right: 5%;
+} 
+
+/* Make previous buttons for reviews float on the left.*/
+.previous {
+    float: left;
+    margin-left: 5%;
+}
+
+/* Give critic reviews a border, make sure they clear
+ * the buttons, and make sure that the edges line up
+ * with the buttons.
+ * CSS border information:
+ * http://www.w3schools.com/css/css_border.asp
+ */
+div.critic_review {
+    clear: both;
+    margin: 0% 5%;
+    padding: 5px;
+    border-style: groove;
+    border-width: 3px; 
+    border-color: white;
+}
+
+/* Give user reviews a border, make sure they clear
+ * the buttons, and make sure that the edges line up
+ * with the buttons.
+ */
+div.user_review {
+    clear: both;
+    margin: 0% 5%;
+    padding: 5px;
+    border-style: groove;
+    border-width: 3px;
+    border-color: white;
+}
+@
+
+
+1.5
+log
+@Tweaked the styling for the reviews.
+@
+text
+@d1 1
+a1 1
+/** Kevin Dittmar
+a4 3
+#search {
+    background:  #CCCCCC;
+}
+d6 4
+a9 9
+div.user_review {
+    clear: both;
+    margin: 0% 5%;
+    /* CSS border information:
+     * http://www.w3schools.com/css/css_border.asp
+     */
+    border-style:solid;
+    border-width:medium;
+    border-color: brown;
+d12 1
+d18 1
+a18 5
+.average_score {
+    background-color: #904000;
+    color: white;
+}
+
+d24 2
+a25 9
+div.critic_review {
+    clear: both;
+    margin: 0% 5%;
+    border-style:solid;
+    border-width:medium; 
+    border-color: brown;
+}
+
+/* float property information from:
+d33 1
+d37 28
+@
+
+
+1.4
+log
+@Added background styling for the search section.
+@
+text
+@d17 1
+a17 1
+    border-color: #000000;
+d40 1
+a40 1
+    border-color: #000000;
+@
+
+
+1.3
+log
+@Added CSS classes that colored good reviews green, bad reviews
+red, and average reviews brown.  The text is white because all
+of the background colors are dark.
+@
+text
+@d6 1
+a6 1
+    background:  #FF0000;
+@
+
+
+1.2
+log
+@Added CSS styling for the pagination buttons.
+@
+text
+@d5 4
+a11 1
+    background: #FF0000;
+d17 16
+a32 1
+    border-color: #0000FF;
+a37 1
+    background: #00FF00;
+d40 1
+a40 1
+    border-color: #0000FF;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 1
+d18 1
+d24 8
+d33 5
+@

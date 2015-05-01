@@ -1,0 +1,316 @@
+head	1.10;
+access;
+symbols;
+locks
+	dittma75:1.10; strict;
+comment	@# @;
+
+
+1.10
+date	2014.12.08.16.25.52;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.12.08.16.07.05;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.05.07.02.46.24;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.05.06.21.30.18;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.05.06.02.47.22;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.05.21.08.23;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.05.05.15.00.08;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.05.05.03.29.02;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.05.05.00.05.50;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of Perl script that finds the right URL to send to
+the game_lengths_scraper.pl Perl script.
+@
+
+
+1.10
+log
+@Changed exit(1) to more appropriate die method.
+@
+text
+@#! /usr/bin/perl -w
+#Kevin Dittmar and Anthony Ratliff
+#6 May 2014
+#Matches the given game name to a link on the given search
+#page.  The link that matches is then sent to the game_lengths_scraper.pl
+#to be scraped for data.
+
+use strict;
+use warnings;
+use CGI;
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+
+#Perl command line argument reading information from:
+#http://stackoverflow.com/questions/361752/how-can-i-pass-command-line-arguments-to-a-perl-program
+
+if (!defined($ARGV[0]) || !defined($ARGV[1]))
+{
+    die "Requires a valid GameLengths search URL and a game name.";
+}
+
+$agent->get($ARGV[0]);
+
+my $game_title = $ARGV[1];
+
+my $comparison_title = &format_title($game_title);
+
+my $cgi = CGI->new;
+my $stream = HTML::TokeParser->new(\$agent->{content});
+
+#This is the base URL for the GameLengths website.
+my $root_url = "http://www.gamelengths.com/";
+
+#All of the links are in the only table on the page.
+my $tag = $stream->get_tag("table");
+#Stores the title of the game from the current link.
+my $link_title = "";
+my $alt_link_title = "";
+
+#Make sure that we don't get stuck in an infinite loop.
+my $timeout_counter = 1000;
+#There is a link at the bottom of the page that goes to the "about"
+#section.  If we haven't found our game by the time we reach the link with the
+#text "about", then we are not going to find it, so we should stop searching.
+while (($link_title ne $comparison_title) and
+       ($alt_link_title ne $comparison_title ) and
+       ($link_title ne "about"))
+{
+    $tag = $stream->get_tag("a");
+    my $text = $stream->get_trimmed_text;
+    my $alt_text = $text;
+    $link_title = &format_title($text);
+    
+    #Take everything up to the left parenthesis out and test the contents
+    #of the parentheses as an alternative title match.
+    $alt_text =~ s/.*\(//g;
+    $alt_link_title = &format_title($alt_text);
+    &timeout;
+}
+
+#If we stopped on the "about" link, then we don't want to try to parse times.
+if ($link_title ne "about")
+{
+    #We have the link we want in the current tag, regardless of whether 
+    #it was the main title or the alternative title that matched.
+    system("perl ./game_lengths_scraper.pl ".$root_url.$tag->[1]{'href'});
+}
+else
+{
+    print $cgi->p("No playtime information or genre information available.");
+}
+
+#Remove all characters that would impede link matching from the
+#given title and return the title without any special punctuation.
+sub format_title()
+{
+    my ($title) = @@_; 
+    my $number = $title;
+    #GameLengths sometimes adds extra information in ()s.
+    #It should be removed.
+    $title =~ s/\(.*\)//g;
+    #Remove punctuation regexp from:
+    #http://stackoverflow.com/questions/3614686/removing-punctuation-from-string-in-perl
+    $title =~ s/[[:punct:]]//g;
+    $title =~ s/ //g;   #Remove spaces.
+    return lc(roman_to_arabic($title));
+}
+
+#Some GameLengths games use Arabic numerals whereas
+#the counterpart entry in Metacritic uses Roman numerals.
+#Since everyone seems to agree for everything except
+#two, three, and four, we only need to handle turning
+#II to 2, III to 3, and IV to 4.
+sub roman_to_arabic()
+{
+    my ($title) = @@_;
+    $title =~ s/IV/4/g;
+    $title =~ s/III/3/g;
+    $title =~ s/II/2/g;
+    return $title;
+}
+
+#Monitors the timeout counter to see if a loop is taking
+#too long.
+sub timeout()
+{
+    $timeout_counter--;
+    if ($timeout_counter <= 0)
+    {
+        #$timeout_counter = 1000;
+        #last;
+        die("No info on GameLengths; stopped.");
+    }
+}
+@
+
+
+1.9
+log
+@Added exit() system call to the end of timeout to try to keep
+the Perl scripts from pegging the elvis server to death.
+@
+text
+@d115 1
+a115 1
+        exit(1);
+@
+
+
+1.8
+log
+@Final commit.  Added headers.
+@
+text
+@d113 3
+a115 2
+        $timeout_counter = 1000;
+        last;
+@
+
+
+1.7
+log
+@Added a method to handle the possibility of Roman numerals in
+a Metacritic game title and Arabic numerals in a GameLengths
+game title so links will be matched appropriately.
+@
+text
+@d2 6
+d19 6
+@
+
+
+1.6
+log
+@Added absence of information messages.
+@
+text
+@d69 3
+a71 1
+    #GameLengths sometimes adds extra information in ()s.  It should be removed.
+d77 15
+a91 1
+    return lc($title);
+@
+
+
+1.5
+log
+@Added timeout failsafe method.
+@
+text
+@d59 4
+@
+
+
+1.4
+log
+@Added webline and fixed LOTS of validation errors and warnings.
+@
+text
+@d31 2
+d49 1
+d72 12
+@
+
+
+1.3
+log
+@Now handles alternative titles written in parentheses after the
+main title.
+@
+text
+@d16 1
+@
+
+
+1.2
+log
+@Parser now removes junk information that messes up link matching
+in more scenarios.
+@
+text
+@d28 2
+d34 1
+d38 8
+a45 1
+    $link_title = &format_title($stream->get_trimmed_text);
+d51 2
+a52 1
+    #We have the link we want.
+d60 3
+a62 1
+    my ($title) = @@_;
+a65 2
+    #GameLengths sometimes adds extra information in ()s.  It should be removed.
+    $title =~ s/(.*)//g;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d28 5
+a32 1
+while ($link_title ne $comparison_title)
+a33 1
+    $tag = $stream->get_tag("tr");
+d38 6
+a43 2
+#We have the link we want.
+system("perl ./game_lengths_scraper.pl ".$root_url.$tag->[1]{'href'});
+d53 2
+a54 3
+    #$title =~ s/-//g;
+    #GameLengths adds (1) to the first game in a series.  Remove the (1).
+    $title =~ s/(1)//g;
+d56 1
+a56 1
+    return uc($title);
+@

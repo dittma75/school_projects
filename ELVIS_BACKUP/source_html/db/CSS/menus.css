@@ -1,0 +1,55 @@
+/* webline.css -- nice style for author, validation, and testing line
+ *
+ * Darren Provine
+ * Modified by Kevin Dittmar, 28 January 2014
+ * $Id: menus.css,v 1.1 2015/05/01 03:43:23 dittma75 Exp dittma75 $
+ */
+
+table {
+    text-align:	center;
+    color: #3f1a0a;
+    background: #FFFFFF; 
+    border: 1px solid #3f1a0a;
+    border-collapse: collapse;
+}
+
+table tr {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid #3f1a0a;
+}
+
+table tr td {
+    border:  1px solid #3f1a0a;
+    margin: 0px;
+    padding: 0px;
+}
+table tr th{
+	border:	1px solid #3f1a0a;
+}
+
+/* Link styling from:
+ * http://www.w3schools.com/css/css_link.asp*/
+/* unvisited link */
+a{
+    text-decoration: none;
+}
+a:link {
+    color: #0000FF;
+}
+
+/* visited link */
+a:visited {
+    color: #00FFFF;
+}
+
+/* mouse over link */
+a:hover {
+    color: #00FFFF;
+}
+
+/* selected link */
+a:active {
+     color: #FFFF00;
+}

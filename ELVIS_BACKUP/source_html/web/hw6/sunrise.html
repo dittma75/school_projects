@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--Created by Darren Provine, 11 March 2014
+	Modified by Kevin Dittmar, 25 March 2014 -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>Sunrise/Sunset Data for Glassboro</title>
+    <meta charset="utf-8" />
+    <meta name="Author" content="Darren Provine" />
+    <meta name="Author" content="Kevin Dittmar" />
+    <meta name="generator" content="vi" />
+    <link rel="icon" href="../resources/black_mage.png" />
+    <link rel="stylesheet" href="../resources/webline.css" />
+    <link rel="stylesheet" href="./layout699-.css" />
+    <!-- JQuery stylesheet from:
+         http://stackoverflow.com/questions/820412/downloading-jquery-ui-css-from-googles-cdn-->
+    <link rel="stylesheet" href="../resources/jquery-ui.css"/>
+    <!-- JQuery script inclusion from:  http://api.jqueryui.com/datepicker/-->
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="sunrise.js"> </script>
+    <script type="text/javascript" src="AjaxFunctions.js"> </script>
+</head>
+
+<body>
+<h1>Glassboro Sunrises and Sunsets</h1>
+<p>
+    Each dark grey vertical line represents one day, and the lighter grey 
+    vertical line is the central date for the sunrise/sunset data.
+</p>
+<p>
+    Each dark grey horizontal line represents one hour.  Time progresses
+    on the graph from bottom to top, so sunrise will always be below sunset.
+</p>
+<canvas id="sungraph" width="280" height="360"
+    style="border: 1px solid black;">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+
+<br />
+
+<!-- Datepicker intialization from:
+     http://forum.jquery.com/topic/installing-a-ui-datepicker-->
+<p>Data centered around <input type="text" id="datepicker">.</p>
+
+<script>
+    $('#datepicker').datepicker();
+    $('#datepicker').datepicker('setDate', new Date());
+</script>
+
+<br />
+
+<input type="button" value="Show Sun Times" onclick="drawGraph();" />
+
+<!-- Compatibilty and testing webline. -->
+<table id="webline">
+	<tr>
+		<th>Name</th>
+		<th colspan="2">Validation</th> 
+		<th colspan="6" 
+			title="Some features may not be supported in all browsers.">
+			Compatible Browsers
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<a class="text_link" title="Link to Homework Listing" 
+				href="http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html">	
+				<img src="http://elvis.rowan.edu/~dittma75/web/resources/black_mage.png"
+					alt="" /> 
+				Kevin Dittmar
+			</a>
+		</td>
+		<td>
+			<a href="http://validator.w3.org/check/referer">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/HTML5_Logo.png"
+					alt="HTML5" />
+			</a>
+		</td>
+		<td>
+			<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/vcss.gif"
+					alt="CSS 3" />
+			</a>
+		</td>
+		<td>
+			<img class="browser_icon" title="Internet Explorer" 
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_IE.png" 
+				alt="Internet Explorer" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Mozilla Firefox"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_FF.png"
+				alt="Firefox" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Google Chrome"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_chrome.png" 
+				alt="Chrome" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Opera"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_opera.png"
+				alt="Opera" />
+		</td> 
+		<td>W3M</td>
+		<td>Lynx</td>
+	</tr>
+</table>
+</body>
+</html>

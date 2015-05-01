@@ -1,0 +1,22 @@
+/* layout700+.css - wide layout
+ *
+ * Kevin Dittmar
+ */
+
+
+@media screen and (min-width: 700px) {
+	div#me {
+		margin-left:	50px;
+		float:	left;
+	}
+	
+	h1 {
+		text-align:	center;
+		width:	100%
+	}
+	
+	div#homework_listing{
+		margin-left: 350px;
+	}
+}
+

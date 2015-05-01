@@ -1,0 +1,56 @@
+head	1.2;
+access;
+symbols;
+locks
+	dittma75:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2014.03.06.14.02.33;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.06.05.49.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Added CSS for large viewing windows.
+@
+
+
+1.2
+log
+@Tweaked the CSS a little to improve resizing.
+@
+text
+@/* layout700+.css - wide layout
+ *
+ * Kevin Dittmar
+ */
+
+
+@@media screen and (min-width: 700px) {
+	h1 {
+		width:	100%
+	}
+	
+	img.comic {
+		max-width:	100%;
+	}
+}
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a12 1
+		max-height:	100%;
+@

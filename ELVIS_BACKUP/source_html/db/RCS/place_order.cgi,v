@@ -1,0 +1,292 @@
+head	1.2;
+access;
+symbols;
+locks
+	dittma75:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2015.04.30.21.01.19;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.30.05.55.33;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of place_order.  Still has some bugs to fix.
+@
+
+
+1.2
+log
+@Added layers of safety for handling bad orders correctly.
+@
+text
+@#!/usr/bin/perl
+use warnings;
+use strict;
+use CGI;
+use CGI::Cookie;
+require 'SCRIPTS/db_connect.pl';
+
+my %cookies = CGI::Cookie->fetch;
+my $success = 1;
+my $error_str;
+my $customerID;
+if (%cookies)
+{
+    $customerID = $cookies{'ID'}->value;
+}
+else
+{
+    $success = 0;
+    $error_str = "Please log in before trying to place an order.";
+}
+
+my $CGI = new CGI;
+
+my @@params = $CGI->param();
+my $card_number;
+my $payment_type;
+my @@unmatched_ISBNs;
+my @@ISBNs;
+my @@quantities;
+my $orderID;
+
+my $dbh = getDBH();
+my $sql;
+my $sth;
+#There is no use trying to place an order if the user isn't logged in.
+if ($success)
+{
+    #Parse the parameters.
+    foreach(@@params)
+    {
+        #Payment type
+        if ($_ eq 'payment_type')
+        {
+            $payment_type = '"'.$CGI->param($_).'"';
+        }
+        #Credit card number
+        elsif ($_ eq 'card_number')
+        {
+            $card_number = '"'.$CGI->param($_).'"';
+        }
+        #The name of the parameter of filled checkboxes is 'check_ISBN'
+        elsif (index($_, 'check') != -1)
+        {
+            push(@@unmatched_ISBNs, $CGI->param($_));
+        }
+        #A quantity parameter
+        elsif (index($_, 'qu') != -1)
+        {
+            for (my $i = 0; $i <= $#unmatched_ISBNs; $i++)
+            {
+                if (index($_, "$unmatched_ISBNs[$i]") != -1)
+                {
+                    #Add the now-matched ISBN to the list.
+                    push(@@ISBNs, '"'.$unmatched_ISBNs[$i].'"');
+                    #Remove the now-matched ISBN.
+                    splice(@@unmatched_ISBNs, $i);
+                    $i--;
+                    #Add the corresponding quantity.
+                    push(@@quantities, $CGI->param($_));
+                    #We don't need to do the rest of the loop.
+                    last;
+                }
+            }
+        }
+    }
+
+    #Can't do an order without payment.
+    #Credit card numbers must be 16 digits, and payment type can't
+    #be empty.  The strings are quoted, so 2 is added to each parameter.
+    if (length($card_number) != 18)
+    {
+        $success = 0;
+        $error_str = "Bad card number $card_number.";
+    }
+
+    if (length($payment_type) <= 2)
+    {
+        $success = 0;
+        $error_str = "No payment type specified.";
+    }
+    #There are still selected books without purchase quantities.
+    if ($#unmatched_ISBNs > -1)
+    {
+        $success = 0;
+        $error_str = "You did not specify quantities for some of your orders.";
+    }
+    
+    #We didn't order any books.
+    if (not @@ISBNs)
+    {
+        $success = 0;
+        $error_str = "No books to order.";
+    }    
+
+    $sql = "SELECT MAX(orderID) + 1
+               FROM orders";
+    $sth = $dbh->prepare($sql);
+    $sth->execute or die "SQL ERROR: $DBI::errstr\n";
+    while (my @@order_number = $sth->fetchrow_array)
+    {
+        $orderID = $order_number[0];
+    }
+    $sth->finish();
+}
+
+#Order preparation succeeded, so make the order.
+if ($success)
+{
+    $sql = "CALL create_new_order($orderID, $payment_type, $card_number, $customerID)";
+    $sth = $dbh->prepare($sql);
+    if (not $sth->execute)
+    {
+        $success = 0;
+        $error_str = "Order creation failed.";
+    }
+    $sth->finish();
+}
+
+#We have books to order.  Add them to the order listing.
+for (my $i = 0; $i <= $#ISBNs; $i++)
+{
+    if ($success)
+    {
+        $sql = "CALL add_ordered_books($orderID, $ISBNs[$i], $quantities[$i])";
+        $sth = $dbh->prepare($sql);
+        if (not $sth->execute)
+        {
+            $success = 0;
+            $error_str = "Adding book $ISBNs[$i] to order failed";
+            #Clean up the old query and delete the failed order.
+            $sth->finish();
+            $sql = "DELETE FROM orders WHERE orderID = $orderID";
+            $sth = $dbh->prepare($sql);
+            $sth->execute or die "SQL ERROR: $DBI::errstr\n";
+        }
+        $sth->finish();
+    }
+}
+
+#We have the specification of an order.  Try to place it.
+if ($success)
+{
+    $sql = "CALL ship_order($orderID)";
+    $sth = $dbh->prepare($sql);
+    if (not $sth->execute)
+    {
+        $success = 0;
+        $error_str = "Shipping order failed.";
+    }
+    $sth->finish();
+}
+
+print $CGI->header(-type=>'text/html', -author =>'Kevin Dittmar');
+print $CGI->start_html(-title=>'AmazingBooks:  Recommendations',
+                       -author=>'dittma75@@students.rowan.edu');
+print $CGI->a({-href=>'./search.cgi'}, 'Back'), "\n";
+if ($success)
+{
+    print $CGI->h2("Your order has been placed."), "\n";
+}
+else
+{
+    print $CGI->h2("Error placing your order:  $error_str"), "\n";
+}
+$dbh->disconnect();
+print $CGI->end_html, "\n";
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d9 12
+a20 1
+my $customerID = $cookies{'ID'}->value;
+d27 1
+a30 1
+my $success = 1;
+d32 5
+a36 1
+foreach(@@params)
+d38 2
+a39 2
+    #Payment type
+    if ($_ eq 'payment_type')
+d41 34
+a74 1
+        $payment_type = '"'.$CGI->param($_).'"';
+d76 5
+a80 2
+    #Credit card number
+    elsif ($_ eq 'card_number')
+d82 2
+a83 1
+        $card_number = '"'.$CGI->param($_).'"';
+d85 2
+a86 3
+    #The name of the parameter of filled checkboxes is 'check'
+    #The quantity for that book is directly after.
+    elsif ($_ eq 'check')
+d88 2
+a89 1
+        push(@@ISBNs, '"'.$CGI->param($_).'"');
+d91 2
+a92 1
+    elsif (index($_, $ISBNs[-1]) != -1)
+d94 2
+a95 1
+        push(@@quantities, $CGI->param($_));
+d97 7
+a103 1
+}
+d105 9
+a113 14
+#Can't do an order without payment.
+if (length($card_number) != 16 || length($payment_type) == 0)
+{
+    $success = 0;
+    die;
+}
+my $dbh = getDBH();
+my $sql = "SELECT MAX(orderID) + 1
+           FROM orders";
+my $sth = $dbh->prepare($sql);
+$sth->execute or die "SQL ERROR: $DBI::errstr\n";
+while (my @@order_number = $sth->fetchrow_array)
+{
+    $orderID = @@order_number[0];
+a114 1
+$sth->finish();
+d116 1
+a118 1
+
+d121 5
+a125 2
+    #$sth->execute or $success = 0;
+    $sth->execute or die "SQL ERROR: $DBI::errstr\n";
+d129 1
+d136 10
+a145 2
+        #$sth->execute or $success = 0;
+        $sth->execute or die "SQL ERROR: $DBI::errstr\n";
+d149 2
+d155 5
+a159 1
+    $sth->execute or $success = 0;
+d173 1
+a173 1
+    print $CGI->h2("There was an error placing your order."), "\n";
+@

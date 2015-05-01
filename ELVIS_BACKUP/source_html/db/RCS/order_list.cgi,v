@@ -1,0 +1,124 @@
+head	1.3;
+access;
+symbols;
+locks
+	dittma75:1.3; strict;
+comment	@# @;
+
+
+1.3
+date	2015.04.30.21.01.19;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2015.04.30.04.21.11;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.29.20.25.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Tracks customer's orders.
+@
+
+
+1.3
+log
+@Added layers of safety for handling bad orders correctly.
+@
+text
+@#!/usr/bin/perl
+use warnings;
+use strict;
+use CGI;
+use CGI::Cookie;
+require 'SCRIPTS/db_connect.pl';
+
+my %cookies = CGI::Cookie->fetch;
+my $customerID;
+my $success = 1;
+if (%cookies)
+{
+    $customerID  = $cookies{'ID'}->value;
+}
+else
+{
+    $success = 0;
+}
+
+my $dbh = getDBH();
+my $sql = "CALL track_order_by_customer($customerID)";
+my $sth = $dbh->prepare($sql);
+
+#This will throw a warning if warnings are on because it is
+#used only once, but that's fine because DBI is included in db_connect
+$sth->execute or $success = 0;
+my $CGI = new CGI;
+print $CGI->header(-type=>'text/html', -author =>'Kevin Dittmar');
+print $CGI->start_html(-title=>'AmazingBooks:  Orders',
+                       -author=>'dittma75@@students.rowan.edu');
+print $CGI->a({-href=>'./index.html'}, 'Back'), "<br/>\n";
+if ($success)
+{
+    print $CGI->h1("Order Records"), "\n";
+    print "<table>\n";
+    print "<tr><th>Order#</th><th>Date</th><th>Status</th></tr>\n";
+    while (my @@order = $sth->fetchrow_array)
+    {
+        print "<tr><td>$order[0]</td><td>$order[1]</td><td>$order[2]</td></tr>\n";
+    }
+    print "</table>\n";
+}
+else
+{
+    print "Please log in before trying to use this feature.<br/>\n";
+}
+$sth->finish();
+$dbh->disconnect();
+print $CGI->end_html, "\n";
+
+@
+
+
+1.2
+log
+@Added error checking to login, recommendations, and order listings.
+@
+text
+@d9 10
+a18 1
+my $customerID = $cookies{'ID'}->value;
+a22 1
+my $success = 1;
+d31 1
+a31 1
+print $CGI->a({-href=>'./index.html'}, 'Back'), "\n";
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d14 1
+d18 1
+a18 1
+$sth->execute or die "SQL ERROR: $DBI::errstr\n";
+d24 1
+a24 4
+print $CGI->h1("Order Records"), "\n";
+print "<table>\n";
+print "<tr><th>Order#</th><th>Date</th><th>Status</th></tr>\n";
+while (my @@order = $sth->fetchrow_array)
+d26 12
+a37 1
+    print "<tr><td>$order[0]</td><td>$order[1]</td><td>$order[2]</td></tr>\n";
+a38 1
+print "</table>\n";
+@

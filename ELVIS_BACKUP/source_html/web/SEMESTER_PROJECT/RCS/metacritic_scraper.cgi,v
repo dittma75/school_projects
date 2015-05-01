@@ -1,0 +1,96 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.04.15.17.41.00;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Commit of Metacritic scraper.  Scrapes all pertinent information for
+a game entry.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#! /usr/bin/perl -w
+#
+# CGI Basis by D Provine
+# Modified by Kevin Dittmar 10 April 2014
+
+use strict;
+use warnings;
+use CGI;
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+use Data::Dumper;
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+$agent->get("http://www.metacritic.com/game/pc/goat-simulator");
+
+my $cgi = CGI->new;
+my $stream = HTML::TokeParser->new(\$agent->{content});
+
+print $cgi->header(-type=>'text/html', -author =>'Kevin Dittmar');
+
+print $cgi->start_html(-title =>'Metacritic Scraper',
+    -author => 'dittma75@@students.rowan.edu');#,
+    #-style => [{src => 'webline.css'},{src => 'layout699-.css'},
+    #   {src=>'layout700+.css'}]);
+
+
+my $tag = $stream->get_tag("span");
+while(!$tag->[1]{itemprop} or
+      ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "name"))
+{
+    $tag = $stream->get_tag("span");
+}
+#print Dumper($tag);
+
+print  "Title of Game:  ", $stream->get_trimmed_text, "\n<br/>\n";
+
+$tag = $stream->get_tag("img");
+while(!$tag->[1]{class} or
+      ($tag->[1]{class} and $tag->[1]{class} ne "product_image large_image"))
+{
+    $tag = $stream->get_tag("img");
+}
+
+my $src = $tag->[1]{'src'};
+#Should be name of game"
+my $alt = "Goat Simulator";
+
+print $cgi->img({src => $src, alt => $alt}), "\n<br/>\n";
+
+$tag = $stream->get_tag("span");
+while(!$tag->[1]{itemprop} or
+      ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "ratingValue"))
+{
+    $tag = $stream->get_tag("span");
+}
+
+print "Rating:  ", $stream->get_trimmed_text, "/100\n<br/>\n";
+
+while (!$tag->[1]{itemprop} or
+       ($tag->[1]{itemprop} and $tag->[1]{itemprop} ne "description"))
+{
+    $tag = $stream->get_tag("span");
+}
+#The description for the game is in a span tag within thedescription span tag.
+$tag = $stream->get_tag("span");
+
+print "<p>Summary:  ", $stream->get_trimmed_text, "</p>\n<br/>\n";
+print $cgi->end_html, "\n";
+
+
+@

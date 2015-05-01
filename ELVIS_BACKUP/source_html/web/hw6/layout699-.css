@@ -1,0 +1,32 @@
+/* layout699-.css - layout for smaller devices
+ *
+ * Kevin Dittmar
+ * 25 March 2014
+ */
+@media screen and (max-width: 699px) {
+    h1 {
+        max-width:	100%;
+    }
+    /*This will make sure that the icons scale
+     *with the webpage to keep the webline from
+     *being too wide.
+     */
+    img.browser_icon{
+        max-height: 32px;
+        max-width:  32px;
+        min-height:	8px;
+        min-width:	8px;
+        height:		auto;
+        width:		100%;
+    }
+	
+    img.valid_icon{
+        /*88 x 31 are the dimensions in pixels
+         *of the validation icons from W3C.
+         */
+        max-width:	88px;
+        max-height:	31px;
+        min-width:	22px;
+        min-height:	6px;
+    }
+}

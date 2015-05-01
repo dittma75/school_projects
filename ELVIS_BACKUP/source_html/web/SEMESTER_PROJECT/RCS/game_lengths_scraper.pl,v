@@ -1,0 +1,326 @@
+head	1.12;
+access;
+symbols;
+locks
+	dittma75:1.12; strict;
+comment	@# @;
+
+
+1.12
+date	2014.12.08.16.25.52;	author dittma75;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2014.12.08.16.07.05;	author dittma75;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.05.07.04.17.34;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.05.06.20.56.09;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.05.06.14.45.42;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.05.06.07.04.24;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.05.06.05.30.06;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.06.02.47.22;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.05.05.21.08.23;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.05.05.03.29.02;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.05.05.00.05.50;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of Perl script that gets genres and completion times
+from gamelengths.com.
+@
+
+
+1.12
+log
+@Changed exit(1) to more appropriate die method.
+@
+text
+@#! /usr/bin/perl -w
+#
+# By Kevin Dittmar and Anthony Ratliff
+# 6 May 2014
+# Scrapes the playtime information and genre information
+# off of the GameLengths.com website.
+
+use strict;
+use warnings;
+use CGI;
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+if (defined($ARGV[0]))
+{
+    $agent->get($ARGV[0]);
+}
+else
+{
+    die "Requires a valid GameLengths URL.";
+}
+
+my $cgi = CGI->new;
+my $stream = HTML::TokeParser->new(\$agent->{content});
+
+#Make sure we don't get stuck in an infinite loop.
+my $timeout_counter = 1000;
+
+#The genre information is in a table after the h3 tag with "Game Info".
+my $tag = $stream->get_tag("h3");
+$tag = $stream->get_tag("table");
+
+#The genre information is in a table header with the text "Genre".
+while ($stream->get_trimmed_text ne "Genre")
+{
+    $tag = $stream->get_tag("th");
+    &timeout();
+}
+
+#The genre information is in the next table data element.
+$tag = $stream->get_tag("td");
+my $genres = $stream->get_trimmed_text;
+while (!$tag->[1]{class} or
+       ($tag->[1]{class} and $tag->[1]{class} ne "span3 time-box"))
+{
+    $tag = $stream->get_tag("div");
+    &timeout();
+}
+my @@headers = ("Average Time", "Minimum Time", "Maximum Time");
+print '<table id="playtime">'."\n<caption>Playtime Information</caption>\n";
+
+for (my $i = 0; $i < 3; $i++)
+{
+    $tag = $stream->get_tag("span");
+    print "<tr><td>".$headers[$i].'</td><td class="time">',
+          $stream->get_trimmed_text." Hours</td></tr>\n";
+}
+print "</table>\n<br/>\n";
+
+#Print the genres in their own div.
+print "<div>Genre(s):  ".$cgi->span({-id=>"genres"}, $genres)."</div>\n<br/>\n";
+
+#Monitors the timeout counter to see if a loop is taking
+#too long.  
+sub timeout()
+{
+    $timeout_counter--;
+    if ($timeout_counter <= 0)
+    {
+        #$timeout_counter = 1000;
+        #last;
+        die("No info on GameLengths; stopped.");
+    }
+}
+@
+
+
+1.11
+log
+@Added exit() system call to the end of timeout to try to keep
+the Perl scripts from pegging the elvis server to death.
+@
+text
+@d74 1
+a74 1
+        exit(1);
+@
+
+
+1.10
+log
+@Final commit.  Added headers.
+@
+text
+@d72 3
+a74 2
+        $timeout_counter = 1000;
+        last;
+@
+
+
+1.9
+log
+@Added a time class to the table data elements in the Playtimes
+table to make it easier to apply this data to preferences and
+score weighting.
+@
+text
+@d3 4
+a6 2
+# CGI Basis by D Provine
+# Modified by Kevin Dittmar 10 April 2014
+d22 1
+a22 1
+    $agent->get("http://www.gamelengths.com/games/playtimes/Dark+Souls/");
+@
+
+
+1.8
+log
+@Made genre searching more flexible.  As long as it can find
+a <th> with "Genre" in it, it will be able to print genres.
+@
+text
+@d51 1
+d55 1
+a55 1
+    print "<tr><td>".$headers[$i]."</td><td>",
+@
+
+
+1.7
+log
+@Added a div block around the Genres data to make it run
+together less.
+@
+text
+@a27 1
+#The genre information is in a table.
+d29 1
+d33 2
+a34 2
+#The genre information is two headers down.
+for (my $i = 0; $i < 2; $i++)
+d37 1
+d39 1
+@
+
+
+1.6
+log
+@Formatted the scraped information a little more nicely.
+@
+text
+@d58 1
+a58 1
+print "Genre(s):  ".$cgi->span({-id=>"genres"}, $genres), "\n<br/>\n";
+@
+
+
+1.5
+log
+@Fixed order of playtime table headers.
+@
+text
+@d58 1
+a58 1
+print "Genres:  ".$cgi->span({-id=>"genres"}, $genres), "\n";
+@
+
+
+1.4
+log
+@Added timeout failsafe method.
+@
+text
+@d42 1
+a42 1
+       ($tag->[1]{class} and $tag->[1]{class} ne "span time-box"))
+d47 2
+a48 2
+my @@headers = ("Minimum Time", "Maximum Time", "Average Time");
+print "<table>\n<caption>Playtime Information</caption>\n";
+d58 1
+a58 1
+print $cgi->div({-id=>"genres"}, $genres), "\n";
+@
+
+
+1.3
+log
+@Added webline and fixed LOTS of validation errors and warnings.
+@
+text
+@d26 2
+a28 1
+my $tag = $stream->get_tag("table");
+d30 5
+a34 2
+#The genre information is three rows down.
+for (my $i = 0; $i < 3; $i++)
+d36 1
+a36 1
+    $tag = $stream->get_tag("tr");
+d42 1
+a42 1
+       ($tag->[1]{class} and $tag->[1]{class} ne "span3 time-box"))
+d45 1
+d53 1
+a53 1
+          $stream->get_trimmed_text." Hours</td></tr>";
+d59 12
+@
+
+
+1.2
+log
+@Scraper now prints a table of time data and a list of genres.
+@
+text
+@d43 1
+a43 1
+print '<table caption="Playtime Information">', "\n";
+d48 1
+a48 2
+          $stream->get_trimmed_text." Hours</td></tr>",
+          "<br/>\n";
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a10 2
+use Data::Dumper;       # Debugging
+use HTML::Entities;     # Handles vulgar fractions
+d42 2
+d47 3
+a49 1
+    print $stream->get_trimmed_text, "<br/>\n";
+d51 4
+@

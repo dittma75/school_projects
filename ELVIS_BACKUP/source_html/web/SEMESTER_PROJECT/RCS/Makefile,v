@@ -1,0 +1,353 @@
+head	1.15;
+access;
+symbols;
+locks
+	dittma75:1.15; strict;
+comment	@# @;
+
+
+1.15
+date	2014.05.07.05.46.06;	author dittma75;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2014.05.07.02.48.14;	author dittma75;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2014.05.06.05.47.37;	author dittma75;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2014.05.06.02.47.22;	author dittma75;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.05.05.21.51.11;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.05.05.21.37.42;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.05.05.00.08.00;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.05.04.14.55.04;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.05.02.22.43.47;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.05.02.02.31.06;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.01.00.57.11;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.04.17.14.27.07;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.04.15.17.41.00;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.04.10.13.53.51;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of empty Makefile.
+@
+
+
+1.15
+log
+@Real Final commit.  Forgot to add README.txt.
+@
+text
+@# Sample Makefile for Web Programming students
+#
+# by Darren Provine, 14 September 2002
+# modified by Kevin Dittmar and Anthony Ratliff, 6 May 2014
+
+# These lines should be the only ones you have to change for many
+# projects.
+
+DESTDIR = /export/home/dittma75/public_html/web/SEMESTER_PROJECT
+TARGETS = dark_background.png webline.css reviews.css index.css reviews.js \
+          metacritic_scraper.pl metacritic_search_parser.pl \
+          game_lengths_scraper.pl game_lengths_search_parser.pl \
+          footer.php index.php README.txt
+SOURCES = dark_background.png webline.css reviews.css index.css reviews.js \
+		  metacritic_scraper.pl metacritic_search_parser.pl \
+		  game_lengths_scraper.pl game_lengths_search_parser.pl \
+		  footer.php index.php README.txt
+# This target is just here to be the top target in the Makefile.
+# There's nothing to compile for this one.
+all: $(TARGETS)
+
+# You might want to look up mkdir(1) to see about that -p flag.
+install: $(TARGETS)
+	@@if [ ! -d $(DESTDIR) ] ; then mkdir -p $(DESTDIR); fi
+	@@for f in $(TARGETS)                 ; \
+	do                                     \
+		/usr/bin/install -v -t $(DESTDIR) -m 555 $$f ; \
+	done
+
+# Note that here we don't blow away the directory, and so we
+# be sure and tell the user.  The reason not to delete the
+# directory is that it may have other files in it.  Checking
+# for, and deleting, any such files will have to be done manually.
+# (How could this be improved?)
+#
+# Note also that the @@ sign keeps the echo lines from being echoed
+# before they are run.  (That could be confusing.)  This little
+# trick (and many more) can be discovered by consulting make(1).
+deinstall:
+	cd $(DESTDIR) ; /bin/rm -f $(TARGETS)
+	@@echo "   ==>   removed file(s): $(TARGETS)"
+	@@echo "   ==>   left directory : $(DESTDIR)"
+
+redo: deinstall install
+
+clean:
+	/bin/rm -f core $(TARGETS)
+@
+
+
+1.14
+log
+@Final commit.  Added headers.
+@
+text
+@d13 1
+a13 1
+          footer.php index.php
+d17 1
+a17 1
+		  footer.php index.php
+@
+
+
+1.13
+log
+@Removed excess files and reorganized file list.
+@
+text
+@d4 1
+a4 1
+# modified by Kevin Dittmar, 10 April 2014
+@
+
+
+1.12
+log
+@Added new files to the Makefile.
+@
+text
+@d10 5
+a14 1
+TARGETS = dark_background.png index.php reviews.js \
+d16 2
+a17 6
+		  footer.php search.php Connect.php game_lengths_scraper.pl \
+		  game_lengths_search_parser.pl webline.css reviews.css index.css
+SOURCES = dark_background.png index.php reviews.js \
+		  metacritic_scraper.pl metacritic_search_parser.pl \
+		  footer.php search.php Connect.php game_lengths_scraper.pl \
+		  game_lengths_search_parser.pl webline.css reviews.css index.css
+@
+
+
+1.11
+log
+@Added background image to Makefile.
+@
+text
+@d10 1
+a10 1
+TARGETS = background.png index.php reviews.js \
+d14 1
+a14 1
+SOURCES = background.png index.php reviews.js \
+@
+
+
+1.10
+log
+@Removed old how_long_to_beat_scraper.pl and changed footer.css
+to index.css.
+@
+text
+@d10 2
+a11 2
+TARGETS = metacritic_scraper.pl index.php reviews.js \
+		  metacritic_search_parser.pl \
+d14 2
+a15 2
+SOURCES = metacritic_scraper.pl index.php reviews.js \
+		  metacritic_search_parser.pl \
+@
+
+
+1.9
+log
+@Added the webline.css file to the Makefile.
+@
+text
+@d11 1
+a11 1
+		  how_long_to_beat_scraper.pl metacritic_search_parser.pl \
+d13 1
+a13 1
+		  game_lengths_search_parser.pl webline.css reviews.css
+d15 1
+a15 1
+		  how_long_to_beat_scraper.pl metacritic_search_parser.pl \
+d17 1
+a17 1
+		  game_lengths_search_parser.pl webline.css reviews.css
+@
+
+
+1.8
+log
+@Removed how_long_to_beat files and added game_lengths files.
+@
+text
+@d11 1
+a11 1
+		  how_long_to_beat_scraper.pl reviews.css metacritic_search_parser.pl \
+d13 1
+a13 1
+		  game_lengths_search_parser.pl
+d15 1
+a15 1
+		  how_long_to_beat_scraper.pl reviews.css metacritic_search_parser.pl \
+d17 1
+a17 1
+		  game_lengths_search_parser.pl
+@
+
+
+1.7
+log
+@Added new PHP files and new Perl scripts to the Makefile.
+@
+text
+@d12 2
+a13 1
+		  footer.php search.php Connect.php gamedetail.php
+d16 2
+a17 1
+		  footer.php search.php Connect.php gamedetail.php
+@
+
+
+1.6
+log
+@Changed searchgame.php to gamedetail.php.
+@
+text
+@d10 6
+a15 4
+TARGETS = metacritic_scraper.pl gamedetail.php index.php reviews.js \
+		  how_long_to_beat_scraper.pl reviews.css metacritic_search_parser.pl
+SOURCES = metacritic_scraper.pl gamedetail.php index.php reviews.js \
+		  how_long_to_beat_scraper.pl reviews.css metacritic_search_parser.pl
+@
+
+
+1.5
+log
+@Added metacritic_search_parser.pl.
+@
+text
+@d10 1
+a10 1
+TARGETS = metacritic_scraper.pl searchgame.php index.php \
+d12 1
+a12 1
+SOURCES = metacritic_scraper.pl searchgame.php index.php \
+@
+
+
+1.4
+log
+@Added CSS for reviews to the Makefile.
+@
+text
+@d11 1
+a11 1
+		  how_long_to_beat_scraper.pl reviews.css
+d13 1
+a13 1
+		  how_long_to_beat_scraper.pl reviews.css
+@
+
+
+1.3
+log
+@metacritic_scraper cgi replaced with regular Perl script.
+how_long_beat_scraper.pl added.
+searchgame.php added.
+@
+text
+@d11 1
+a11 1
+		  how_long_to_beat_scraper.pl
+d13 1
+a13 1
+		  how_long_to_beat_scraper.pl
+@
+
+
+1.2
+log
+@Makefile now makes the metacritic scraper.
+@
+text
+@d10 4
+a13 2
+TARGETS = metacritic_scraper.cgi
+SOURCES = metacritic_scraper.cgi
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 2
+a11 2
+TARGETS = 
+SOURCES = 
+@

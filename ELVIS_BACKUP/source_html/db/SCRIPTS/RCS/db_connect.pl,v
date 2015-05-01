@@ -1,0 +1,65 @@
+head	1.2;
+access;
+symbols;
+locks
+	dittma75:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2015.04.20.03.53.38;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.18.04.29.02;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of database connection Perl script.
+@
+
+
+1.2
+log
+@Changed the name of db.conf.
+@
+text
+@#!/usr/bin/perl
+use strict;
+use warnings;
+#db connect info from
+#http://perl.about.com/od/perltutorials/a/perlmysql_3.html
+use DBD::mysql;
+sub getDBH
+{
+    my $conf_path = "/home/dittma75/source_html/db/SCRIPTS/.db.conf";
+    my $db_name;
+    my $user;
+    my $pass;
+    open (CONF, "<", $conf_path);
+    while (<CONF>)
+    {
+        chomp;
+        ($db_name, $user, $pass) = split(/,/,$_);
+    }
+    my $db_handle = DBI->connect("DBI:mysql:$db_name",$user,$pass)
+        or die "Connection Error:  $DBI::errstr\n";
+    return $db_handle;
+}
+#required scripts must return true to make the compiler happy.
+1;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d9 1
+a9 1
+    my $conf_path = "/home/dittma75/source_html/db/SCRIPTS/db.conf";
+@

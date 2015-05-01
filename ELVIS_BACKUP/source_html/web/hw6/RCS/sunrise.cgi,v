@@ -1,0 +1,143 @@
+head	1.3;
+access;
+symbols;
+locks
+	dittma75:1.3; strict;
+comment	@# @;
+
+
+1.3
+date	2014.03.23.18.51.28;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.23.04.33.31;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.22.19.08.44;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of cgi that gets and prints the sunrise and
+sunset data for a single day.
+@
+
+
+1.3
+log
+@Attempted to improve CGI, but no longer needed.
+@
+text
+@#! /usr/bin/perl -w
+
+use lib '/opt/kilroy/lib/perl';
+use Astro::Sunrise;
+
+use CGI qw/:standard/;
+
+print '
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>Glassboro Sunrise/Sunset Graph</title>
+  <meta charset="utf-8" />
+  <meta name="Author" content="Darren Provine" />
+  <meta name="Author" content="Kevin Dittmar" />
+  <meta name="generator" content="vi" />
+  <link rel="shortcut icon" href="../resources/black_mage.png" />
+  <link rel="stylesheet" href="../resources/webline.css" />
+  <script type="text/javascript" src="sunrise.js"> </script>
+  <script type="text/javascript" src="AjaxFunctions.js"> </script>
+</head>
+
+<body>
+
+<canvas id="sungraph" width="290" height="360"
+        style="border: 1px solid black;">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+<br />
+
+<input type="hidden" onsubmit="drawGraph();" />
+';
+
+print start_form,
+     	 "Year: ",textfield('year'),br,
+     	 "Month: ",textfield('month'),br,
+	 	 "Day: ",textfield('day'),br,
+		 submit('Show Sun Times'),
+	  end_form;
+
+#Information on reading a file and printing its contents from:
+#http://www.cs.mcgill.ca/~abatko/computers/programming/perl/howto/open/#read_from_one_file_and_write_its_contents_into_another_file_
+my $webline_path = "../resources/webline.txt";
+open( FILE, "< $webline_path") or die "Can't open $webline_path.";
+while( <FILE> ) {
+	print;
+}
+close FILE;   
+print end_html, "\n";
+
+
+@
+
+
+1.2
+log
+@Attempted to make a CGI that allowed date-select, but
+it doesn't quite work.
+@
+text
+@d31 1
+a31 3
+<input type="button"
+       value="Show Sun Times"
+       onclick="drawGraph();" />
+d38 2
+a39 1
+	 end_form;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 42
+a49 29
+#
+# ($sunrise, $sunset) = sunrise(YYYY,MM,DD,longitude,latitude,Time Zone,DST);
+# glassboro, 6 Mar 2014, EST, no DST adjustment
+
+($sunrise, $sunset) = sunrise(2014,3,6, -75.12643, 39.70057, -5,0);
+
+print header,
+     start_html('Sunrise in Glassboro, 2014-03-06');
+
+print comment("Data from: " .
+ "($sunrise, $sunset) = sunrise(2014,3,6, -75.12643, 39.70057, -5,0);"), "\n";
+
+print h1('Sunrise'), "\n\n";
+
+print p($sunrise), "\n";
+
+print h1('Sunset'), "\n\n";
+
+print p($sunset), "\n";
+
+print <<END_OF_VALIDATION_CODE;
+<p>
+    <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-xhtml10"
+         alt="Valid XHTML 1.0 Transitional"
+         height="31" width="88" /></a>
+</p>
+END_OF_VALIDATION_CODE
+
+@

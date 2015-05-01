@@ -1,0 +1,47 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.02.02.23.35.19;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@This is the stylesheet for a large screen (laptop/desktop).
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* layout700+.css - wide layout
+ *
+ * Kevin Dittmar
+ */
+
+
+@@media screen and (min-width: 700px) {
+	div#me {
+		margin-left:	50px;
+		float:	left;
+	}
+	
+	h1 {
+		text-align:	center;
+		width:	100%
+	}
+	
+	div#homework_listing{
+		margin-left: 350px;
+	}
+}
+
+@

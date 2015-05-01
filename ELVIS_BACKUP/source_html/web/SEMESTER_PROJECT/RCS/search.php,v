@@ -1,0 +1,34 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.05.04.14.59.36;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the PHP file that allows the user to pick which
+game they want to see out of the list that matches their search.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@<h2>Please choose which game you want to see:</h2>
+<?php
+	$parameter = str_replace(" ", "+",trim($_GET['gamename']));
+	$parameter = "http://www.metacritic.com/search/game/$parameter/results";
+	$output = shell_exec("perl ./metacritic_search_parser.pl $parameter");
+	echo $output;
+	require 'footer.php';
+?>
+@

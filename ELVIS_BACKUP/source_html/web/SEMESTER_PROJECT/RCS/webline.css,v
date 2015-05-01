@@ -1,0 +1,70 @@
+head	1.2;
+access;
+symbols;
+locks
+	dittma75:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.05.05.21.08.23;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the validation webline.
+@
+
+
+1.2
+log
+@Final commit.  Added headers.
+@
+text
+@/* webline.css -- nice style for author, validation, and testing line
+ *
+ * Darren Provine
+ * Modified by Kevin Dittmar, 28 January 2014
+ */
+
+table#webline {
+    text-align:	center;	
+    width: 100%;
+    color: #3f1a0a;
+    background: #dfdbc3; 
+    border: 1px solid #3f1a0a;
+    border-collapse: collapse;
+}
+
+table#webline tr {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid #3f1a0a;
+}
+
+table#webline tr td {
+    border:  1px solid #3f1a0a;
+    margin: 0px;
+    padding: 0px;
+}
+table#webline tr th{
+	border:	1px solid #3f1a0a;
+}
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a4 1
+ * $Id: webline.css,v 1.1 2014/03/23 03:27:55 dittma75 Exp $
+@

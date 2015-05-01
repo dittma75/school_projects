@@ -1,0 +1,185 @@
+head	1.7;
+access;
+symbols;
+locks
+	dittma75:1.7; strict;
+comment	@# @;
+
+
+1.7
+date	2015.04.29.08.41.45;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2015.04.29.02.34.15;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2015.04.18.18.06.28;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2015.04.18.07.57.56;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2015.04.18.07.26.57;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2015.04.18.04.29.02;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.17.15.18.22;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of scripts Makefile.
+@
+
+
+1.7
+log
+@Added lots of metric scripts to the Makefile.
+@
+text
+@# Sample Makefile for Web Programming students
+#
+# by Darren Provine, 14 September 2002
+# modified by Kevin Dittmar, 28 January 2014
+
+# These lines should be the only ones you have to change for many
+# projects.
+
+DESTDIR = /export/home/dittma75/public_html/db/SCRIPTS
+TARGETS = db_connect.pl book_index.cgi author_index.cgi publisher_index.cgi \
+	      genre_index.cgi customer_index.cgi inactive_customers.cgi \
+		  active_customers.cgi priced_too_high.cgi not_selling_well.cgi \
+	      best_sellers.cgi prolific_authors.cgi inventory.cgi reorder.cgi
+SOURCES = db_connect.pl book_index.cgi author_index.cgi publisher_index.cgi \
+		  genre_index.cgi customer_index.cgi inactive_customers.cgi \
+          active_customers.cgi priced_too_high.cgi not_selling_well.cgi \
+          best_sellers.cgi prolific_authors.cgi inventory.cgi reorder.cgi
+
+# This target is just here to be the top target in the Makefile.
+# There's nothing to compile for this one.
+all: $(TARGETS)
+
+# You might want to look up mkdir(1) to see about that -p flag.
+install: $(TARGETS)
+	@@if [ ! -d $(DESTDIR) ] ; then mkdir -p $(DESTDIR); fi
+	@@for f in $(TARGETS)                 ; \
+	do                                     \
+		/usr/bin/install -v -t $(DESTDIR) -m 555 $$f ; \
+	done
+
+# Note that here we don't blow away the directory, and so we
+# be sure and tell the user.  The reason not to delete the
+# directory is that it may have other files in it.  Checking
+# for, and deleting, any such files will have to be done manually.
+# (How could this be improved?)
+#
+# Note also that the @@ sign keeps the echo lines from being echoed
+# before they are run.  (That could be confusing.)  This little
+# trick (and many more) can be discovered by consulting make(1).
+deinstall:
+	cd $(DESTDIR) ; /bin/rm -f $(TARGETS)
+	@@echo "   ==>   removed file(s): $(TARGETS)"
+	@@echo "   ==>   left directory : $(DESTDIR)"
+
+redo: deinstall install
+
+clean:
+	/bin/rm -f core $(TARGETS)
+@
+
+
+1.6
+log
+@Added customer_index.cgi to the Makefile.
+@
+text
+@d11 3
+a13 1
+	      genre_index.cgi customer_index.cgi
+d15 3
+a17 1
+		  genre_index.cgi customer_index.cgi
+@
+
+
+1.5
+log
+@Added the new index pages to the Makefile.
+@
+text
+@d11 1
+a11 1
+	      genre_index.cgi
+d13 1
+a13 1
+		  genre_index.cgi
+@
+
+
+1.4
+log
+@Updated the Makefile to include author index page.
+@
+text
+@d10 4
+a13 2
+TARGETS = db_connect.pl book_index.cgi author_index.cgi
+SOURCES = db_connect.pl book_index.cgi author_index.cgi
+@
+
+
+1.3
+log
+@Added book index cgi to Makefile.
+@
+text
+@d10 2
+a11 2
+TARGETS = webline.cgi db_connect.pl book_index.cgi
+SOURCES = webline.cgi db_connect.pl book_index.cgi
+d22 1
+a22 1
+		/usr/bin/install -v -t $(DESTDIR) -m 755 $$f ; \
+@
+
+
+1.2
+log
+@Added database connection and book index Perl scripts.
+@
+text
+@d10 2
+a11 2
+TARGETS = webline.cgi db_connect.pl book_index.pl
+SOURCES = webline.cgi db_connect.pl book_index.pl
+d22 1
+a22 1
+		/usr/bin/install -v -t $(DESTDIR) -m 444 $$f ; \
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 2
+a11 2
+TARGETS = webline.cgi
+SOURCES = webline.cgi
+@

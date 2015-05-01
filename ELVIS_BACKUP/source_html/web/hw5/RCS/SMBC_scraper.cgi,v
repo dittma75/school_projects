@@ -1,0 +1,1018 @@
+head	1.18;
+access;
+symbols;
+locks
+	dittma75:1.18; strict;
+comment	@# @;
+
+
+1.18
+date	2015.03.26.04.08.09;	author dittma75;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2014.03.06.16.55.30;	author dittma75;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2014.03.06.15.59.05;	author dittma75;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2014.03.06.06.05.28;	author dittma75;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2014.03.06.06.00.37;	author dittma75;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2014.03.06.05.49.07;	author dittma75;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2014.03.05.16.10.01;	author dittma75;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2014.03.03.23.25.01;	author dittma75;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.03.03.22.19.45;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.03.03.21.41.04;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.03.03.20.23.39;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.03.03.00.42.11;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.03.02.15.52.04;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.03.02.06.57.50;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.03.02.06.10.46;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.02.05.40.09;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.02.04.31.09;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.02.01.41.49;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Saturday Morning Breakfast Cereal comic screen
+scraper initial commit.
+@
+
+
+1.18
+log
+@SMBC-comics.com changed their format and removed
+the hidden comic :'(... Fixed it the best I could.
+@
+text
+@#! /usr/bin/perl -w
+
+# SMBC Comic Scraper
+# CGI Basis by D Provine
+# Modified by Kevin Dittmar 3 March 2014
+
+use strict;
+use CGI;
+
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+use DateTime;			# Date package
+
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+my $address = "http://www.smbc-comics.com/";
+$agent->get($address);
+
+# create new HTML parser and get the content from the web agent
+my $stream = HTML::TokeParser->new(\$agent->{content});
+
+# Stores the current date to be used for finding yesterday's
+# comic until there is a week's worth of comics.
+my $date = DateTime->now;
+
+#################### Start of Comic HTML to Scrape #######################
+
+#Main comic looks like this:
+#<!-- Begin COMIC image -->
+#
+#<div id="comicimage">
+#	<img src='http://www.smbc-comics.com/comics/20140301.png'>	   
+#</div>
+#<!-- End COMIC image -->
+
+#Bonus panel looks like this:
+#<div id="aftercomic" 
+#	style="position:absolute;
+#	z-index:10; display:none" 
+#	onMouseDown='hideBlock("aftercomic")'
+#>
+#	<img src='http://www.smbc-comics.com/comics/20140301after.gif'>
+#</div>
+
+
+#Hidden comic looks like this:
+#<div id="konamicomic"
+#   style="position:absolute;
+#   left:95px;
+#   top:400px;
+#   z-index:15;
+#   display:none"
+#   onMouseDown='hideBlock("konamicomic")'
+#>
+#   <img src='/images/videogamezach.gif'
+#       style='border:3px solid black'
+#       onMouseDown='hideBlock("konamicomic")'
+#   >
+#</div>
+
+###################### End of Comic HTML to Scrape #######################
+
+#Initializes the CGI.
+my $cgi = new CGI;
+#Stores the src for the site's hidden comic.
+my $hidden_source;
+
+#Information for including multiple stylesheets came from:
+#http://stackoverflow.com/questions/7070873/can-cgis-start-html-method-have-multiple-script-attributes
+print $cgi->header(-type=>'text/html', -author =>'Kevin Dittmar');
+
+print $cgi->start_html(-title =>'A Week of SMBC Comics',
+		 -author => 'dittma75@@students.rowan.edu',
+		 -style => [{src => 'webline.css'},{src => 'layout699-.css'},
+			{src=>'layout700+.css'}]);
+
+#################### Start of Helper Functions ###############################
+#Get the main cartoon from the SMBC website.
+sub add_main_cartoon()
+{
+	#Create new HTML parser and get the content from the web agent
+    my $stream = HTML::TokeParser->new(\$agent->{content});
+
+    #Get the first "div" tag to setup the loop.
+    my $tag = $stream->get_tag("div");
+	
+	#Advance to the div with the main cartoon:
+    while ($tag->[1]{id} and $tag->[1]{id} ne 'comicbody') {
+    	$tag = $stream->get_tag("div");
+    }
+
+	#Get the main cartoon:
+    my $toon = $stream->get_tag("img");
+
+	#Get the source from the "img" tag:
+    my $src = $address.$toon->[1]{'src'};
+	my $alt = $toon->[1]{'title'};
+	
+	print $cgi->h2("Main Comic from ".sprintf("%d-%02d-%02d",
+		$date->year(), $date->month(), $date->day() )), "\n";
+
+    print $cgi->img({src => $src, alt => $alt,
+		class=> 'comic'}), "\n\n";
+	return;
+}
+
+#Get the bonus cartoon from the SMBC website.
+sub add_bonus_cartoon()
+{
+	#Create new HTML parser and get the content from the web agent
+    my $stream = HTML::TokeParser->new(\$agent->{content});
+
+	#Get the first "div tag to setup the loop.
+	my $tag = $stream->get_tag("div");
+
+	#Advance to the div with the bonus panel:
+    while (!$tag->[1]{id} or $tag->[1]{id} ne 'aftercomic'){
+    	$tag = $stream->get_tag("div");
+    }
+
+    #Get the bonus panel:
+    my $toon = $stream->get_tag("img");
+#    $toon = $stream->get_tag("img");
+
+	#Get the source from the "img" tag:
+    my $src = $toon->[1]{'src'};
+	my $alt = 'SMBC Bonus Panel';
+    if ($src ne "")
+	{
+		print $cgi->h2("Bonus Comic from ".sprintf("%d-%02d-%02d",
+			$date->year(), $date->month(), $date->day() )), "\n";
+
+    	print $cgi->img({src => $src, alt => $alt, 
+			class => 'comic'}), "\n\n";
+	}
+	return;
+}
+#################### End of Helper Functions ###############################
+
+#Start the loop at the first div:
+my $tag = $stream->get_tag("div");
+
+###### This code worked... then they removed the Konami comic...############
+#Only get hidden cartoon the first time (same for each page).
+#while ($tag->[1]{id} and $tag->[1]{id} ne 'konamicomic') {
+#	$tag = $stream->get_tag("div");
+#}
+
+#Get the img tag that contains the hidden cartoon:
+#my $toon = $stream->get_tag("img");
+                
+#Get the source from the "img" tag:
+#$hidden_source = $toon->[1]{'src'};
+############################################################################
+
+
+#Print a header for the page.
+print $cgi->h1("This Week's Saturday Morning Breakfast Cereal Comics");
+
+#Get seven days worth of comics by following the backward link
+#and scraping the main and bonus comics on each page.
+for (my $comic_counter = 0; $comic_counter < 7; $comic_counter++)
+{
+    add_main_cartoon();
+	add_bonus_cartoon();
+	$date->subtract(days=>1);
+	#The previous comic button has a class of backRollover
+	$agent->follow_link(class=>'prev');
+}
+
+########## More Konami Comic stuff that was removed ########################
+#print $cgi->h2("Hidden Comic"), "\n";
+
+#Hidden Comic is a relative URL, so use the address to
+#get its complete path on the website.
+#print $cgi->img({src=>$address.$hidden_source, alt=>"Hidden Comic",
+#	class => 'comic'}), "\n\n";
+############################################################################
+
+
+#Information on reading a file and printing its contents from:
+#http://www.cs.mcgill.ca/~abatko/computers/programming/perl/howto/open/#read_from_one_file_and_write_its_contents_into_another_file_
+my $webline_path = "../resources/webline.txt";
+open( FILE, "< $webline_path") or die "Can't open $webline_path.";
+while( <FILE> ) {
+	print;
+}
+close FILE;
+print $cgi->end_html, "\n";
+@
+
+
+1.17
+log
+@Added dates instead of "days since" headers.
+@
+text
+@d88 1
+a88 1
+    while ($tag->[1]{id} and $tag->[1]{id} ne 'comicimage') {
+d96 2
+a97 2
+    my $src = $toon->[1]{'src'};
+	my $alt = 'SMBC Main Comic';
+d117 1
+a117 1
+    while ($tag->[1]{id} and $tag->[1]{id} ne 'aftercomic') {
+d123 1
+d143 1
+d145 3
+a147 3
+while ($tag->[1]{id} and $tag->[1]{id} ne 'konamicomic') {
+	$tag = $stream->get_tag("div");
+}
+d150 1
+a150 1
+my $toon = $stream->get_tag("img");
+d153 3
+a155 1
+$hidden_source = $toon->[1]{'src'};
+d168 1
+a168 1
+	$agent->follow_link(class=>'backRollover');
+d170 3
+a172 1
+print $cgi->h2("Hidden Comic"), "\n";
+d176 4
+a179 2
+print $cgi->img({src=>$address.$hidden_source, alt=>"Hidden Comic",
+	class => 'comic'}), "\n\n";
+@
+
+
+1.16
+log
+@Changed CGI for webline to a text file for simplicity.
+@
+text
+@d12 1
+d16 1
+a16 1
+my $address = "http://www.smbc-comics.com";
+d22 3
+a24 3
+# Counter for how many days of comics have been scraped.
+# Used for printing identification headers over each comic.
+my $comic_counter = 0;
+d26 1
+a26 14
+#Hidden comic looks like this:
+#<div id="konamicomic" 
+#	style="position:absolute; 
+#	left:95px; 
+#	top:400px;
+#	z-index:15; 
+#	display:none"
+#	onMouseDown='hideBlock("konamicomic")'
+#>
+#	<img src='/images/videogamezach.gif' 
+#		style='border:3px solid black' 
+#		onMouseDown='hideBlock("konamicomic")'
+#	>
+#</div>
+d45 18
+d76 2
+d98 4
+a101 1
+	add_main_cartoon_header();
+d129 3
+a131 1
+		add_bonus_cartoon_header();
+d137 1
+d139 1
+a139 38
+#Add a header for the main cartoon based on the number
+#of days passed since the comic was printed.
+sub add_main_cartoon_header()
+{
+	if ($comic_counter == 0)
+	{
+		print $cgi->h2("Main Comic from Today"), "\n";
+	}
+	elsif ($comic_counter == 1)
+	{
+		print $cgi->h2("Main Comic from Yesterday"), "\n";
+	}
+	else
+	{
+		print $cgi->h2("Main Comic from ".$comic_counter." Days Ago"),"\n";
+	}
+	return;
+}
+
+#Add a header for the bonus cartoon based on the number
+#of days passed since the comic was printed.
+sub add_bonus_cartoon_header()
+{
+	if ($comic_counter == 0)
+	{
+		print $cgi->h2("Bonus Comic from Today"), "\n";
+	}
+	elsif ($comic_counter == 1)
+	{
+		print $cgi->h2("Bonus Comic from Yesterday"), "\n";
+	}
+	else
+	{
+		print $cgi->h2("Bonus Comic from ".$comic_counter." Days Ago"),"\n";
+	}
+	return;
+}
+
+d158 1
+a158 1
+for ($comic_counter = 0; $comic_counter < 7; $comic_counter++)
+d162 3
+a164 1
+	$agent->follow_link(class => 'backRollover');
+@
+
+
+1.15
+log
+@Removed unnecessary use statement.
+@
+text
+@d194 8
+a201 6
+#Information for using system found on:
+#http://perldoc.perl/org/functions/exec.html
+system('../resources/webline.cgi');
+print $cgi->p('*Lynx and W3M work as well as expected for text-based
+		browsers.  They will not print the actual comics for
+		obvious reasons, but they will print the alt text.');
+@
+
+
+1.14
+log
+@Fixed formatting.
+@
+text
+@d9 1
+a9 1
+use CGI "meta";
+@
+
+
+1.13
+log
+@Made the comic webpage responsive.
+@
+text
+@d74 1
+a74 1
+        my $stream = HTML::TokeParser->new(\$agent->{content});
+d76 2
+a77 2
+        #Get the first "div" tag to setup the loop.
+        my $tag = $stream->get_tag("div");
+d80 3
+a82 3
+        while ($tag->[1]{id} and $tag->[1]{id} ne 'comicimage') {
+                $tag = $stream->get_tag("div");
+        }
+d85 1
+a85 1
+        my $toon = $stream->get_tag("img");
+d87 2
+a88 2
+        #Get the source from the "img" tag:
+        my $src = $toon->[1]{'src'};
+d91 1
+a91 1
+        print $cgi->img({src => $src, alt => $alt,
+d100 1
+a100 1
+        my $stream = HTML::TokeParser->new(\$agent->{content});
+d106 3
+a108 3
+        while ($tag->[1]{id} and $tag->[1]{id} ne 'aftercomic') {
+                $tag = $stream->get_tag("div");
+        }
+d110 5
+a114 5
+        #Get the bonus panel:
+        my $toon = $stream->get_tag("img");
+	
+        #Get the source from the "img" tag:
+        my $src = $toon->[1]{'src'};
+d116 1
+a116 1
+        if ($src ne "")
+d119 1
+a119 1
+        	print $cgi->img({src => $src, alt => $alt, 
+d183 1
+a183 1
+    	add_main_cartoon();
+@
+
+
+1.12
+log
+@Changed h1s to h2s for comic distinctions.  Put an h1 header
+for the entire page.
+@
+text
+@d9 1
+d62 2
+d65 1
+d68 2
+a69 2
+		 -style => {src => 'webline.css'});
+		 
+d91 2
+a92 1
+        print $cgi->img({src => $src, alt => $alt}), "\n\n";
+d119 2
+a120 1
+        	print $cgi->img({src => $src, alt => $alt}), "\n\n";
+d191 2
+a192 1
+print $cgi->img({src=>$address.$hidden_source, alt=>"Hidden Comic"}), "\n\n";
+@
+
+
+1.11
+log
+@Added message about Lynx and W3M compatibility.
+@
+text
+@d125 1
+a125 1
+		print $cgi->h1("Main Comic from Today"), "\n";
+d129 1
+a129 1
+		print $cgi->h1("Main Comic from Yesterday"), "\n";
+d133 1
+a133 1
+		print $cgi->h1("Main Comic from ".$comic_counter." Days Ago"),"\n";
+d144 1
+a144 1
+		print $cgi->h1("Bonus Comic from Today"), "\n";
+d148 1
+a148 1
+		print $cgi->h1("Bonus Comic from Yesterday"), "\n";
+d152 1
+a152 1
+		print $cgi->h1("Bonus Comic from ".$comic_counter." Days Ago"),"\n";
+d170 3
+d177 1
+a177 1
+    add_main_cartoon();
+d181 1
+a181 1
+print $cgi->h1("Hidden Comic"), "\n";
+@
+
+
+1.10
+log
+@Improved formatting.
+@
+text
+@d187 3
+@
+
+
+1.9
+log
+@Added cgi-generated webline.
+@
+text
+@d65 1
+d119 2
+d123 12
+a134 15
+	#Add HTML to display main comic with a header based
+        #on how old the comic is.
+        if ($comic_counter == 0)
+        {
+                print $cgi->h1("Main Comic from Today"), "\n";
+
+        }
+        elsif ($comic_counter == 1)
+        {
+                print $cgi->h1("Main Comic from Yesterday"), "\n";
+        }
+        else
+        {
+                print $cgi->h1("Main Comic from ".$comic_counter." Days Ago"), "\n";
+        }
+d138 2
+d142 12
+a153 15
+	#Add HTML to display bonus comic with a header based
+        #on how old the comic is.
+        if ($comic_counter == 0)
+        {
+                print $cgi->h1("Bonus Comic from Today"), "\n";
+
+        }
+        elsif ($comic_counter == 1)
+        {
+                print $cgi->h1("Bonus Comic from Yesterday"), "\n";
+        }
+        else
+        {
+                print $cgi->h1("Bonus Comic from ".$comic_counter." Days Ago"), "\n";
+        }
+d170 2
+d174 1
+a174 1
+        add_main_cartoon();
+@
+
+
+1.8
+log
+@Added webline prototype.
+@
+text
+@d183 3
+a185 82
+print '
+<table id="webline">
+	<tr>
+		<th>Name</th>
+		<th colspan="2">Valid</th>
+		<th colspan="7">Tested Browsers</th>
+	</tr>
+	<tr>
+		<td><a href="http://elvis.rowan.edu/~dittma75/" 
+				title="Link to my home page"
+				class="text_link">
+				<img src="../resources/black_mage.png" alt=""/>
+				Kevin Dittmar
+			</a>
+		</td>
+		<!--Link as image came from 
+			http://www.w3schools.com/html/tryit.asp?filename=tryhtml_imglink-->
+		<td>
+		 <a href="http://validator.w3.org/check/referer">
+			<img src="../resources/valid-xhtml10.png"
+				alt="XHTML 1.0" 
+				title="Valid XHTML 1.0"
+			/>
+		 </a>
+		</td>
+		<td>
+		 <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+		 	<img src="../resources/vcss.gif" 
+				alt="CSS3" 
+				title="Valid CSS 3"
+			/>
+		 </a>
+		</td>
+
+		<!--CSS to make link underline disappear came from
+			http://www.w3schools.com/cssref/pr_text_text-decoration.asp-->
+
+		<td>
+			<img src="../resources/logo_IE.png"
+				alt="Internet Explorer"
+				title="Internet Explorer"
+			/>
+		</td>
+		<td>
+			<img src="../resources/logo_FF.png"
+				alt="Mozilla Firefox"
+				title="Mozilla Firefox"
+			/>
+		</td>
+
+		<td>
+			<img src="../resources/logo_chrome.png"
+				alt="WebKit"
+				title="Google Chrome"
+			/>
+		</td>
+		
+		<td>
+			<img src="../resources/logo_opera.png" 
+				alt="Opera"
+				title="Opera"
+			/>
+		</td>
+
+		<td>
+			<img src="../resources/logo_konqueror.png"
+				alt="Konqueror"
+				title="Konqueror"
+			/>
+		</td>
+		
+		<td>W3M</td>
+		
+		<td>Lynx</td>
+	</tr>
+</table>
+';
+#if (no cookie)
+#{
+#	require "../resources/webline.cgi";
+#}
+#webline();
+@
+
+
+1.7
+log
+@Added alt text to the comics.
+@
+text
+@d3 3
+a5 3
+# Scrape1.cgi - demonstrate screen-scraping in Perl
+# D Provine
+# Modified by Kevin Dittmar
+d14 1
+a14 1
+my $address = "http://www.smbc-comics.com/";
+d63 2
+a64 2
+		 -author => 'dittma75@@students.rowan.edu');
+
+d181 1
+a181 1
+print $cgi->img({src=>$address.$hidden_source}), "\n\n";
+d183 82
+@
+
+
+1.6
+log
+@Abstracted header printing into functions and added logic
+to prevent header printing in the event that a bonus comic
+does not exist.
+@
+text
+@d83 4
+a86 3
+        my $main_source = $toon->[1]{'src'};
+	print add_main_cartoon_header();
+        print $cgi->img({src => $toon->[1]{'src'}}), "\n\n";
+d108 3
+a110 1
+        if ($toon->[1]{'src'} ne "")
+d113 1
+a113 1
+        	print $cgi->img({src => $toon->[1]{'src'}}), "\n\n";
+d135 1
+d155 1
+@
+
+
+1.5
+log
+@Added headers.
+@
+text
+@d20 4
+d66 1
+a66 1
+sub get_main_cartoon()
+d84 1
+d90 1
+a90 1
+sub get_bonus_cartoon()
+d105 1
+a105 1
+
+d107 5
+a111 1
+        print $cgi->img({src => $toon->[1]{'src'}}), "\n\n";
+d115 7
+a121 1
+my $tag = $stream->get_tag("div");
+d123 9
+a131 3
+#Only get hidden cartoon the first time (same for each page).
+while ($tag->[1]{id} and $tag->[1]{id} ne 'konamicomic') {
+	$tag = $stream->get_tag("div");
+d134 1
+a134 7
+#Get the img tag that contains the hidden cartoon:
+my $toon = $stream->get_tag("img");
+                
+#Get the source from the "img" tag:
+$hidden_source = $toon->[1]{'src'};
+
+for (my $counter = 0; $counter < 7; $counter++)
+a135 17
+	#Add HTML to display main comic with a header based
+	#on how old the comic is.
+	if ($counter == 0)
+	{
+		print $cgi->h1("Main Comic from Today"), "\n";
+		
+	}
+	elsif ($counter == 1)
+	{
+		print $cgi->h1("Main Comic from Yesterday"), "\n";
+	}
+	else
+	{
+		print $cgi->h1("Main Comic from ".$counter." Days Ago"), "\n";
+	}
+        get_main_cartoon();
+
+d137 2
+a138 2
+	#on how old the comic is.
+	if ($counter == 0)
+d143 1
+a143 1
+        elsif ($counter == 1)
+d149 1
+a149 1
+                print $cgi->h1("Bonus Comic from ".$counter." Days Ago"), "\n";
+d151 3
+a153 1
+	get_bonus_cartoon();
+d155 15
+@
+
+
+1.4
+log
+@There is now a function for getting the main and bonus cartoons
+and putting them in the proper place on the webpage.
+@
+text
+@d57 3
+a59 2
+print $cgi->header(-type=>'text/html'),
+$cgi->start_html('A Week of SMBC Comics');
+@
+
+
+1.3
+log
+@Began functionalizing code.
+@
+text
+@d60 2
+a61 1
+sub get_cartoon()
+d66 1
+a66 1
+        #Get the first "div" tag to setup the loop...
+d79 13
+a91 1
+	
+d98 1
+a98 1
+        $toon = $stream->get_tag("img");
+d101 2
+a102 3
+        my $bonus_source = $toon->[1]{'src'};
+
+	return ($main_source, $bonus_source);
+a119 5
+	my ($main_source, $bonus_source) = get_cartoon();
+	
+	my $tag;
+	my $toon;
+
+d135 2
+a136 2
+        print $cgi->img({src=>$main_source}), "\n\n";
+	
+d152 2
+a153 1
+	print $cgi->img({src=>$bonus_source}), "\n\n";
+@
+
+
+1.2
+log
+@Gets a week's worth of SMBC comics.
+@
+text
+@d60 1
+a60 1
+for (my $counter = 0; $counter < 7; $counter++)
+d62 5
+a66 5
+	# create new HTML parser and get the content from the web agent
+	my $stream = HTML::TokeParser->new(\$agent->{content});
+                
+	#Get the first "div" tag to setup the loop...
+	my $tag = $stream->get_tag("div");
+d68 10
+a77 6
+	#Only get hidden cartoon the first time (same for each page).
+	if ($counter == 0)
+	{
+		while ($tag->[1]{id} and $tag->[1]{id} ne 'konamicomic') {
+    			$tag = $stream->get_tag("div");
+		}
+d79 4
+a82 2
+		#Get the img tag that contains the hidden cartoon:
+		my $toon = $stream->get_tag("img");
+d84 2
+a85 3
+		#Get the source from the "img" tag:
+		$hidden_source = $toon->[1]{'src'};
+	}
+d87 2
+a88 4
+	#Advance to the div with the main cartoon:
+	while ($tag->[1]{id} and $tag->[1]{id} ne 'comicimage') {
+    		$tag = $stream->get_tag("div");
+	}
+d90 2
+a91 2
+	#Get the main cartoon:
+	my $toon = $stream->get_tag("img");
+d93 1
+a93 2
+	#Get the source from the "img" tag:
+	my $main_source = $toon->[1]{'src'};
+d95 4
+a98 4
+	#Advance to the div with the bonus panel:
+	while ($tag->[1]{id} and $tag->[1]{id} ne 'aftercomic') {
+    		$tag = $stream->get_tag("div");
+	}
+d100 5
+a104 2
+	#Get the bonus panel:
+	$toon = $stream->get_tag("img");
+d106 3
+a108 2
+	#Get the source from the "img" tag:
+	my $bonus_source = $toon->[1]{'src'};
+d110 3
+d150 2
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d14 2
+a15 1
+$agent->get("http://www.smbc-comics.com/");
+a50 2
+#Get the first "div" tag to setup the loop...
+my $tag = $stream->get_tag("div");
+d52 1
+a52 33
+while ($tag->[1]{id} and $tag->[1]{id} ne 'konamicomic') {
+    $tag = $stream->get_tag("div");
+}
+#Get the img tag that contains the hidden cartoon:
+my $toon = $stream->get_tag("img");
+
+#Get the source from the "img" tag:
+my $hidden_source = $toon->[1]{'src'};
+
+#Advance to the div with the main cartoon:
+while ($tag->[1]{id} and $tag->[1]{id} ne 'comicimage') {
+    $tag = $stream->get_tag("div");
+}
+
+#Get the main cartoon:
+$toon = $stream->get_tag("img");
+
+#Get the source from the "img" tag:
+my $main_source = $toon->[1]{'src'};
+
+
+#Advance to the div with the bonus panel:
+while ($tag->[1]{id} and $tag->[1]{id} ne 'aftercomic') {
+    $tag = $stream->get_tag("div");
+}
+
+#Get the bonus panel:
+$toon = $stream->get_tag("img");
+
+#Get the source from the "img" tag:
+my $bonus_source = $toon->[1]{'src'};
+
+# Generate a bunch of output:
+d54 2
+d58 1
+a58 9
+      $cgi->start_html('A Week of SMBC Comics');
+
+print $cgi->h1("Main Comic"), "\n";
+
+print $cgi->img({src=>$main_source}), "\n\n";
+
+print $cgi->h1("Bonus Comic"), "\n";
+
+print $cgi->img({src=>$bonus_source}), "\n\n";
+d60 79
+d141 1
+a141 1
+print $cgi->img({src=>"http://www.smbc-comics.com".$hidden_source}), "\n\n";
+@

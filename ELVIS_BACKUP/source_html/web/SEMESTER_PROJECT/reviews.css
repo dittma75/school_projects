@@ -1,0 +1,65 @@
+/** Kevin Dittmar and Anthony Ratliff
+  * 6 May 2014
+  * CSS to style the Metacritic reviews.
+  */
+
+/*Color average reviews brown with white text.*/
+.average_score {
+    background-color: #904000;
+    color: white;
+}
+
+/*Color bad reviews red with white text.*/
+.bad_score {
+    background-color: #DD0000;
+    color: white;
+}
+
+/*Color good reviews green with white text.*/
+.good_score {
+    background-color: #007700;
+    color: white;
+}
+
+/* Make the next buttons for reviews float on the right.
+ * float property information from:
+ * http://www.w3schools.com/cssref/pr_class_float.asp
+ */
+.next {
+    float: right;
+    margin-right: 5%;
+} 
+
+/* Make previous buttons for reviews float on the left.*/
+.previous {
+    float: left;
+    margin-left: 5%;
+}
+
+/* Give critic reviews a border, make sure they clear
+ * the buttons, and make sure that the edges line up
+ * with the buttons.
+ * CSS border information:
+ * http://www.w3schools.com/css/css_border.asp
+ */
+div.critic_review {
+    clear: both;
+    margin: 0% 5%;
+    padding: 5px;
+    border-style: groove;
+    border-width: 3px; 
+    border-color: white;
+}
+
+/* Give user reviews a border, make sure they clear
+ * the buttons, and make sure that the edges line up
+ * with the buttons.
+ */
+div.user_review {
+    clear: both;
+    margin: 0% 5%;
+    padding: 5px;
+    border-style: groove;
+    border-width: 3px;
+    border-color: white;
+}

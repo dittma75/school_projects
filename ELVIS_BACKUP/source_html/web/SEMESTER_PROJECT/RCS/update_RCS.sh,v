@@ -1,0 +1,47 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.05.04.14.59.36;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@A simple script to update RCS filepaths when their names are changed.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@if [ $# != "2" ]
+then
+    echo "Usage:  update_RCS.sh current_file_name new_file_name"
+else
+    if ! [ -f $1 ]
+    then
+        echo "Error:  $1 does not exist."
+    elif [ -f $2 ]
+    then
+        echo "Error:  $2 is already in this directory."
+    elif ! [ -f "RCS/$1,v" ]
+    then
+        echo "Error:  $1 is not in RCS."
+    elif [ -f "RCS/$2,v" ]
+    then
+        echo "Error:  $2 is already in RCS."
+    else
+        mv $1 $2
+        mv RCS/$1,v RCS/$2,v
+    fi
+fi
+
+@

@@ -1,0 +1,1239 @@
+Script started on Mon 27 Apr 2015 03:47:42 PM EDT
+]0;dittma75@elvis:db[dittma75@elvis db]$ mysql -u dittma75 -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 48773
+Server version: 5.5.38 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2014, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+[?1034hmysql> USE dittma75;
+CREATE PROCEDURE create_new_customer(newFName VARCHAR(25),
+                                     newLname VARCHAR(30),
+                                     newStreet VARCHAR(50),
+                                     newCity VARCHAR(25),
+                                     newState CHAR(2),
+                                     newZip CHAR(5),
+                                     newGender CHAR(1))
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> DROP PROCEDURE IF EXISTS create_new_customer;
+BEGIN
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE create_new_customer(newFName VARCHAR(25),
+                         city, 
+    ->                                      newLname VARCHAR(30),
+    ->                                      newStreet VARCHAR(50),
+    ->                                      newCity VARCHAR(25),
+    ->                                      newState CHAR(2),
+    ->                                      newZip CHAR(5),
+    ->                                      newGender CHAR(1))
+    -> BEGIN
+    ->     INSERT INTO customer(Fname,
+    ->                          Lname,
+    ->                          street,
+    ->                          city, 
+    ->                          state,
+    ->                          zip,
+    ->                          gender)
+    ->     VALUES(newFname,
+    ->            newLname,
+    ->            newStreet,
+    ->            newCity,
+    ->            newState,
+    ->            newZip,
+    ->            newGender);
+    -> END//
+    SELECT *
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS view_customer;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE view_customer(c_ID INT(11))
+    -> BEGIN
+    ->     SELECT *
+    ->     FROM customer 
+    ->     WHERE customerID = c_ID;    
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS update_customer;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_customer(c_ID INT(11),
+    ->                                  newFName VARCHAR(25),
+    ->                                  newLname VARCHAR(30),
+    ->                                  newStreet VARCHAR(50),
+    ->                                  newCity VARCHAR(25),
+    ->                                  newState CHAR(2),
+    ->                                  newZip CHAR(5),
+    ->                                  newGender CHAR(1))
+    -> BEGIN
+    ->     UPDATE customer 
+    ->     SET Fname = newFname,
+    ->         Lname = newLname,
+    ->         street = newStreet,
+    ->         city = newCity,
+    ->         state = newState,
+    ->         zip = newZip,
+    ->         gender = newGender
+    ->     WHERE customerID = c_ID;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS delete_customer;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE delete_customer(c_ID INT(11))
+    -> BEGIN
+    ->     DELETE
+    ->     FROM customer 
+    ->     WHERE customerID = c_ID;    
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+DELIMITER ;
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS create_new_publisher;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE create_new_publisher(new_publisher_name VARCHAR(45),
+    ->                                       newPhone VARCHAR(30))
+    -> BEGIN
+    ->     INSERT INTO publisher(publisher_name,phone)
+    ->     VALUES(new_publisher_name, newPhone);
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS view_publisher;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE view_publisher(p_ID INT(11))
+    -> BEGIN
+    ->     SELECT *
+    ->     FROM publisher 
+    ->     WHERE publisher_ID = p_ID;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS update_publisher;
+BEGIN
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_publisher(p_ID INT(11),
+    ->                                   newName VARCHAR(25),
+    ->                                   newPhone VARCHAR(30))
+    -> BEGIN
+    ->     UPDATE publisher 
+    ->     SET publisher_name = newName,
+    ->         phone = newPhone 
+    ->     WHERE publisher_ID = p_ID;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS delete_publisher;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE delete_publisher(p_ID INT(11))
+    -> BEGIN
+    ->     DELETE
+    ->     FROM publisher 
+    ->     WHERE publisher_ID = p_ID;
+    -> END//
+DROP PROCEDURE IF EXISTS create_new_book;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS create_new_book;
+                     title,
+Query OK, 0 rows affected (0.00 sec)                     price,
+
+
+                     stock,
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE create_new_book(newISBN CHAR(13),
+    ->                                  newTitle VARCHAR(50),
+    ->                                  newPrice DECIMAL(10,2),
+    ->                                  newStock INT(11),
+    ->                                  newPub INT(11),
+    ->                                  newPubDate DATE)
+    -> BEGIN
+    ->     INSERT INTO book(ISBN,
+    ->                      title,
+    ->                      price,
+    ->                      stock,
+    ->                      publisher_id,
+    ->                      date_published)
+    ->     VALUES(newISBN,
+    ->            newTitle,
+    ->            newPrice,
+    ->            newStock,
+    ->            newPub,
+    ->            newPubDate);
+    -> END//
+                             newPubDate DATE)
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL create_new_book("9780000000000", "New Book", 7.99, 22, 7, "2015-04-27");
+        price = newPrice,
+        stock = newStock,
+        publisher_ID = newPub,
+        date_published = newPubDate 
+Query OK, 1 row affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS view_book;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE view_book(b_ISBN CHAR(13))
+    -> BEGIN
+    ->         SELECT *
+    ->         FROM book 
+    ->         WHERE ISBN = b_ISBN;        
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL view_book("9780000000000");
+DELIMITER ;
++---------------+----------+-------+-------+--------------+----------------+
+| ISBN          | title    | price | stock | publisher_ID | date_published |
++---------------+----------+-------+-------+--------------+----------------+
+| 9780000000000 | New Book |  7.99 |    22 |            7 | 2015-04-27     |
++---------------+----------+-------+-------+--------------+----------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS update_book;
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE update_book(b_ISBN CHAR(13),
+CREATE PROCEDURE delete_book(b_ISBN CHAR(13))
+    ->                              newTitle VARCHAR(50),
+    ->                              newPrice DECIMAL(10,2),
+    ->                              newStock INT(11),
+    ->                              newPub INT(11),
+    ->                              newPubDate DATE)
+    ->                                     
+    -> BEGIN
+    ->     UPDATE book 
+
+
+    ->     SET title = newTitle,
+    ->         price = newPrice,
+    ->         stock = newStock,
+BEGIN
+    ->         publisher_ID = newPub,
+    ->         date_published = newPubDate 
+    ->     WHERE ISBN = b_ISBN;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL update_book("9780000000000", "New Name", 15.00, 35, 7, "2015-04-27");
+    DECLARE n INT DEFAULT 0;
+    DECLARE i INT DEFAULT 0;
+    DECLARE this_stock INT DEFAULT 0;
+    DECLARE this_quant INT DEFAULT 0;
+    DECLARE this_ISBN CHAR(13);
+    
+    SET autocommit=0;
+    START TRANSACTION;
+    
+    DROP TEMPORARY TABLE IF EXISTS ship_table;
+    CREATE TEMPORARY TABLE ship_table(
+        orderID int,
+        ISBN char(13),
+        quantity int,
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CALL view_book("9780000000000");
+    FROM orders JOIN (SELECT orderID, ISBN, quantity
+                      FROM contains
++---------------+----------+-------+-------+--------------+----------------+
+| ISBN          | title    | price | stock | publisher_ID | date_published |
++---------------+----------+-------+-------+--------------+----------------+
+| 9780000000000 | New Name | 15.00 |    35 |            7 | 2015-04-27     |
++---------------+----------+-------+-------+--------------+----------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS delete_book;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE delete_book(b_ISBN CHAR(13))
+    -> BEGIN
+    ->     DELETE
+    ->     FROM book 
+    ->     WHERE ISBN = b_ISBN;        
+    -> END//
+      SELECT stock FROM ship_table LIMIT i,1 INTO this_stock;
+      SELECT quantity FROM ship_table LIMIT i,1 INTO this_quant;
+      SET shippable =
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL delete_book("9780000000000");
+      SET i = i + 1;
+    END WHILE;
+
+    UPDATE orders
+    SET status =
+Query OK, 1 row affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS view_inventory;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE view_inventory()
+    -> BEGIN
+    ->         SELECT ISBN, title, stock
+    ->         FROM book;
+    -> END//
+    WHERE orderID = o_ID;
+    
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL view_inventory();
+    
+    WHILE i<n DO
++---------------+---------------------------------+-------+
+| ISBN          | title                           | stock |
++---------------+---------------------------------+-------+
+| 9021347257444 | Shall We Tell the President?    |    50 |
+| 9044515704729 | Into the Wild                   |     8 |
+| 9085864929874 | Death on the Nile               |     6 |
+| 9147240725544 | King John                       |    25 |
+| 9162661479765 | Memory Man                      |     9 |
+| 9166397962071 | Solitude Creek                  |    18 |
+| 9185093299212 | Ulysses                         |     8 |
+| 9208898835171 | Nothing Lasts Forever           |    29 |
+| 9223796950134 | Pericles                        |     7 |
+| 9238871539340 | Backfire                        |    16 |
+| 9260751734932 | Mornings on Horseback           |    11 |
+| 9261003075663 | Cleopatra: A Life               |    37 |
+| 9270568133017 | Insomnia                        |    44 |
+| 9284877555107 | The Girl on the Train           |    54 |
+| 9311839942262 | Cat Among the Pigeons           |    12 |
+| 9349669287042 | If Tomorrow Comes               |    50 |
+| 9362978271314 | Three Act Tragedy               |    30 |
+| 9372526184495 | Rajinikanth: The Hero           |    10 |
+| 9407655827345 | Rage of Angels                  |     5 |
+| 9452425951010 | As You Like It                  |    40 |
+| 9458869679573 | Ages Of Man                     |    10 |
+| 9476341903038 | Parting the Waters              |     4 |
+| 9566508823158 | Tell Me Your Dreams             |    29 |
+| 9583020150600 | To The Mafia With Love          |     6 |
+| 9604723036705 | Julius Caesar                   |    16 |
+| 9661783446324 | The Taming of the Shrew         |    40 |
+| 9673635029547 | Affairs Of State                |    15 |
+| 9677171884010 | Garden of Lies                  |    14 |
+| 9684233791334 | Catch22                         |    13 |
+| 9694409545011 | Einstein: His Life and Universe |     3 |
+| 9694423469346 | The Merchant of Venice          |    11 |
+| 9702165597554 | The Big Four                    |    33 |
+| 9719858962028 | The Grapes of Wrath             |    35 |
+| 9734162727340 | The Very Hungry Caterpillar     |     7 |
+| 9745836073931 | The Clocks                      |     7 |
+| 9764757310788 | The Great Gatsby                |    46 |
+| 9774528542643 | One Two Buckle My Shoe          |     6 |
+| 9804578885525 | Revival                         |   775 |
+| 9820516336637 | All the Light We Cannot See     |    63 |
+| 9843468714365 | Goodnight Moon                  |    51 |
+| 9846843928944 | The Secret of the Tower         |    70 |
+| 9861881295838 | Curtain                         |     5 |
+| 9886164179740 | Cards on the Table              |    20 |
+| 9926378019982 | A Stranger in the Mirror        |     5 |
+| 9940203488478 | Lisey Story                     |    40 |
+| 9956888108985 | Kane and Abel                   |    24 |
+| 9963872990443 | Destination Unknown             |    28 |
+| 9977624138210 | Desperation                     |    10 |
+        SELECT ISBN FROM ship_table LIMIT i,1 INTO this_ISBN;
+| 9993553536395 | green mile                      |     9 |
+| 9994648981234 | Gathering Prey                  |    21 |
++---------------+---------------------------------+-------+
+50 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS create_new_order;
+        SET stock = 
+            IF(
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE create_new_order (o_ID INT(11),
+    ->                                    pt VARCHAR(45), 
+    ->                                    cn CHAR(16),
+    ->                                    c_ID INT(11))
+    -> BEGIN
+    -> INSERT INTO orders(orderID, 
+    ->                    payment_type,
+    ->                    card_number,
+    ->                    date,
+    ->                    status,
+    ->                    customerID)
+    -> VALUES(o_ID, pt, cn, CURDATE(), "pending", c_ID);
+    -> END//
+    COMMIT;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS add_ordered_books;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE add_ordered_books (o_ID INT(11),
+    ->                                     i CHAR(13),
+    ->                                     qu INT(11))
+    -> BEGIN
+CALL add_ordered_books(101, "9764757310788", 1);
+CALL ship_order(101);
+
+    -> INSERT INTO contains(orderID, ISBN, quantity)
+    -> VALUES(o_ID, i, qu);
+
+    -> END//
+FROM book
+WHERE ISBN = "9583020150600" OR ISBN = "9764757310788";
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+DROP PROCEDURE IF EXISTS track_order_by_customer;
+mysql> 
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS ship_order;
+    SELECT orderID, date, status
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE ship_order (o_ID INT(11))
+CALL track_order_by_customer(32);
+    -> BEGIN
+    ->     DECLARE shippable CHAR(0);
+    ->     DECLARE has_shipped CHAR(0);
+    ->     DECLARE n INT DEFAULT 0;
+    ->     DECLARE i INT DEFAULT 0;
+    ->     DECLARE this_stock INT DEFAULT 0;
+    ->     DECLARE this_quant INT DEFAULT 0;
+    ->     DECLARE this_ISBN CHAR(13);
+    ->     
+    ->     SET autocommit=0;
+    ->     START TRANSACTION;
+    ->     
+      FROM author
+      WHERE author_fname = "Stephen" AND author_lname = "King") AS SK
+    ->     DROP TEMPORARY TABLE IF EXISTS ship_table;
+    ->     CREATE TEMPORARY TABLE ship_table(
+    ->         orderID int,
+    ->         ISBN char(13),
+    ->         quantity int,
+    ->         stock int
+DROP PROCEDURE IF EXISTS very_active_customers;
+
+    ->     );
+    ->     INSERT INTO ship_table (orderID, ISBN, quantity, stock)
+    ->     SELECT orderID, ISBN, quantity, stock
+    ->     FROM orders JOIN (SELECT orderID, ISBN, quantity
+    ->                       FROM contains
+    ->                       WHERE orderID = o_ID) AS order_to_update USING (orderID)
+    ->                 JOIN (SELECT ISBN, stock
+    ->                       FROM book) AS book_to_update USING (ISBN);
+    ->     
+    ->     SELECT COUNT(*)
+    ->     FROM ship_table
+    ->     INTO n;
+    ->     
+    ->     SET i=0;
+    ->     SET shippable = '';
+    ->     SET has_shipped =
+    ->         IF (((SELECT status FROM orders WHERE orderID = o_ID) = 'shipped'),
+    ->             '',
+    ->             NULL
+    ->         );
+    ->         
+    ->     WHILE i<n DO
+    ->       SELECT stock FROM ship_table LIMIT i,1 INTO this_stock;
+    ->       SELECT quantity FROM ship_table LIMIT i,1 INTO this_quant;
+    ->       SET shippable =
+    ->         IF(
+    ->             (has_shipped IS NOT NULL OR this_stock < this_quant),
+    ->             NULL,
+    ->             shippable
+    ->         );
+    ->       SET i = i + 1;
+    ->     END WHILE;
+    -> 
+    ->     UPDATE orders
+    ->     SET status =
+    ->         IF(
+    ->             (shippable IS NOT NULL),
+    ->             "shipped",
+    ->             status
+    ->         )
+    ->     WHERE orderID = o_ID;
+    ->     
+    ->     SET i=0;
+    ->     
+    ->     WHILE i<n DO
+    ->         SELECT ISBN FROM ship_table LIMIT i,1 INTO this_ISBN;
+    ->         SELECT quantity FROM ship_table LIMIT i,1 INTO this_quant;
+    ->         UPDATE book
+    ->         SET stock = 
+    ->             IF(
+    ->                 (shippable IS NOT NULL),
+    ->                 stock - this_quant,
+    ->                 stock
+    ->             )
+    ->         WHERE ISBN = this_ISBN;
+    ->         SET i = i + 1;
+    ->     END WHILE;
+    ->     DROP TEMPORARY TABLE IF EXISTS ship_table;
+    ->     COMMIT;
+    ->     SET autocommit=1;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> SELECT ISBN, title, stock
+    -> FROM book
+    -> WHERE ISBN = "9583020150600" OR ISBN = "9764757310788";
++---------------+------------------------+-------+
+| ISBN          | title                  | stock |
++---------------+------------------------+-------+
+| 9583020150600 | To The Mafia With Love |     6 |
+| 9764757310788 | The Great Gatsby       |    46 |
++---------------+------------------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> CALL create_new_order(101, "AMERICAN EXPRESS", "1234567890123456", 42);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CALL add_ordered_books(101, "9583020150600", 3);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CALL add_ordered_books(101, "9764757310788", 1);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> CALL ship_order(101);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> SELECT * 
+    -> FROM orders 
+    -> WHERE orderID = 101;
++---------+------------------+------------------+------------+---------+------------+
+| orderID | payment_type     | card_number      | date       | status  | customerID |
++---------+------------------+------------------+------------+---------+------------+
+|     101 | AMERICAN EXPRESS | 1234567890123456 | 2015-04-27 | shipped |         42 |
++---------+------------------+------------------+------------+---------+------------+
+1 row in set (0.00 sec)
+
+mysql> 
+ mysql> SELECT ISBN, title, stock
+    -> FROM book
+    -> WHERE ISBN = "9583020150600" OR ISBN = "9764757310788";
++---------------+------------------------+-------+
+| ISBN          | title                  | stock |
++---------------+------------------------+-------+
+| 9583020150600 | To The Mafia With Love |     3 |
+| 9764757310788 | The Great Gatsby       |    45 |
++---------------+------------------------+-------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS track_order_by_customer;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE track_order_by_customer (c_ID INT(11))
+     -> BEGIN
+    ->     SELECT orderID, date, status
+    ->     FROM orders
+    ->     WHERE customerID = c_ID
+    ->     ORDER BY date DESC;
+I    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL track_order_by_customer(32);
++---------+------------+---------+
+| orderID | date       | status  |
++---------+------------+---------+
+|      57 | 2013-05-16 | shipped |
+|      72 | 2012-05-16 | shipped |
+|      69 | 2011-05-16 | shipped |
++---------+------------+---------+
+3 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+ mysql> DROP PROCEDURE IF EXISTS search_book;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE search_book(search VARCHAR(50))
+    -> BEGIN
+    ->     Select ISBN,
+    ->            title,
+    ->            IF ((stock > 0),
+    ->                "in stock",
+    ->                "out of stock") AS available
+    ->     FROM book
+    ->     WHERE ISBN LIKE CONCAT("%", search, "%") OR
+    ->           title LIKE CONCAT("%", search, "%") OR
+    ->           ISBN IN (SELECT ISBN
+    ->                    FROM wrote
+    ->                    WHERE authorID IN (SELECT authorID
+    ->                                       FROM author
+    ->                                       WHERE author_fname LIKE CONCAT("%", search, "%") OR
+    ->                                             author_lname LIKE CONCAT("%", search, "%") OR
+    ->                                             search LIKE CONCAT("%", author_lname, "%") OR
+    ->                                             search LIKE CONCAT("%", author_fname, "%")));
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+Amysql> CALL search_book("stephen king");
++---------------+---------------------------------+-----------+
+| ISBN          | title                           | available |
++---------------+---------------------------------+-----------+
+| 9021347257444 | Shall We Tell the President?    | in stock  |
+| 9208898835171 | Nothing Lasts Forever           | in stock  |
+| 9261003075663 | Cleopatra: A Life               | in stock  |
+| 9270568133017 | Insomnia                        | in stock  |
+| 9673635029547 | Affairs Of State                | in stock  |
+| 9694409545011 | Einstein: His Life and Universe | in stock  |
+| 9804578885525 | Revival                         | in stock  |
+| 9926378019982 | A Stranger in the Mirror        | in stock  |
+| 9940203488478 | Lisey Story                     | in stock  |
+| 9993553536395 | green mile                      | in stock  |
++---------------+---------------------------------+-----------+
+10 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT author_fname, author_lname, title
+    -> FROM (SELECT author_fname, author_lname, authorID
+    ->       FROM author
+    ->       WHERE author_fname = "Stephen" AND author_lname = "King") AS SK
+    -> JOIN  wrote USING (authorID)
+    -> JOIN  book USING (ISBN);
++--------------+--------------+---------------------------------+
+| author_fname | author_lname | title                           |
++--------------+--------------+---------------------------------+
+| Stephen      | King         | Shall We Tell the President?    |
+| Stephen      | King         | Nothing Lasts Forever           |
+| Stephen      | King         | Cleopatra: A Life               |
+| Stephen      | King         | Insomnia                        |
+| Stephen      | King         | Affairs Of State                |
+| Stephen      | King         | Einstein: His Life and Universe |
+| Stephen      | King         | Revival                         |
+| Stephen      | King         | A Stranger in the Mirror        |
+| Stephen      | King         | Lisey Story                     |
+| Stephen      | King         | green mile                      |
++--------------+--------------+---------------------------------+
+10 rows in set (0.00 sec)
+
+mysql> CALL search_book("KING");
++---------------+---------------------------------+-----------+
+| ISBN          | title                           | available |
++---------------+---------------------------------+-----------+
+| 9021347257444 | Shall We Tell the President?    | in stock  |
+| 9147240725544 | King John                       | in stock  |
+| 9208898835171 | Nothing Lasts Forever           | in stock  |
+| 9261003075663 | Cleopatra: A Life               | in stock  |
+| 9270568133017 | Insomnia                        | in stock  |
+| 9673635029547 | Affairs Of State                | in stock  |
+| 9694409545011 | Einstein: His Life and Universe | in stock  |
+| 9804578885525 | Revival                         | in stock  |
+| 9926378019982 | A Stranger in the Mirror        | in stock  |
+| 9940203488478 | Lisey Story                     | in stock  |
+| 9993553536395 | green mile                      | in stock  |
++---------------+---------------------------------+-----------+
+11 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CALL search_book("9583020150600");
++---------------+------------------------+-----------+
+| ISBN          | title                  | available |
++---------------+------------------------+-----------+
+| 9583020150600 | To The Mafia With Love | in stock  |
++---------------+------------------------+-----------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS books_at_reorder;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE books_at_reorder()
+    -> BEGIN
+    ->     SELECT ISBN, title, stock
+    ->     FROM book
+    ->     WHERE stock <= 10;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+tmysql> 
+omysql> CALL books_at_reorder();
++---------------+---------------------------------+-------+
+| ISBN          | title                           | stock |
++---------------+---------------------------------+-------+
+| 9044515704729 | Into the Wild                   |     8 |
+| 9085864929874 | Death on the Nile               |     6 |
+| 9162661479765 | Memory Man                      |     9 |
+| 9185093299212 | Ulysses                         |     8 |
+| 9223796950134 | Pericles                        |     7 |
+| 9372526184495 | Rajinikanth: The Hero           |    10 |
+| 9407655827345 | Rage of Angels                  |     5 |
+| 9458869679573 | Ages Of Man                     |    10 |
+| 9476341903038 | Parting the Waters              |     4 |
+| 9583020150600 | To The Mafia With Love          |     3 |
+| 9694409545011 | Einstein: His Life and Universe |     3 |
+| 9734162727340 | The Very Hungry Caterpillar     |     7 |
+| 9745836073931 | The Clocks                      |     7 |
+| 9774528542643 | One Two Buckle My Shoe          |     6 |
+| 9861881295838 | Curtain                         |     5 |
+| 9926378019982 | A Stranger in the Mirror        |     5 |
+| 9977624138210 | Desperation                     |    10 |
+| 9993553536395 | green mile                      |     9 |
++---------------+---------------------------------+-------+
+18 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+Tmysql> DROP PROCEDURE IF EXISTS very_active_customers;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+ mysql> DELIMITER //
+mysql> CREATE PROCEDURE very_active_customers(starting_day DATE,
+    ->                                        time_period INT(11))
+    -> BEGIN
+    -> 
+c    -> SELECT fname, lname
+    -> FROM customer
+    -> WHERE (customerID) IN (SELECT customerID
+    ->                        FROM(SELECT customerID, SUM(quantity*price) AS total_spent, AVG(price), SUM(quantity*price)/AVG(price)+SUM(quanti ty) AS activity_value
+    ->                             FROM ((orders JOIN contains USING(orderID)) JOIN book USING (ISBN))
+    ->                             WHERE date BETWEEN starting_day - INTERVAL time_period DAY AND starting_day
+    ->                             GROUP BY customerID
+    ->                             HAVING activity_value>20)AS table2);
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+Emysql> CALL very_active_customers(CURDATE(), 30);
++--------+-------------+
+| fname  | lname       |
++--------+-------------+
+| Allene | Iturbide    |
+| Marino | Lueckenbach |
+| Twana  | Felger      |
+| Johann | Leinenbach  |
+| Roxane | Campain     |
+| John   | Abdallah    |
+| Cyndy  | Goldammer   |
+| Sunny  | Kownacki    |
+| Tresa  | Sweely      |
+| Daniel | Perruzza    |
++--------+-------------+
+10 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+rmysql> DROP PROCEDURE IF EXISTS inactive_customers;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+cmysql> DELIMITER //
+mysql> CREATE PROCEDURE inactive_customers(from_day DATE,
+    ->                                     time_period INT(11))
+    -> BEGIN
+    -> SELECT fname, lname
+    -> FROM customer
+    -> WHERE (customerID) IN (SELECT customerID
+    ->                        FROM (SELECT customerID, SUM(quantity*price) AS total_spent, AVG(price), SUM(quantity*price)/AVG(price)+SUM(quant ity) AS activity_value
+    ->                              FROM ((orders JOIN contains USING(orderID)) JOIN book USING (ISBN))
+    ->                              WHERE date BETWEEN from_day - INTERVAL time_period DAY AND from_day
+    ->                              GROUP BY customerID
+    ->                              HAVING activity_value<5)AS table2);
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+ mysql> CALL inactive_customers(CURDATE(), 180);
++---------+--------+
+| fname   | lname  |
++---------+--------+
+| Rebecka | Gesick |
++---------+--------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+ mysql> DROP VIEW IF EXISTS book_order_quantities;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW book_order_quantities AS(
+    ->     SELECT ISBN, SUM(quantity) AS total_quantity
+    ->     FROM contains
+    ->     GROUP BY ISBN);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>     
+mysql> 
+
+mysql> DROP PROCEDURE IF EXISTS not_selling_well;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+Emysql> DELIMITER //
+mysql> CREATE PROCEDURE not_selling_well()
+    -> BEGIN
+    ->     SELECT DISTINCT ISBN, title, SUM(quantity)
+    ->     FROM contains JOIN (SELECT ISBN, title FROM book) AS temp_book USING (ISBN)
+    ->     WHERE ISBN NOT IN (SELECT ISBN
+    ->                        FROM book
+    ->                        WHERE date_published BETWEEN CURDATE() -
+    ->                                             INTERVAL 180 DAY AND CURDATE())
+    ->     GROUP BY ISBN
+    ->     HAVING (SUM(quantity) * 2) < (SELECT AVG(total_quantity)
+    ->                                   FROM book_order_quantities);
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL not_selling_well();
++---------------+------------------------+---------------+
+| ISBN          | title                  | SUM(quantity) |
++---------------+------------------------+---------------+
+| 9085864929874 | Death on the Nile      |            10 |
+| 9166397962071 | Solitude Creek         |            12 |
+| 9208898835171 | Nothing Lasts Forever  |            12 |
+| 9223796950134 | Pericles               |             9 |
+| 9311839942262 | Cat Among the Pigeons  |             9 |
+| 9372526184495 | Rajinikanth: The Hero  |            11 |
+| 9407655827345 | Rage of Angels         |            10 |
+| 9452425951010 | As You Like It         |             9 |
+| 9476341903038 | Parting the Waters     |             9 |
+| 9566508823158 | Tell Me Your Dreams    |             4 |
+| 9604723036705 | Julius Caesar          |            12 |
+| 9673635029547 | Affairs Of State       |             8 |
+| 9677171884010 | Garden of Lies         |            12 |
+| 9774528542643 | One Two Buckle My Shoe |             7 |
+| 9843468714365 | Goodnight Moon         |             9 |
+| 9886164179740 | Cards on the Table     |            10 |
+| 9956888108985 | Kane and Abel          |            12 |
++---------------+------------------------+---------------+
+17 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS priced_too_high;
+_password");
+
+SELECT lname, fname, pass
+FRQuery OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE priced_too_high()
+    -> BEGIN
+    ->     SELECT ISBN, title, price
+    ->     FROM book
+    ->     WHERE price > (SELECT AVG(price) FROM book) AND
+    ->     date_published NOT BETWEEN CURDATE() - INTERVAL 180 DAY AND CURDATE() AND
+    ->     ISBN IN (SELECT ISBN
+    ->              FROM contains
+    ->              GROUP BY ISBN
+    ->              HAVING (SUM(quantity) * 2) < (SELECT AVG(total_quantity)
+    ->                                            FROM book_order_quantities));
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL priced_too_high();
++---------------+-----------------------+-------+
+| ISBN          | title                 | price |
++---------------+-----------------------+-------+
+| 9166397962071 | Solitude Creek        | 38.20 |
+| 9208898835171 | Nothing Lasts Forever | 35.50 |
+| 9223796950134 | Pericles              | 47.60 |
+| 9476341903038 | Parting the Waters    | 47.60 |
+| 9604723036705 | Julius Caesar         | 34.80 |
+| 9677171884010 | Garden of Lies        | 36.00 |
+| 9956888108985 | Kane and Abel         | 35.90 |
++---------------+-----------------------+-------+
+7 rows in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> DROP VIEW IF EXISTS book_orders_last_month;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW book_orders_last_month AS(
+    ->     SELECT ISBN, SUM(quantity) AS total_quantity
+    ->     FROM contains JOIN orders USING(orderID)
+    ->     WHERE date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE()
+    ->     GROUP BY ISBN);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP VIEW IF EXISTS best_sellers;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW best_sellers AS (
+    ->     SELECT ISBN
+    ->     FROM book_orders_last_month
+    ->     ORDER BY total_quantity DESC
+    ->     LIMIT 10);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS list_best_sellers;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE list_best_sellers()
+    -> BEGIN
+    ->     SELECT title
+    ->     FROM book
+    ->     WHERE ISBN IN (SELECT ISBN
+    ->                    FROM best_sellers);
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL list_best_sellers();
++-----------------------------+
+| title                       |
++-----------------------------+
+| Into the Wild               |
+| Ulysses                     |
+| The Girl on the Train       |
+| Three Act Tragedy           |
+| Ages Of Man                 |
+| The Very Hungry Caterpillar |
+| The Great Gatsby            |
+| The Secret of the Tower     |
+| A Stranger in the Mirror    |
+| Gathering Prey              |
++-----------------------------+
+10 rows in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> DROP VIEW IF EXISTS customer_orders;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW customer_orders AS (
+    ->     SELECT orderID
+    ->     FROM orders
+    ->     WHERE customerID = 32);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>     
+mysql> DROP VIEW IF EXISTS customer_books;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW customer_books AS (
+    ->     SELECT ISBN
+    ->     FROM book
+    ->     WHERE ISBN IN (SELECT ISBN
+    ->                    FROM contains
+    ->                    WHERE orderID IN (SELECT orderID
+    ->                                      FROM customer_orders)));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>                    
+mysql> DROP VIEW IF EXISTS customer_genres;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW customer_genres AS (
+    ->     SELECT DISTINCT genrename
+    ->     FROM `in`
+    ->     WHERE ISBN IN (SELECT ISBN
+    ->                    FROM customer_books));
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS customer_suggestions;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE customer_suggestions()
+    -> BEGIN
+    ->     SELECT title 
+    ->     FROM book  
+    ->     WHERE ISBN IN (SELECT ISBN 
+    ->                    FROM `in` 
+    ->                    WHERE genrename IN (SELECT genrename
+    ->                                        FROM customer_genres))
+    ->     AND   ISBN IN (SELECT ISBN
+    ->                    FROM best_sellers)
+    ->     AND   ISBN NOT IN (SELECT ISBN
+    ->                        FROM customer_books);
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> SELECT genrename FROM customer_genres;
++----------------------+
+| genrename            |
++----------------------+
+| Action and Adventure |
+| Art                  |
+| Drama                |
+| Mystery              |
+| Poetry               |
+| Romance              |
++----------------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT title
+    -> FROM book
+    -> WHERE ISBN IN (SELECT ISBN FROM customer_books);
++-----------------------------+
+| title                       |
++-----------------------------+
+| The Girl on the Train       |
+| Three Act Tragedy           |
+| All the Light We Cannot See |
++-----------------------------+
+3 rows in set (0.00 sec)
+
+mysql> CALL customer_suggestions();
++-----------------------------+
+| title                       |
++-----------------------------+
+| Into the Wild               |
+| The Very Hungry Caterpillar |
+| The Great Gatsby            |
+| The Secret of the Tower     |
+| A Stranger in the Mirror    |
+| Gathering Prey              |
++-----------------------------+
+6 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP VIEW IF EXISTS customers_owning;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE VIEW customers_owning AS(
+    ->     SELECT ISBN, COUNT(DISTINCT customerID) AS owners
+    ->     FROM contains JOIN orders USING (orderID)
+    ->     GROUP BY ISBN);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql>     
+mysql> DROP VIEW IF EXISTS busy_authors;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> CREATE VIEW busy_authors AS(
+    ->     SELECT authorID, COUNT(DISTINCT ISBN) AS num_written
+    ->     FROM wrote
+    ->     GROUP BY authorID
+    ->     HAVING num_written >= 5);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql>     
+mysql> DROP PROCEDURE IF EXISTS list_prolific_authors;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE list_prolific_authors()
+    -> BEGIN
+    ->     SELECT author_lname, author_fname
+    ->     FROM author
+    ->     WHERE authorID IN (SELECT authorID
+    ->                        FROM busy_authors)
+    ->     AND   authorID IN (SELECT authorID
+    ->                        FROM wrote
+    ->                        WHERE ISBN IN (SELECT ISBN
+    ->                                       FROM customers_owning
+    ->                                       WHERE owners >= (SELECT COUNT(*) FROM customer) *.15));
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL list_prolific_authors();
++--------------+--------------+
+| author_lname | author_fname |
++--------------+--------------+
+| King         | Stephen      |
+| Garten       | Ina          |
+| Twain        | Mark         |
+| Dickens      | Charles      |
+| Shakespeare  | William      |
+| Brett        | Peter        |
+| Stockett     | Kathryn      |
++--------------+--------------+
+7 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> DROP TRIGGER IF EXISTS before_insert_customer;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE TRIGGER before_insert_customer
+    -> BEFORE INSERT ON customer 
+    -> FOR EACH ROW
+    -> SET NEW.pass = CONCAT(NEW.fname, NEW.lname);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS reset_passwords;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE reset_passwords()
+    -> BEGIN
+    ->     UPDATE customer
+    ->     SET pass = CONCAT(fname, lname);
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> CALL reset_passwords();
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> DROP PROCEDURE IF EXISTS change_password;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER //
+mysql> CREATE PROCEDURE change_password(c_ID INT(11), p VARCHAR(45))
+    -> BEGIN
+    ->     UPDATE customer
+    ->     SET pass = p
+    ->     WHERE customerID = c_ID;
+    -> END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELIMITER ;
+mysql> 
+mysql> SELECT lname, fname, pass
+    -> FROM customer
+    -> WHERE customerID = 32;
++-------+-------+----------+
+| lname | fname | pass     |
++-------+-------+----------+
+| Kampa | Ray   | RayKampa |
++-------+-------+----------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> CALL change_password(32, "new_password");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> 
+mysql> SELECT lname, fname, pass
+    -> FROM customer
+    -> WHERE customerID = 32;
++-------+-------+--------------+
+| lname | fname | pass         |
++-------+-------+--------------+
+| Kampa | Ray   | new_password |
++-------+-------+--------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> DELETE FROM publisher;
+Query OK, 10 rows affected (0.00 sec)
+
+mysql> LOAD DATA LOCAL INFILE "/home/dittma75/publisher.txt"
+    -> INTO TABLE publisher
+    -> FIELDS TERMINATED BY ','
+    -> LINES TERMINATED BY '\n';
+Query OK, 10 rows affected (0.00 sec)
+Records: 10  Deleted: 0  Skipped: 0  Warnings: 0
+
+mysql> exit
+Bye
+]0;dittma75@elvis:db[dittma75@elvis db]$ exit
+Script done on Mon 27 Apr 2015 03:48:03 PM EDT

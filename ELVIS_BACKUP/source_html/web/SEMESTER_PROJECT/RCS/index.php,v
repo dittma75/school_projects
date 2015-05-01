@@ -1,0 +1,1053 @@
+head	1.18;
+access;
+symbols;
+locks
+	dittma75:1.18; strict;
+comment	@# @;
+
+
+1.18
+date	2014.05.07.05.08.57;	author dittma75;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2014.05.07.04.38.39;	author dittma75;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2014.05.07.04.17.34;	author dittma75;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2014.05.07.02.48.14;	author dittma75;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2014.05.06.21.30.18;	author dittma75;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2014.05.06.20.40.33;	author dittma75;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2014.05.06.07.04.24;	author dittma75;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2014.05.06.05.47.37;	author dittma75;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2014.05.06.05.30.06;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.05.05.21.51.11;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.05.05.21.37.42;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.05.05.21.08.23;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.05.05.15.00.08;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.05.05.03.29.02;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.04.17.43.57;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.05.02.22.43.47;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.05.02.02.31.06;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.04.17.14.27.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of index page.
+@
+
+
+1.18
+log
+@Final commit.  Added headers.
+@
+text
+@<!--Kevin Dittmar and Anthony Ratliff
+    6 May 2014
+    The main page of the website.  Accepts all user input and
+    displays reviews, recommendations, and other information.
+    This PHP file gets all of that data from the Perl scripts,
+    which are called by this file. 
+-->
+
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+
+<head>
+    <script type="text/javascript"
+          src="http://code.jquery.com/jquery-1.9.0.min.js"> </script>
+    <script type="text/javascript" src="reviews.js"> </script>
+    <link rel="stylesheet" href="reviews.css" />
+    <link rel="stylesheet" href="webline.css" />
+    <link rel="stylesheet" href="index.css" />
+    <title>Game Recommendation Interface</title>
+    <meta name="Author" content="Kevin Dittmar" />
+    <meta name="Author" content="Anthony Ratliff" />
+    <meta name="generator" content="vi" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body onload="initialize();">
+    <?php
+        //Make sure we are not resetting the session.
+        if (session_id() == '') {
+            session_start();
+        }
+        //This first block is for storing the searched games during a session
+        if(isset($_GET['URL']))//Make sure there is a GET parameter
+        {
+            //A search has already been done.
+            if(isset($_SESSION['searchHistory'])) {
+                $newSearchArray =  $_SESSION['searchHistory'];
+                $newgameArray = $_SESSION['gamenameHistory'];
+            }
+            $newSearch = $_GET['URL'];
+            $newgame = $_GET['gamename'];
+            //If no search has been done, create a new array and store it.
+            if(empty($newSearchArray)) {
+                $newSearchArray = array($newSearch);
+                $_SESSION['searchHistory'] = $newSearchArray;
+                $newgameArray = array($newgame);
+                $_SESSION['gamenameHistory'] = $newgameArray;
+            }
+            //Check to see that less than 5 searches have been done.
+            elseif(!array_key_exists(4,$newSearchArray)) {
+                for($i = 0; $i<=4; $i++) {
+                    //If we find an empty place, push the value onto the array.
+                    if(!array_key_exists($i,$newSearchArray)) {
+                        array_push($newSearchArray,$newSearch);
+                        $_SESSION['searchHistory'] = $newSearchArray;
+                        array_push($newgameArray,$newgame);
+                        $_SESSION['gamenameHistory'] = $newgameArray;
+                        break;
+                    }
+                    //If we find a duplicate, break.
+                    if($newSearchArray[$i] == $newSearch) {
+                        break;
+                    }
+                }
+            }
+            //We know that 5 searches have been done.
+            else { 
+                $alreadyExists = False;
+                //Check to see if the game is already in the array.
+                for($i = 0; $i<=4; $i++) {
+                    if($newSearchArray[$i] == $newSearch) {
+                        $alreadyExists = True;
+                        break;
+                    }
+                }
+                //If the game is not already saved...
+                if(!$alreadyExists) {
+                    for($i = 0; $i<4; $i++) {
+                        $j = $i+1;
+                        //Shift the array contents back one.
+                        $newSearchArray[$i] = $newSearchArray[$j];
+                        $newgameArray[$i] = $newgameArray[$j];
+                    }
+                    //and set the last index to the new value.
+                    $newSearchArray[4] = $newSearch;
+                    $_SESSION['searchHistory'] =  $newSearchArray;
+                    $newgameArray[4] = $newgame;
+                    $_SESSION['gamenameHistory'] = $newgameArray;
+                }
+            }
+        }
+
+        //Print the recent searches in a table
+        if(isset($_SESSION['searchHistory'])) {
+            echo '<div id="recentsearches">';
+            echo '<table>
+                  <tr><th>Recent Searches</th></tr>';
+            for($i = 0; $i<5; $i++) {
+                if(isset($_SESSION['searchHistory'][$i])) {
+                    echo '<tr>';
+                    echo '<td><a href="./index.php?URL=' . 
+                        $_SESSION['searchHistory'][$i] . '&amp;gamename=' . 
+                        $_SESSION['gamenameHistory'][$i] . '">' . 
+                        $_SESSION['gamenameHistory'][$i] .  '</a> </td>';
+                    echo '</tr>';
+                }
+            }
+            echo '</table>';
+            echo '</div>';
+        }
+    ?> 
+
+    <div id="search">
+        <a href = "./">Home</a>
+        <form action="index.php" method="get">
+            Game Name:
+            <input type="text" name="search"/>
+            <input type="submit" class="button" value="Search for Game"/>
+            <br />
+            Preferences:
+            <br />
+            <div id="preferences">
+                <input type="checkbox" name="length[]" value="longgame" class="preference"/>
+                <label>Long Games:</label>
+                <input type="checkbox" name="length[]" value="shortgame" class="preference"/>
+                <label>Short Games:</label>
+                <br /> 
+                Genre: 
+                <br />
+                <input type="checkbox" name="genre[]" value="Action" class="preference"/>
+                <label>Action</label>
+
+                <input type="checkbox" name="genre[]" value="RPG" class="preference"/>
+                <label>RPG</label>
+
+                <input type="checkbox" name="genre[]" value="FPS" class="preference"/>
+                <label>First Person Shooter</label>
+                <br/>
+
+                <input type="checkbox" name="genre[]" value="3rd-Person-Shooter" class="preference"/>
+                <label>Third Person Shooter</label>
+     
+                <input type="checkbox" name="genre[]" value="Simulation" class="preference"/>
+                <label>Simulation</label>
+                <br/>
+        
+                <input type="checkbox" name="genre[]" value="Strategy" class="preference"/>
+                <label>Strategy</label>
+        
+                <input type="checkbox" name="genre[]" value="Adventure" class="preference"/>
+                <label>Adventure</label>
+
+                <input type="checkbox" name="genre[]" value="Sports" class="preference"/>
+                <label>Sports</label>
+                <br/>
+
+                <input type="checkbox" name="genre[]" value="Platformer" class="preference"/>
+                <label>Platformer</label>
+            </div>
+        </form>
+    </div>
+    <div id="content">
+        <?php
+            //If search is set, that means that we are trying to search for a game.
+            //Bring up a list of search results from metacritic.
+            if(isset($_GET['search']))
+            {
+                echo '<h2>Please choose which game you want to see:</h2>';
+                //Make the url in form 
+                //http://www.metacritic.com/search/game/search+terms/results
+                $searchURL = str_replace(" ", "+",trim($_GET['search']));
+                $searchURL = "http://www.metacritic.com/search/game/$searchURL/results";
+                $matching_links = shell_exec("perl ./metacritic_search_parser.pl $searchURL");
+                echo $matching_links;
+            }
+        ?>
+
+        <?php
+            //If URL is set, we know what page the user wants to look at
+            if (isset($_GET['URL']) && isset($_GET['gamename'])) {
+                echo '<h1>' . $_GET['gamename'] . '</h1>';
+                //Grab the page date from Metacritic
+                //Make the url in the form 
+                //http://www.metacritic.com/game/platform/game-title
+                $metacriticURL = $_GET["URL"];
+                $metacriticURL = "http://www.metacritic.com/game/$metacriticURL";
+                $metacritic = shell_exec("perl ./metacritic_scraper.pl $metacriticURL");
+
+                //Grab the length data from gamelengths.com
+                $gamename = str_replace("%20", "+",trim($_GET['gamename']));
+                $gamename = str_replace(" ", "+",trim($_GET['gamename']));
+                $gameLengthsURL = 'http://www.gamelengths.com/sitesearch/newSearch/?gameName='. $gamename;
+                $game_lengths = shell_exec("perl ./game_lengths_search_parser.pl $gameLengthsURL $gamename");
+                echo $game_lengths;
+                echo $metacritic;
+                echo '<div id="highlyRecommended" class="recommendation">
+                        Everyone loves this game.  Go get it.  Now.
+                      </div>
+
+                      <div id="recommended" class="recommendation">
+                        This one is a solid B.
+                      </div>
+
+                      <div id="mildlyRecommended" class="recommendation">
+                        Meh.  You might like it.  Go watch a few YouTube videos
+                        and come back.
+                      </div>
+
+                      <div id="notReallyRecommended" class="recommendation">
+                        I dunno about this one.  Well, maybe if you think it
+                        looks cool...
+                      </div>
+
+                      <div id="notRecommended" class="recommendation">
+                        THIS GAME IS THE SPAWN OF SATAN!  STAY AWAY!
+                      </div>
+                      <div id ="noRecommendation" class = "recommendation">
+                        There is not enough information to make a recommendation.
+                      </div>';
+            }
+            echo '</div>';
+            require 'footer.php';
+        ?>
+    </body>
+</html>
+@
+
+
+1.17
+log
+@Added Platformer preference.
+@
+text
+@d1 8
+d157 1
+a157 1
+                </br>
+@
+
+
+1.16
+log
+@Made variable purposes clearer by improving their names.
+@
+text
+@d149 4
+@
+
+
+1.15
+log
+@Formatted PHP code structure.
+@
+text
+@d76 1
+a76 1
+                        $newgameArray[$u] = $newgameArray[$j];
+d161 4
+a164 4
+                $parameter = str_replace(" ", "+",trim($_GET['search']));
+                $parameter = "http://www.metacritic.com/search/game/$parameter/results";
+                $output = shell_exec("perl ./metacritic_search_parser.pl $parameter");
+                echo $output;
+d175 3
+a177 3
+                $parameter = $_GET["URL"];
+                $parameter = "http://www.metacritic.com/game/$parameter";
+                $metacritic = shell_exec("perl ./metacritic_scraper.pl $parameter");
+d180 4
+a183 4
+                $parameter2 = str_replace("%20", "+",trim($_GET['gamename']));
+                $parameter2 = str_replace(" ", "+",trim($_GET['gamename']));
+                $parameter = 'http://www.gamelengths.com/sitesearch/newSearch/?gameName='. $parameter2;
+                $game_lengths = shell_exec("perl ./game_lengths_search_parser.pl $parameter $parameter2");
+@
+
+
+1.14
+log
+@Fixed syntax error and formatting.
+@
+text
+@d22 2
+a23 1
+        if (session_id() == '') { //Make sure we are not resetting the session
+d112 1
+a112 1
+            <input type="submit" value="Search for Game"/>
+@
+
+
+1.13
+log
+@Formatted PHP and improved documentation.
+@
+text
+@d31 1
+a31 1
+		        $newgameArray = $_SESSION['gamenameHistory'];
+d34 1
+a34 1
+	        $newgame = $_GET['gamename'];
+d39 2
+a40 2
+		        $newgameArray = array($newgame);
+		        $_SESSION['gamenameHistory'] = $newgameArray;
+d49 2
+a50 2
+				        array_push($newgameArray,$newgame);
+				        $_SESSION['gamenameHistory'] = $newgameArray;
+d80 2
+a81 2
+			        $newgameArray[4] = $newgame;
+			        $_SESSION['gamenameHistory'] = $newgameArray;
+d93 1
+a93 1
+        	        echo '<tr>';
+d102 2
+a103 2
+		    echo '</div>';
+	    }
+d125 1
+a125 1
+		
+d133 1
+a133 1
+		        <input type="checkbox" name="genre[]" value="3rd-Person-Shooter" class="preference"/>
+d161 3
+a163 3
+        	    $parameter = "http://www.metacritic.com/search/game/$parameter/results";
+        	    $output = shell_exec("perl ./metacritic_search_parser.pl $parameter");
+        	    echo $output;
+d168 1
+a168 1
+	        //If URL is set, we know what page the user wants to look at
+d206 1
+a206 1
+                      <div id = noRecommendation" class = "recommendation">
+d210 1
+a210 1
+	        echo '</div>';
+@
+
+
+1.12
+log
+@Changed the best recommendation to be a bit more emphatic.
+@
+text
+@d21 9
+a29 8
+<?php
+if (session_id() == '') { //Make sure we are not resetting the session
+    session_start();
+}
+//This first block is for storing the searched games during a session
+if(isset($_GET['URL']))//Make sure there is a GET parameter
+{
+        if(isset($_SESSION['searchHistory'])) { //There has already been a search done before
+d31 6
+a36 5
+		$newgameArray = $_SESSION['gamenameHistory'];
+        }
+        $newSearch = $_GET['URL'];
+	$newgame = $_GET['gamename'];
+        if(empty($newSearchArray)) {//If no search has been done before, create a new array and store it
+d39 5
+a43 4
+		$newgameArray = array($newgame);
+		$_SESSION['gamenameHistory'] = $newgameArray;
+        }
+        elseif(!array_key_exists(4,$newSearchArray)) { //Check to see that less than 5 searches have been done
+d45 12
+a56 10
+                        if(!array_key_exists($i,$newSearchArray)) { //If we find an empty place, we can push the value into the array
+                                array_push($newSearchArray,$newSearch);
+                                $_SESSION['searchHistory'] = $newSearchArray;
+				array_push($newgameArray,$newgame);
+				$_SESSION['gamenameHistory'] = $newgameArray;
+                                break;
+                        }
+                        if($newSearchArray[$i] == $newSearch) { //If we find a duplicate, break
+                                break;
+                        }
+d58 3
+a60 2
+        }
+        else { //We know that 5 searches have been done
+d62 6
+a67 5
+                for($i = 0; $i<=4; $i++) { //check to see if the game is already in the array
+                        if($newSearchArray[$i] == $newSearch) {
+                                $alreadyExists = True;
+                                break;
+                        }
+d69 13
+a81 10
+                if(!$alreadyExists) { //If the game is not already saved
+                        for($i = 0; $i<4; $i++) {
+                                $j = $i+1;
+                                $newSearchArray[$i] = $newSearchArray[$j];  //Shift the array contents back one
+				$newgameArray[$u] = $newgameArray[$j];
+                        }
+                        $newSearchArray[4] = $newSearch; //and set the last index to the new value
+                        $_SESSION['searchHistory'] =  $newSearchArray;
+			$newgameArray[4] = $newgame;
+			$_SESSION['gamenameHistory'] = $newgameArray;
+d83 1
+a84 1
+}
+d86 39
+a124 39
+	//Print the recent searches in a table
+	if(isset($_SESSION['searchHistory'])) {
+	echo '<div id="recentsearches">
+		<table>
+                        <tr>
+                          <th>Recent Searches</th>
+                        </tr>';
+        	for($i = 0; $i<5; $i++) {
+        		if(isset($_SESSION['searchHistory'][$i])) {
+        			echo '<tr>';
+        			echo '<td><a href="./index.php?URL=' . $_SESSION['searchHistory'][$i] . '&amp;gamename=' 
+					. $_SESSION['gamenameHistory'][$i] . '">' . $_SESSION['gamenameHistory'][$i]  . '</a> </td>';
+        			echo '</tr>';
+        		}
+        	}
+        	echo '</table>
+		</div>';
+	}
+?> 
+
+<div id="search">
+    <a href = "./">Home</a>
+    <form action="index.php" method="get">
+	Game Name:
+	<input type="text" name="search"/>
+	<input type="submit" value="Search for Game"/>
+	<br />
+	Preferences:
+	<br />
+	<div id="preferences">
+		<input type="checkbox" name="length[]" value="longgame" class="preference"/>
+        <label>Long Games:</label>
+		<input type="checkbox" name="length[]" value="shortgame" class="preference"/>
+        <label>Short Games:</label>
+		<br /> 
+		Genre: 
+		<br />
+		<input type="checkbox" name="genre[]" value="Action" class="preference"/>
+        <label>Action</label>
+d126 6
+a131 6
+        <input type="checkbox" name="genre[]" value="RPG" class="preference"/>
+        <label>RPG</label>
+		
+        <input type="checkbox" name="genre[]" value="FPS" class="preference"/>
+        <label>First Person Shooter</label>
+        <br/>
+d133 2
+a134 2
+		<input type="checkbox" name="genre[]" value="3rd-Person-Shooter" class="preference"/>
+        <label>Third Person Shooter</label>
+d136 3
+a138 3
+		<input type="checkbox" name="genre[]" value="Simulation" class="preference"/>
+        <label>Simulation</label>
+        <br/>
+d140 2
+a141 2
+		<input type="checkbox" name="genre[]" value="Strategy" class="preference"/>
+        <label>Strategy</label>
+d143 2
+a144 22
+		<input type="checkbox" name="genre[]" value="Adventure" class="preference"/>
+        <label>Adventure</label>
+
+		<input type="checkbox" name="genre[]" value="Sports" class="preference"/>
+        <label>Sports</label>
+	</div>
+    </form>
+</div>
+<div id="content">
+    <?php
+	    //If search is set, that means that we are trying to search for a game;
+	    //Brink up a list of search results from metacritic
+	    if(isset($_GET['search']))
+	    {
+		    echo '<h2>Please choose which game you want to see:</h2>';
+		    //Make the url in form http://www.metacritic.com/search/game/search+terms/results
+            $parameter = str_replace(" ", "+",trim($_GET['search']));
+        	$parameter = "http://www.metacritic.com/search/game/$parameter/results";
+        	$output = shell_exec("perl ./metacritic_search_parser.pl $parameter");
+        	echo $output;
+	    }
+    ?>
+d146 68
+a213 51
+    <?php
+	    //test code
+	    //if(!isset($_GET['gamename'])) {
+	    //	$_GET['gamename'] = 'Dark%20Souls';
+	    //	$_GET["URL"] = 'pc/half-life-2';
+	    //}
+	
+	    //If URL is set, we know what page the user wants to look at
+        if (isset($_GET['URL']) && isset($_GET['gamename'])) {
+            echo '<h1>' . $_GET['gamename'] . '</h1>';
+	        //echo '<a href = "./">Back</a>';
+            //echo "\n<br />";
+
+	        //Grab the page date from Metacritic
+	        //Make the url in the form "http://www.metacritic.com/game/platform/game-title
+            $parameter = $_GET["URL"];
+            $parameter = "http://www.metacritic.com/game/$parameter";
+            $metacritic = shell_exec("perl ./metacritic_scraper.pl $parameter");
+            //echo $metacritic;
+
+	        //Grab the length data from gamelengths.con
+	        $parameter2 = str_replace("%20", "+",trim($_GET['gamename']));
+	        $parameter2 = str_replace(" ", "+",trim($_GET['gamename']));
+            $parameter = 'http://www.gamelengths.com/sitesearch/newSearch/?gameName='. $parameter2;
+            $game_lengths = shell_exec("perl ./game_lengths_search_parser.pl $parameter $parameter2");
+	        echo $game_lengths;
+            echo $metacritic;
+            echo '<div id="highlyRecommended" class="recommendation">
+                      Everyone loves this game.  Go get it.  Now.
+                  </div>
+
+                  <div id="recommended" class="recommendation">
+                      There is a really good chance you will like this game.
+                  </div>
+
+                  <div id="mildyRecommended" class="recommendation">
+                      You will (probably) not be disappointed in this game.
+                  </div>
+
+                  <div id="notReallyRecommended" class="recommendation">
+                      You might not like this game; be warned.
+                  </div>
+
+                  <div id="notRecommended" class="recommendation">
+                      Stay away! Nobody likes this game.
+                  </div>';
+        }
+	    echo '</div>';
+        require 'footer.php';
+    ?>
+</body>
+@
+
+
+1.11
+log
+@Added PHP end of recommendation system.
+@
+text
+@d184 1
+a184 1
+                      You will (probably) not be disappointed in this game!
+d192 1
+a192 1
+                      You might like this game.
+@
+
+
+1.10
+log
+@Fixed a lot of HTML issues and code formatting.
+@
+text
+@d119 1
+a119 1
+        <input type="checkbox" name="genre[]" value="First Person Shooter" class="preference"/>
+d123 1
+a123 1
+		<input type="checkbox" name="genre[]" value="Third Person Shooter" class="preference"/>
+d174 1
+a174 1
+            echo $metacritic;
+d182 22
+a203 24
+	    }
+    ?>
+    <div id="highlyRecommended" class="recommendation">
+        You will (probably) not be disappointed in this game!
+    </div>
+
+    <div id="recommended" class="recommendation">
+        There's a really good chance you'll like this game.
+    </div>
+
+    <div id="mildyrecommended" class="recommendation">
+        You might like this game.
+    </div>
+
+    <div id="notReallyRecommended" class="recommendation">
+        You might not like this game; be warned.
+    </div>
+
+    <div id="notRecommended" class="recommendation">
+        Stay away! Nobody likes this game.
+    </div>
+
+    <?php
+	echo '</div>';
+@
+
+
+1.9
+log
+@The footer.css include was changed to index.css.
+@
+text
+@a95 1
+<a href = "./">Home</a>
+d97 1
+d106 2
+a107 8
+		Long Games:
+		<input type="checkbox" 
+               name="length[]" 
+               value="longgame"
+               class="preference"
+               onclick="calculateRecommendation();"
+        />
+		Short Games:
+d109 1
+a112 1
+		<label>Action</label>
+d114 9
+a122 5
+        	<label>RPG</label>
+		<input type="checkbox" name="genre[]" value="RPG" class="preference"/>
+        	<label>First Person Shooter</label>
+		<input type="checkbox" name="genre[]" value="First Person Shooter" class="preference"/>
+        	<label>Third Person Shooter</label>
+d124 2
+a125 1
+        	<label>Simulation</label>
+d127 3
+a129 1
+        	<label>Strategy</label>
+d131 2
+a132 1
+        	<label>Adventure</label>
+d134 2
+a135 1
+        	<label>Sports</label>
+d137 1
+d142 8
+a149 8
+<?php
+	//If search is set, that means that we are trying to search for a game;
+	//Brink up a list of search results from metacritic
+	if(isset($_GET['search']))
+	{
+		echo '<h2>Please choose which game you want to see:</h2>';
+		//Make the url in form http://www.metacritic.com/search/game/search+terms/results
+        	$parameter = str_replace(" ", "+",trim($_GET['search']));
+d153 2
+a154 2
+	}
+?>
+d156 6
+a161 6
+     <?php
+	//test code
+	//if(!isset($_GET['gamename'])) {
+	//	$_GET['gamename'] = 'Dark%20Souls';
+	//	$_GET["URL"] = 'pc/half-life-2';
+	//}
+d163 1
+a163 1
+	//If URL is set, we know what page the user wants to look at
+d166 1
+a166 1
+	    //echo '<a href = "./">Back</a>';
+d169 2
+a170 2
+	    //Grab the page date from Metacritic
+	    //Make the url in the form "http://www.metacritic.com/game/platform/game-title
+d173 30
+a202 2
+            $output = shell_exec("perl ./metacritic_scraper.pl $parameter");
+            echo $output;
+d204 1
+a204 7
+	    //Grab the length data from gamelengths.con
+	    $parameter2 = str_replace("%20", "+",trim($_GET['gamename']));
+	    $parameter2 = str_replace(" ", "+",trim($_GET['gamename']));
+	    $parameter = 'http://www.gamelengths.com/sitesearch/newSearch/?gameName='. $parameter2;
+	    $output = shell_exec("perl ./game_lengths_search_parser.pl $parameter $parameter2");
+	    echo $output;
+	}
+@
+
+
+1.8
+log
+@Fixed the rest of the HTML validation errors.
+@
+text
+@d12 1
+@
+
+
+1.7
+log
+@Added webline and fixed LOTS of validation errors and warnings.
+@
+text
+@d11 1
+d16 1
+a16 1
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+d85 1
+a85 1
+        			echo '<td><a href="./index.php?URL=' . $_SESSION['searchHistory'][$i] . '&gamename=' 
+@
+
+
+1.6
+log
+@Further partitioned the parts of the HTML to make it easier
+to style it with CSS.
+@
+text
+@d1 18
+d93 1
+a93 5
+<script type="text/javascript"
+          src="http://code.jquery.com/jquery-1.9.0.min.js"> </script>
+<script type="text/javascript" src="reviews.js"> </script>
+<body onload="initialize();">
+   
+d98 2
+a99 2
+	<input type="text" name="search">
+	<input type="submit" value="Search for Game">
+d105 6
+a110 1
+		<input type="checkbox" name="length[]" value="longgame" class="preference">
+d112 1
+a112 1
+		<input type="checkbox" name="length[]" value="shortgame" class="preference">
+d117 1
+a117 1
+		<input type="checkbox" name="genre[]" value="Action" class="preference">
+d119 1
+a119 1
+		<input type="checkbox" name="genre[]" value="RPG" class="preference">
+d121 1
+a121 1
+		<input type="checkbox" name="genre[]" value="First Person Shooter" class="preference">
+d123 1
+a123 1
+		<input type="checkbox" name="genre[]" value="Third Person Shooter" class="preference">
+d125 1
+a125 1
+		<input type="checkbox" name="genre[]" value="Simulation" class="preference">
+d127 1
+a127 1
+		<input type="checkbox" name="genre[]" value="Strategy" class="preference">
+d129 1
+a129 1
+		<input type="checkbox" name="genre[]" value="Adventure" class="preference">
+d131 1
+a131 1
+		<input type="checkbox" name="genre[]" value="Sports" class="preference">
+d134 1
+a134 1
+<div>
+a149 3
+<link rel="stylesheet" href="reviews.css" />
+
+
+d171 1
+d180 2
+@
+
+
+1.5
+log
+@Title is printed, GameLengths Perl scripts are now called, and
+some identification divs have been added.
+@
+text
+@d10 1
+d13 1
+d17 2
+d25 2
+d46 1
+d50 2
+a51 1
+
+d57 3
+a59 1
+	echo '<table>
+d63 7
+a69 5
+        for($i = 0; $i<5; $i++) {
+        	if(isset($_SESSION['searchHistory'][$i])) {
+        		echo '<tr>';
+        		echo '<td><a href="./index.php?URL=' . $_SESSION['searchHistory'][$i] . '">' . $_SESSION['searchHistory'][$i]  . '</a> </td>';
+        		echo '</tr>';
+d71 10
+a80 3
+        }
+        echo '</table>';
+?>    
+a84 1
+	<br />
+d89 25
+a113 23
+	Long Games:
+	<input type="checkbox" name="length[]" value="longgame">
+	Short Games:
+	<input type="checkbox" name="length[]" value="shortgame">
+	<br /> 
+	Genre: 
+	<br />
+	<label>Action</label>
+	<input type="checkbox" name="genre[]" value="Action">
+        <label>RPG</label>
+	<input type="checkbox" name="genre[]" value="RPG">
+        <label>First Person Shooter</label>
+	<input type="checkbox" name="genre[]" value="First Person Shooter">
+        <label>Third Person Shooter</label>
+	<input type="checkbox" name="genre[]" value="Third Person Shooter">
+        <label>Simulation</label>
+	<input type="checkbox" name="genre[]" value="Simulation">
+        <label>Strategy</label>
+	<input type="checkbox" name="genre[]" value="Strategy">
+        <label>Adventure</label>
+	<input type="checkbox" name="genre[]" value="Adventure">
+        <label>Sports</label>
+	<input type="checkbox" name="genre[]" value="Sports">
+d116 1
+a116 1
+
+d137 1
+a137 1
+	//	$_GET['gamename'] = 'Half-Life%202';
+d155 3
+a157 4
+	    $parameter = str_replace(" ", "+",trim($_GET['gamename']));
+	    $parameter = 'http://www.gamelengths.com/sitesearch/newSearch/?gameName='. $parameter;
+	    $parameter2 = str_replace("%20", " ",trim($_GET['gamename']));
+	    $output = shell_exec("perl /home/ratlif10/public_html/web/semester_project/game_lengths_search_parser.pl $parameter $parameter2");
+d159 2
+a160 5
+	}// else {
+        //    if (isset($_GET['gamename'])) { // must be empty
+        //        echo "You must enter a game title";
+        //    }
+        //}
+a162 6
+
+<script type="text/javascript"
+          src="http://code.jquery.com/jquery-1.9.0.min.js"> </script>
+<script type="text/javascript" src="reviews.js"> </script>
+<body onload="initialize();">
+
+@
+
+
+1.4
+log
+@All of the old PHP files have been collapsed down to a single page.
+@
+text
+@a57 1
+        		}
+d59 1
+d62 2
+a63 2
+
+	<form action="index.php" method="get">
+d95 2
+d103 1
+d110 1
+d112 2
+d115 1
+d123 2
+a124 1
+            //echo '<a href = "./">Back</a>';
+d126 3
+a131 3
+            //$pattern = '\<h1\>+.\<\/h1\>';
+            //preg_match($pattern,$output,$matches);
+            //echo $matches;
+d133 7
+a139 5
+	    //$parameter = str_replace("%20", "+",trim($_GET['gamename']));
+	    //$parameter = 'http://www.howlongtobeat.com/search.php?t=games&s='. $parameter;
+	    //echo $parameter;
+	    //$output = shell_exec("perl ./how_long_to_beat_scraper.pl $parameter");
+	    //echo $output;
+d147 1
+@
+
+
+1.3
+log
+@index.php now submits to gamedetail.php instead of searchgame.php.
+@
+text
+@d1 63
+a63 1
+    <form action="gamedetail.php" method="get">
+d65 1
+a65 1
+	<input type="text" name="gamename">
+d95 47
+@
+
+
+1.2
+log
+@Now includes a proper form instead of basic shell of a form.
+@
+text
+@d1 1
+a1 1
+    <form action="searchgame.php" method="get">
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d1 31
+a31 5
+    <form action="searchgame.php" method="post">
+      <br>First Name:
+        <input type="text" name="gamename">
+      <br>
+        <input type="submit" value="Search for Game">
+@

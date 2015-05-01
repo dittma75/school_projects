@@ -1,0 +1,103 @@
+head	1.2;
+access;
+symbols;
+locks
+	dittma75:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2015.04.30.04.10.47;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.29.07.25.08;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of cgi that handles creation of entities.
+@
+
+
+1.2
+log
+@Tweaked output and prevented param parser from quoting price.
+@
+text
+@#!/usr/bin/perl
+use strict;
+use warnings;
+use CGI;
+require '../db_connect.pl';
+
+my $CGI = new CGI;
+my @@params = $CGI->param();
+my @@args;
+my $type;
+foreach (@@params)
+{
+    if ($_ eq 'type')
+    {
+        $type = $CGI->param($_);
+    }
+    #Add non-string arg values as they are.
+    elsif (index($_, 'ID') != -1 or
+           $_ eq 'stock' or
+           $_ eq 'quantity' or
+           $_ eq 'price')
+    {
+        push(@@args, $CGI->param($_));
+    }
+    #Put quotes around string arg values.
+    else
+    {
+        push(@@args, '"'.$CGI->param($_).'"');
+    }
+}
+
+my $dbh = getDBH();
+my $sql = "CALL create_new_$type(".join(", ", @@args).")";
+my $sth = $dbh->prepare($sql);
+#This will throw a warning if warnings are on because it is
+#used only once, but that's fine because DBI is included in db_connect
+$sth->execute or die "SQL ERROR: $DBI::errstr\n";
+print $CGI->header(-type=>'text/html', -author =>'Kevin Dittmar');
+print $CGI->start_html(-title=>"AmazingBooks:  create_new_$type",
+                       -author=>'dittma75@@students.rowan.edu');
+                       print $CGI->a({-href=>"../$type"."_index.cgi"}, 'Back'), "<br/>\n";
+print "New $type with identifying information:  \n",
+      join(", ", @@args), "added.<br/>\n";
+print $CGI->end_html, "\n";
+$sth->finish();
+$dbh->disconnect();
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@a7 1
+#my $type = $CGI->param('type');
+d20 2
+a21 1
+           $_ eq 'quantity')
+a30 6
+#my $ISBN = $CGI->param('ISBN');
+#my $title = $CGI->param('title');
+#my $price = $CGI->param('price');
+#my $stock = $CGI->param('stock');
+#my $publisherID = $CGI->param('publisherID');
+#my $date_published = $CGI->param('date_published');
+a32 1
+#my $sql = "CALL create_new_$type(\"$ISBN\", \"$title\", $price, $stock, $publisherID, \"$date_published\")";
+d42 2
+a43 3
+print "New $type with identifying information:<br/>\n",
+      join("<br/>", @@args),
+      "<br/>\nadded.<br/>\n";
+@

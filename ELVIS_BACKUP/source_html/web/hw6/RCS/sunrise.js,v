@@ -1,0 +1,606 @@
+head	1.10;
+access;
+symbols;
+locks
+	dittma75:1.10; strict;
+comment	@# @;
+
+
+1.10
+date	2014.03.25.23.31.25;	author dittma75;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2014.03.25.22.43.14;	author dittma75;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2014.03.25.13.30.52;	author dittma75;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2014.03.23.18.51.28;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2014.03.23.05.25.35;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2014.03.23.05.02.55;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.03.23.04.08.53;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.22.23.45.12;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.22.22.12.35;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.22.19.08.44;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the JavaScript that plots points on a
+canvas for the sun data.
+@
+
+
+1.10
+log
+@Datepicker now starts with today's date as a default.
+Canvas no longer prints white dot artifacts after repainting.
+@
+text
+@/* sunrise.js - draw some suns
+ *
+ * D Provine, 11 March 2014
+ * Modified by Kevin Dittmar, 25 March 2014
+ */
+
+"use strict";
+
+/* Stores sunrise/sunset info from the JSON file.
+ */
+var suninfo;
+/*Global variables for the canvas and context that are needed
+ *in all functions.
+ */
+var canvas;
+var context;
+
+// saveReturn parses the JSON data and stores it in suninfo.
+function saveReturn(data)
+{
+    suninfo = JSON.parse(data);
+}
+
+/* initialize sets up the canvas and context.
+ */
+function initialize(){
+    canvas = document.getElementById('sungraph');
+    context = canvas.getContext('2d');
+}
+
+/* getDateParams retrieves the date parameters from the JQuery
+ * datepicker to pass off to the Perl CGI.
+ */
+function getDateParams()
+{
+    //DatePicker getDate from: http://api.jqueryui.com/datepicker/
+    var currentDate = $( "#datepicker" ).datepicker( "getDate" );
+    return currentDate;
+}
+
+/* makes a gradient background for the
+ * sungraph canvas.
+ * Gradient info from:
+ * http://www.html5canvastutorials.com/tutorials/html5-canvas-linear-gradients/
+ */
+function drawBackground()
+{
+    context.rect(0, 0, canvas.width, canvas.height);
+    // add linear gradient
+    var grd = context.createLinearGradient(
+                canvas.width,	
+                0,
+                canvas.width,
+                canvas.height);
+    // dark purple -nighttime sky
+    grd.addColorStop(.8, '#140014');
+    // light orange -sunrises are lighter
+    grd.addColorStop(.725, '#A62E00');
+    // light blue -midday sky
+    grd.addColorStop(.6, '#7EC6EF');
+    // light blue -midday sky
+    grd.addColorStop(.35, '#7EC6EF');     
+    // vivid orange -sunsets are more brilliant
+    grd.addColorStop(.175, '#E62E00');        
+    // dark purple -nighttime sky
+    grd.addColorStop(.125, '#140014');
+    context.fillStyle = grd;
+    context.fill();
+}
+/* drawGrid makes gridlines on the x-axis (each day of sun info) and
+ * the y-axis (time in increments of 1 hour).
+ */
+function drawGrid()
+{
+    /* line drawing information from:
+     * http://www.html5canvastutorials.com/tutorials/html5-canvas-lines/
+     * line color information from:
+     * http://www.html5canvastutorials.com/tutorials/html5-canvas-line-color/
+     */
+    for (var x = 0; x < canvas.width ; x += 10)
+    {
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, canvas.height);
+        if (x == canvas.width/2)
+        {
+            context.strokeStyle = '#D0D0D0';
+        }
+        else
+        {
+            context.strokeStyle = '#606060';
+        }
+        context.stroke();
+        context.closePath();
+    }
+    for (var y = 0; y < canvas.height; y+=15)
+    {
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(canvas.width, y);
+        context.strokeStyle = '#606060';
+        context.stroke();
+        context.closePath();
+    }
+}
+
+/* drawSuns plots circles in yellow for the sunrise points
+ * and orange for the sunset points to make the
+ * lines of the graph.
+ */
+function drawSuns()
+{
+    var x;	//x coordinate
+    var y;	//y coordinate
+    var date = getDateParams();
+    /* Javascript date object info:
+     * http://www.w3schools.com/jsref/jsref_obj_date.asp
+     */
+    ajaxFetch("./sunrise_json.cgi?year=" + date.getFullYear().toString() +
+                "&month=" + (date.getMonth() + 1 ).toString()+
+                "&day=" + date.getDate().toString(),
+                saveReturn);
+    // "suninfo" now an array full of info
+
+    // arc takes centerX, centerY, radius, (those obvious)
+    //           startangle, endangle, (for drawing arcs)
+    //           counterclockwise (true or false)
+
+    for (var i = 0; i < suninfo.SunInfo.length; i++)
+    {
+        // sunrise
+        x = i * 10;
+        y = 360 - (suninfo.SunInfo[i].rise/4);
+        context.beginPath();
+        context.arc(x, y, 3, 0, Math.PI * 2, true);
+        context.closePath();
+        context.strokeStyle = "#FFFF44";
+        context.fillStyle = "#FFFF44";
+        context.stroke();
+        context.fill();
+        console.log("sunrise: x = " + x + " y = " + y);
+
+        // sunset
+        y = 360 - (suninfo.SunInfo[i].set/4);
+        context.beginPath();
+        context.arc(x, y, 3, 0, Math.PI * 2, true);
+        context.closePath();
+        context.strokeStyle = "#FFCC00";
+        context.fillStyle = "#FFCC00";
+        context.stroke();
+        context.fill();
+        console.log("sunset: x = " + x + "  y = " + y);
+    }
+
+    /* Clears the context path to prevent artifacts from appearing
+     * when repainting the canvas.
+     */
+    context.beginPath();
+    context.closePath();
+}
+
+/* Clears the canvas in the case of redrawing.
+ * Browser independent method of clearing from:
+ * http://stackoverflow.com/questions/2142535/how-to-clear-the-canvas-for-redrawing
+*/
+function clearGraph()
+{
+    context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/* drawGraph draws a graph of sunrise/sunset information.
+ */
+function drawGraph()
+{
+    initialize();
+    clearGraph();
+    drawBackground();
+    drawGrid();
+    drawSuns();
+}
+
+@
+
+
+1.9
+log
+@Added JQuery stylesheet.
+@
+text
+@d154 6
+@
+
+
+1.8
+log
+@Added datepicker and JQuery.
+@
+text
+@d19 2
+a20 1
+function saveReturn(data){
+d27 2
+a28 2
+	canvas = document.getElementById('sungraph');
+	context = canvas.getContext('2d');
+d31 2
+a32 2
+/* getDateParams retrieves the date parameters from textboxes to
+ * pass off to the Perl CGI.
+d34 5
+a38 6
+function getDateParams(){
+	//DatePicker getDate from: http://api.jqueryui.com/datepicker/
+	var currentDate = $( "#datepicker" ).datepicker( "getDate" );
+    document.getElementById('date_label').innerHTML =
+            "Data centered around " + currentDate.toDateString() + ".";
+	return currentDate;
+d40 1
+d46 3
+a48 3
+function drawBackground(){
+	context.rect(0, 0, canvas.width, canvas.height);
+
+d50 7
+a56 7
+	var grd = context.createLinearGradient(
+				canvas.width,	
+				0,
+				canvas.width,
+				canvas.height);
+	// dark purple -nighttime sky
+	grd.addColorStop(.8, '#140014');
+d59 8
+a66 8
+	// light blue -midday sky
+	grd.addColorStop(.6, '#7EC6EF');
+	// light blue -midday sky
+	grd.addColorStop(.35, '#7EC6EF');     
+	// vivid orange -sunsets are more brilliant
+	grd.addColorStop(.175, '#E62E00');        
+	// dark purple -nighttime sky
+	grd.addColorStop(.125, '#140014');
+d73 32
+a104 31
+function drawGrid(){
+	/* line drawing information from:
+	 * http://www.html5canvastutorials.com/tutorials/html5-canvas-lines/
+	 * line color information from:
+	 * http://www.html5canvastutorials.com/tutorials/html5-canvas-line-color/
+	 */
+	for (var x = 0; x < canvas.width ; x += 10)
+	{
+		context.beginPath();
+		context.moveTo(x, 0);
+		context.lineTo(x, canvas.height);
+		if (x == canvas.width/2)
+		{
+			context.strokeStyle = '#D0D0D0';
+		}
+		else
+		{
+			context.strokeStyle = '#606060';
+		}
+		context.stroke();
+		context.closePath();
+	}
+	for (var y = 0; y < canvas.height; y+=15)
+	{
+		context.beginPath();
+		context.moveTo(0, y);
+		context.lineTo(canvas.width, y);
+		context.strokeStyle = '#606060';
+		context.stroke();
+		context.closePath();
+	}
+d111 2
+a112 1
+function drawSuns(){
+d115 4
+a118 4
+	var date = getDateParams();
+	/* Javascript date object info:
+ 	 * http://www.w3schools.com/jsref/jsref_obj_date.asp
+ 	 */
+d120 3
+a122 3
+				"&month=" + (date.getMonth() + 1 ).toString()+
+				"&day=" + date.getDate().toString(),
+				saveReturn);
+d130 1
+a130 1
+	{
+d137 1
+a137 1
+		context.strokeStyle = "#FFFF44";
+d148 1
+a148 1
+		context.strokeStyle = "#FFCC00";
+d160 3
+a162 2
+function clearGraph(){
+	context.clearRect(0, 0, canvas.width, canvas.height);
+d167 2
+a168 1
+function drawGraph(){
+d170 1
+a170 1
+	clearGraph();
+@
+
+
+1.7
+log
+@You can now pick the date, but date validator is needed and
+canvas doesn't clear properly.
+@
+text
+@d34 2
+a35 5
+	var year = document.getElementById('year').value;
+	var month = document.getElementById('month').value;
+	var day = document.getElementById('day').value;
+	var current_date = new Date();
+	current_date.setFullYear(year, month - 1, day);
+d37 2
+a38 2
+            "Data centered around " + current_date.toDateString();
+	return [year, month, day];
+d112 7
+a118 4
+	var date_array = getDateParams();
+    ajaxFetch("./sunrise_json.cgi?year=" + date_array[0] +
+				"&month=" + date_array[1] +
+				"&day=" + date_array[2],
+@
+
+
+1.6
+log
+@Updated comments.
+@
+text
+@d12 3
+d19 1
+a19 2
+function saveReturn(data)
+{
+d23 1
+a23 2
+/* Initializes canvas and context.  Also ensures
+ * that the graph is clear before drawing.
+d25 1
+a25 2
+function initialize()
+{
+a27 1
+	clearGraph();
+d30 13
+d48 1
+a48 2
+function drawBackground()
+{
+d72 1
+a72 1
+/* draws gridlines on the x-axis (each day of sun info) and
+d75 1
+a75 2
+function drawGrid()
+{
+d86 8
+a93 1
+		context.strokeStyle = '#D0D0D0';
+d95 1
+d102 1
+a102 1
+		context.strokeStyle = '#D0D0D0';
+d104 1
+d108 1
+a108 1
+/* Draw circles in yellow for the sunrise points
+d112 1
+a112 2
+function drawSuns()
+{
+d115 5
+a119 2
+
+    ajaxFetch("./sunrise_json.cgi", saveReturn);
+a121 2
+    //var canvas = document.getElementById('sungraph');
+    //var context = canvas.getContext('2d');
+d157 2
+a158 3
+function clearGraph()
+{
+	context.clearRect(0,0, canvas.width, canvas.height);
+d161 3
+a163 2
+function drawGraph()
+{
+d165 1
+@
+
+
+1.5
+log
+@Minor tweaks.
+@
+text
+@d4 1
+d21 3
+d89 4
+d107 2
+a108 2
+    for (var i = 0; i < suninfo.SunInfo.length; i++) {
+
+d115 1
+a115 1
+        context.strokeStyle = "#FFFF44";
+a118 1
+
+d126 1
+a126 1
+        context.strokeStyle = "#FFCC00";
+a129 1
+
+@
+
+
+1.4
+log
+@Added clear to graph generation.
+@
+text
+@d67 1
+a67 1
+	for (var x = 0; x < 290 ; x += 10)
+d71 1
+a71 1
+		context.lineTo(x, 360);
+d75 1
+a75 1
+	for (var y = 0; y < 360; y+=15)
+d79 1
+a79 1
+		context.lineTo(290, y);
+@
+
+
+1.3
+log
+@Now has functions to initialize the canvas variables,
+draw the graph grid, color a sunrise/sunset background,
+and draw the suns, each in their own small function.
+@
+text
+@d24 1
+a24 8
+}
+
+function drawGraph()
+{
+	initialize();
+	drawBackground();
+	drawGrid();
+	drawSuns();
+d127 18
+@
+
+
+1.2
+log
+@Sunrise webpage now generates data for 29 days of
+sunrise and sunset information with DST.
+@
+text
+@d29 1
+d34 32
+a65 2
+/* draws gridlines on the x-axis (date of sun info) and
+ * the y-axis (time in increments of 15 minutes).
+d74 1
+a74 1
+	for (var x = 0; x < 280 ; x+=10)
+d86 1
+a86 1
+		context.lineTo(280, y);
+d112 1
+a112 1
+        context.arc(x, y, 1, 0, Math.PI * 2, true);
+d114 2
+a115 2
+        context.strokeStyle = "#ff9900";
+        context.fillStyle = "#ff9900";
+d124 1
+a124 1
+        context.arc(x, y, 1, 0, Math.PI * 2, true);
+d126 2
+a127 2
+        context.strokeStyle = "#EE9A00";
+        context.fillStyle = "#EE9A00";
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d8 1
+a8 1
+/* Load the Factors from the JSON file.
+d11 4
+d20 41
+d63 2
+a64 2
+    var x;
+    var y;
+d69 2
+a70 2
+    var canvas = document.getElementById('sungraph');
+    var context = canvas.getContext('2d');
+d79 1
+a79 1
+        y = 360 - (suninfo.SunInfo[0].rise / 4);
+d81 1
+a81 1
+        context.arc(x, y, 3, 0, Math.PI * 2, true);
+d91 1
+a91 1
+        y = 360 - (suninfo.SunInfo[0].set / 4);
+d93 1
+a93 1
+        context.arc(x, y, 3, 0, Math.PI * 2, true);
+@

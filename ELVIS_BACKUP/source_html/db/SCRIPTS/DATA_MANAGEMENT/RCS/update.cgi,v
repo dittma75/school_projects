@@ -1,0 +1,85 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2015.04.30.04.10.47;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of the update cgi.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#!/usr/bin/perl
+use warnings;
+use strict;
+use CGI;
+require '../db_connect.pl';
+
+my $CGI = new CGI;
+my @@params = $CGI->param();
+my @@args;
+my $type;
+my $success = 1;
+
+foreach (@@params)
+{
+    if ($_ eq 'type')
+    {
+        $type = $CGI->param($_);
+    }
+    #Add non-string arg values as they are.
+    elsif (index($_, 'ID') != -1 or
+           $_ eq 'stock' or
+           $_ eq 'quantity' or
+           $_ eq 'price')
+    {
+        push(@@args, $CGI->param($_));
+    }
+    #Put quotes around string arg values.
+    else
+    {
+        push(@@args, '"'.$CGI->param($_).'"');
+    }
+}
+                                                                     
+my $dbh = getDBH();
+
+#Store the first element, which will be the ID.
+#It's useless for updating, but good for navigating.
+#my $ID = shift(@@args);
+my $sql = "CALL update_$type(".join(", ", @@args).")";
+my $sth = $dbh->prepare($sql);
+#This will throw a warning if warnings are on because it is
+#used only once, but that's fine because DBI is included in db_connect
+$sth->execute or $success = 0;
+print $CGI->header(-type=>'text/html', -author =>'Kevin Dittmar');
+print $CGI->start_html(-title=>"AmazingBooks:  update_$type: $CGI->param($params[0])",
+                       -author=>'dittma75@@students.rowan.edu');
+print $CGI->a({-href=>"./view.cgi?type=$type&ID=$args[0]"}, 'Back'), "\n<br/>";
+if ($success)
+{
+    print "Update of $type with ID $args[0] successful.<br/>\n";
+    print "The $type now contains:  ", join(", ", @@args);
+}
+else
+{
+    print "Invalid update information.  Please try again.<br/>\n";
+}
+print $CGI->end_html, "\n";
+$sth->finish();
+$dbh->disconnect();
+
+@

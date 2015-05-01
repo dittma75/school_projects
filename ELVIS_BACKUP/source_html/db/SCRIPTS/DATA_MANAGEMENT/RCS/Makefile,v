@@ -1,0 +1,139 @@
+head	1.5;
+access;
+symbols;
+locks
+	dittma75:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2015.05.01.03.44.08;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2015.04.30.04.10.47;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2015.04.29.07.25.08;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2015.04.29.02.32.00;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.28.16.24.33;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial Commit of Makefile.
+@
+
+
+1.5
+log
+@Added file uploader.
+@
+text
+@# Sample Makefile for Web Programming students
+#
+# by Darren Provine, 14 September 2002
+# modified by Kevin Dittmar, 28 January 2014
+
+# These lines should be the only ones you have to change for many
+# projects.
+
+DESTDIR = /export/home/dittma75/public_html/db/SCRIPTS/DATA_MANAGEMENT
+TARGETS = view.cgi delete.cgi create_new.cgi add_author.cgi add_genre.cgi \
+		  update.cgi upload.cgi file_upload.html
+SOURCES = view.cgi delete.cgi create_new.cgi add_author.cgi add_genre.cgi \
+		  update.cgi upload.cgi file_upload.html
+
+# This target is just here to be the top target in the Makefile.
+# There's nothing to compile for this one.
+all: $(TARGETS)
+
+# You might want to look up mkdir(1) to see about that -p flag.
+install: $(TARGETS)
+	@@if [ ! -d $(DESTDIR) ] ; then mkdir -p $(DESTDIR); fi
+	@@for f in $(TARGETS)                 ; \
+	do                                     \
+		/usr/bin/install -v -t $(DESTDIR) -m 555 $$f ; \
+	done
+
+# Note that here we don't blow away the directory, and so we
+# be sure and tell the user.  The reason not to delete the
+# directory is that it may have other files in it.  Checking
+# for, and deleting, any such files will have to be done manually.
+# (How could this be improved?)
+#
+# Note also that the @@ sign keeps the echo lines from being echoed
+# before they are run.  (That could be confusing.)  This little
+# trick (and many more) can be discovered by consulting make(1).
+deinstall:
+	cd $(DESTDIR) ; /bin/rm -f $(TARGETS)
+	@@echo "   ==>   removed file(s): $(TARGETS)"
+	@@echo "   ==>   left directory : $(DESTDIR)"
+
+redo: deinstall install
+
+clean:
+	/bin/rm -f core $(TARGETS)
+@
+
+
+1.4
+log
+@Added update.cgi.
+@
+text
+@d11 1
+a11 1
+		  update.cgi
+d13 1
+a13 1
+		  update.cgi
+@
+
+
+1.3
+log
+@Added new create/view/remove scripts to Makefile.
+@
+text
+@d10 4
+a13 2
+TARGETS = view.cgi delete.cgi create_new.cgi add_author.cgi add_genre.cgi
+SOURCES = view.cgi delete.cgi create_new.cgi add_author.cgi add_genre.cgi
+@
+
+
+1.2
+log
+@Makefile sends the delete.cgi.
+@
+text
+@d10 2
+a11 2
+TARGETS = view.cgi delete.cgi
+SOURCES = view.cgi delete.cgi
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 2
+a11 2
+TARGETS = view.cgi
+SOURCES = view.cgi
+@

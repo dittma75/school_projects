@@ -1,0 +1,108 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.02.02.19.04.08;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@The original copied HTML from kilroy's directory.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <title>Sample Page</title>
+  <meta charset="utf-8" />
+  <meta name="Author" content="Darren Provine" />
+  <meta name="generator" content="vi" />
+  <link rel="shortcut icon" href="/~kilroy/Images/KilroyBrick.png" />
+  <link rel="stylesheet" href="webline.css" />
+</head>
+
+<body>
+
+<p>
+Here is an angle bracket: &lt; <br />
+Here is a semicolon: ; <br />
+Here is an ampersand: &amp; <br />
+C&aelig;sar;
+
+</p>
+
+<hr style="width: 25%; margin-left: 0;" />
+
+<p>
+This is a <strong>(boring)</strong> sample web page.
+</p>
+
+<p>
+The last book I read was <i>Island in the Sea of Time</i>.
+</p>
+
+<p>
+The Spanish word for orange is <i>anaranjado</i>.
+</p>
+
+<p>
+I did not say he beats his <em>dog</em>. (he beats his cat)<br />
+I did not say he <em>beats</em> his dog. (he feeds his dog)<br />
+I did not say <em>he</em> beats his dog. (his kids do it)<br />
+I did not say he beats <em>his</em> dog. (he beats other dogs)<br />
+</p>
+
+<!-- This is how to put in a comment.  Do NOT try to put a
+     double-hyphen inside a comment. -->
+
+<p>
+This is a pointless edit.
+</p>
+
+<p>
+<i>$Id: sample1.html,v 2.2 2012/01/18 18:08:39 kilroy Exp kilroy $</i>
+</p>
+
+
+<table id="webline">
+  <tr>
+    <td> <a href="http://elvis.rowan.edu/~kilroy/" 
+            title="Link to my home page">
+             <img src="/~kilroy/Images/KilroyBrick.png" alt="" />
+             D. Provine
+         </a>
+    </td>
+
+    <td style="word-spacing:1em;">Valid:
+     <a href="http://validator.w3.org/check/referer">HTML5</a>
+     <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+     CSS3</a>
+    </td>
+
+    <td style="word-spacing:1em;">Tests:
+         <a href=".IEshot.png"
+            title="I Don't Do Windows">IE(!)</a>
+         <a href=".FFshot.png">Mozilla</a>
+         <a href=".WKshot.png">WebKit</a>
+         <a href=".OPshot.png">Opera</a>
+         <a href=".W3Mshot.png">W3M</a>
+         <a href=".LYNXshot.png">Lynx</a>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
+@

@@ -1,0 +1,122 @@
+head	1.4;
+access;
+symbols;
+locks
+	dittma75:1.4; strict;
+comment	@# @;
+
+
+1.4
+date	2014.03.06.05.49.07;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.03.02.19.10;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.03.00.42.11;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.02.01.41.49;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Makefile for HW5 screen scrapers.
+@
+
+
+1.4
+log
+@Added make instructions for size-based CSS.
+@
+text
+@# Sample Makefile for Web Programming students
+#
+# by Darren Provine, 14 September 2002
+# modified by Kevin Dittmar, 1 March 2014
+
+# These lines should be the only ones you have to change for many
+# projects.
+
+DESTDIR = /export/home/dittma75/public_html/web/hw5
+TARGETS = SMBC_scraper.cgi three_comic_scraper.cgi webline.css \
+	  layout699-.css layout700+.css
+SOURCES = SMBC_scraper.cgi three_comic_scraper.cgi webline.css \
+	  layout699-.css layout700+.css
+# This target is just here to be the top target in the Makefile.
+# There's nothing to compile for this one.
+all: $(TARGETS)
+
+# You might want to look up mkdir(1) to see about that -p flag.
+install: $(TARGETS)
+	@@if [ ! -d $(DESTDIR) ] ; then mkdir -p $(DESTDIR); fi
+	@@for f in $(TARGETS)                 ; \
+	do                                     \
+		/usr/bin/install -v -t $(DESTDIR) -m 555 $$f ; \
+	done
+
+# Note that here we don't blow away the directory, and so we
+# be sure and tell the user.  The reason not to delete the
+# directory is that it may have other files in it.  Checking
+# for, and deleting, any such files will have to be done manually.
+# (How could this be improved?)
+#
+# Note also that the @@ sign keeps the echo lines from being echoed
+# before they are run.  (That could be confusing.)  This little
+# trick (and many more) can be discovered by consulting make(1).
+deinstall:
+	cd $(DESTDIR) ; /bin/rm -f $(TARGETS)
+	@@echo "   ==>   removed file(s): $(TARGETS)"
+	@@echo "   ==>   left directory : $(DESTDIR)"
+
+redo: deinstall install
+
+clean:
+	/bin/rm -f core $(TARGETS)
+@
+
+
+1.3
+log
+@Added webline.css.
+@
+text
+@d10 4
+a13 2
+TARGETS = SMBC_scraper.cgi three_comic_scraper.cgi webline.css
+SOURCES = SMBC_scraper.cgi three_comic_scraper.cgi webline.css
+@
+
+
+1.2
+log
+@Added three_comic_scraper.cgi to the Makefile.
+@
+text
+@d10 2
+a11 2
+TARGETS = SMBC_scraper.cgi three_comic_scraper.cgi
+SOURCES = SMBC_scraper.cgi three_comic_scraper.cgi
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 2
+a11 2
+TARGETS = SMBC_scraper.cgi
+SOURCES = SMBC_scraper.cgi
+d21 1
+a21 1
+		/usr/bin/install -v -t $(DESTDIR) -m 444 $$f ; \
+@

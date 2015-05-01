@@ -1,0 +1,56 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.05.04.14.55.04;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of Perl script that is supposed to get the URL
+of the page that the how_long_to_beat_scraper.pl is supposed
+to scrape.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@#! /usr/bin/perl -w
+#Perl command line argument reading information from:
+#http://stackoverflow.com/questions/361752/how-can-i-pass-command-line-arguments-to-a-perl-program
+use strict;
+use warnings;
+use CGI;
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+use Data::Dumper;
+
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+
+#Perl command line argument reading information from:
+#http://stackoverflow.com/questions/361752/how-can-i-pass-command-line-arguments-to-a-perl-program
+$agent->get($ARGV[0]);
+
+my $cgi = CGI->new;
+my $stream = HTML::TokeParser->new(\$agent->{content});
+my $link_list = "";
+
+#This is the base URL for the How Long to Beat website.
+my $root_url = "http://www.howlongtobeat.com/";
+my $tag = $stream->get_tag("h3");
+print $stream->get_trimmed_text;
+$tag = $stream->get_tag("a");
+#print $tag->[1]{'href'};
+#my $game_link = $tag->[1]{'href'};
+#print $root_url.$game_link;
+@

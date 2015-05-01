@@ -1,0 +1,118 @@
+head	1.4;
+access;
+symbols;
+locks
+	dittma75:1.4; strict;
+comment	@# @;
+
+
+1.4
+date	2014.03.06.17.33.09;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.06.14.02.33;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.06.06.33.05;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.06.05.49.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Added CSS for small viewing windows.
+@
+
+
+1.4
+log
+@Made it so scaling behaves best collectively across browsers.
+@
+text
+@/* layout699-.css - layout for smaller devices
+ *
+ * Kevin Dittmar
+ */
+@@media screen and (max-width: 699px) {
+	h1 {
+		max-width:	100%;
+	}
+	img.comic {
+		height:			auto;
+		max-width:		100%;
+	}
+	/*This will make sure that the icons scale
+	 *with the webpage to keep the webline from
+	 *being too wide.
+	 */
+	img.browser_icon{
+		max-height: 32px;
+		max-width:  32px;
+		min-height:	8px;
+		min-width:	8px;
+		height:		auto;
+		width:		100%;
+	}
+	
+	img.valid_icon{
+		/*88 x 31 are the dimensions in pixels
+		 *of the validation icons from W3C.
+		 */
+		max-width:	88px;
+		max-height:	22px;
+		min-width:	22px;
+		min-height:	6px;
+	}
+}
+@
+
+
+1.3
+log
+@Tweaked the CSS a little to improve resizing.
+@
+text
+@d18 6
+a23 4
+		max-height:	100%;
+		max-width:	100%;
+		min-height:	25%;
+		min-width:	25%;
+@
+
+
+1.2
+log
+@Made the comics render better on smaller screens.
+@
+text
+@d10 2
+a11 4
+		max-height:	100%;
+		max-width:	100%;
+		min-height:	25%;
+		min-width:	25%;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d7 1
+a7 1
+		width:	100%;
+d32 2
+a33 2
+		min-width:	44px;
+		min-height:	11px;
+@

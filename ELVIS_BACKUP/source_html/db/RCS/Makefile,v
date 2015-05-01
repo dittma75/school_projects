@@ -1,0 +1,172 @@
+head	1.7;
+access;
+symbols;
+locks
+	dittma75:1.7; strict;
+comment	@# @;
+
+
+1.7
+date	2015.04.30.05.55.33;	author dittma75;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2015.04.29.20.25.07;	author dittma75;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2015.04.29.18.21.02;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2015.04.18.18.05.11;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2015.04.18.07.42.36;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2015.04.17.15.33.14;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2015.04.17.15.02.40;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of Makefile.
+@
+
+
+1.7
+log
+@Added place_order.cgi.
+@
+text
+@# Sample Makefile for Web Programming students
+#
+# by Darren Provine, 14 September 2002
+# modified by Kevin Dittmar, 28 January 2014
+
+# These lines should be the only ones you have to change for many
+# projects.
+
+DESTDIR = /export/home/dittma75/public_html/db
+TARGETS = index.html prolific_authors.cgi best_sellers.cgi search.cgi \
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+SOURCES = index.html prolific_authors.cgi best_sellers.cgi search.cgi \
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+
+# This target is just here to be the top target in the Makefile.
+# There's nothing to compile for this one.
+all: $(TARGETS)
+
+# You might want to look up mkdir(1) to see about that -p flag.
+install: $(TARGETS)
+	@@if [ ! -d $(DESTDIR) ] ; then mkdir -p $(DESTDIR); fi
+	@@for f in $(TARGETS)                 ; \
+	do                                     \
+		/usr/bin/install -v -t $(DESTDIR) -m 555 $$f ; \
+	done
+
+# Note that here we don't blow away the directory, and so we
+# be sure and tell the user.  The reason not to delete the
+# directory is that it may have other files in it.  Checking
+# for, and deleting, any such files will have to be done manually.
+# (How could this be improved?)
+#
+# Note also that the @@ sign keeps the echo lines from being echoed
+# before they are run.  (That could be confusing.)  This little
+# trick (and many more) can be discovered by consulting make(1).
+deinstall:
+	cd $(DESTDIR) ; /bin/rm -f $(TARGETS)
+	@@echo "   ==>   removed file(s): $(TARGETS)"
+	@@echo "   ==>   left directory : $(DESTDIR)"
+
+redo: deinstall install
+
+clean:
+	/bin/rm -f core $(TARGETS)
+@
+
+
+1.6
+log
+@newest version.
+@
+text
+@d11 1
+a11 1
+	      login.cgi recommendations.cgi order_list.cgi
+d13 1
+a13 1
+	      login.cgi recommendations.cgi order_list.cgi
+@
+
+
+1.5
+log
+@prolific_authors.cgi and best_sellers.cgi are now on the same level
+as the index.
+@
+text
+@d10 4
+a13 2
+TARGETS = index.html prolific_authors.cgi best_sellers.cgi
+SOURCES = index.html prolific_authors.cgi best_sellers.cgi
+@
+
+
+1.4
+log
+@Fixed the Makefile.
+@
+text
+@d10 2
+a11 2
+TARGETS = index.html
+SOURCES = index.html
+@
+
+
+1.3
+log
+@Added books index page as a link.
+@
+text
+@d22 1
+a22 1
+		/usr/bin/install -v -t $(DESTDIR) -m 755 $$f ; \
+@
+
+
+1.2
+log
+@Added index.html to Makefile.
+@
+text
+@d22 1
+a22 1
+		/usr/bin/install -v -t $(DESTDIR) -m 444 $$f ; \
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d10 2
+a11 2
+TARGETS = 
+SOURCES = 
+@

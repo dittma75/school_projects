@@ -1,0 +1,46 @@
+head	1.1;
+access;
+symbols;
+locks
+	dittma75:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2014.05.02.02.31.06;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of database connection PHP file.
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@<?php
+
+function ConnectDB() {
+
+    /*** mysql server info ***/
+    $hostname = '127.0.0.1';
+    $username = 'ratlif10';
+    $password = '';
+    $dbname   = 'webuser';
+
+    try {
+        $dbh = new PDO("mysql:host=$hostname;dbname=$dbname",
+                       $username, $password);
+    } catch(PDOException $e) {
+        die ('PDO error in "ConnectDB()": ' . $e->getMessage() );
+    }
+
+    return $dbh;
+}
+
+?>
+@

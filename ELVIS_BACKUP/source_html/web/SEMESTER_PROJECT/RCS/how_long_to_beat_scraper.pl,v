@@ -1,0 +1,182 @@
+head	1.5;
+access;
+symbols;
+locks
+	dittma75:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2014.05.04.14.55.04;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.04.29.14.38.54;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.04.29.13.44.33;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.04.18.18.16.09;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.04.17.14.27.07;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of Perl script that scrapes www.howlongtobeat.com.
+@
+
+
+1.5
+log
+@Scraper now takes an argument of the URL of the page that it
+is supposed to scrape.
+@
+text
+@#! /usr/bin/perl -w
+#
+# CGI Basis by D Provine
+# Modified by Kevin Dittmar 10 April 2014
+
+use strict;
+use warnings;
+use CGI;
+use WWW::Mechanize;     # This is the object that gets stuff
+use HTML::TokeParser;   # This is the object that parses HTML
+use Data::Dumper;       # Debugging
+use HTML::Entities;     # Handles vulgar fractions
+
+# create new web agent and get a page
+my $agent = WWW::Mechanize->new();
+if (defined($ARGV[0]))
+{
+    $agent->get($ARGV[0]);
+}
+else
+{
+    $agent->get("http://www.howlongtobeat.com/game.php?id=17536");
+}
+
+my $cgi = CGI->new;
+my $stream = HTML::TokeParser->new(\$agent->{content});
+
+my $tag = $stream->get_tag("div");
+
+while(!$tag->[1]{class} or
+      ($tag->[1]{class} and $tag->[1]{class} ne 
+       "gprofile_image backlight shadow_box"))
+{
+    $tag = $stream->get_tag("div");
+}
+
+$tag = $stream->get_tag("img");
+my $src = "http://www.howlongtobeat.com/".$tag->[1]{'src'};
+my $alt = "TITLE OF GAME HERE";
+
+print $cgi->img({src => $src, alt => $alt});
+
+while(!$tag->[1]{class} or
+      ($tag->[1]{class} and $tag->[1]{class} ne "gprofile_details"))
+{
+    $tag = $stream->get_tag("div");
+}
+
+#Get the table for completion times for the game.
+my $header = "";
+my $data = "";
+print $cgi->h2("How Long to Beat Data"), "\n<table>\n";
+
+for (my $i = 0; $i < 5; $i++)
+{
+    $tag = $stream->get_tag("li");
+    $data = $stream->get_trimmed_text;
+    $tag = $stream->get_tag("h5");
+    $header = $stream->get_trimmed_text;
+    print "<tr>\n\t<td>", $header, "</td>\n\t<td>", $data, "</td>\n</tr>\n\n";
+}
+for (my $i = 0; $i < 4; $i++)
+{
+    $tag = $stream->get_tag("h5");
+    $header = encode_entities($stream->get_trimmed_text);
+    $tag = $stream->get_tag("div");
+    $data = encode_entities($stream->get_trimmed_text);
+    print "<tr>\n\t<td>", $header, "</td>\n\t<td>", $data, "</td>\n</tr>\n\n";
+}
+
+my $title = $stream->get_trimmed_text;
+print $cgi->($title), "\n";
+@
+
+
+1.4
+log
+@Improved the HTML formatting so it doesn't print in a giant line.
+@
+text
+@d16 8
+a23 1
+$agent->get("http://www.howlongtobeat.com/game.php?id=17536");
+@
+
+
+1.3
+log
+@Added code to handle vulgar fractions from the How Long to Beat
+completion time table.
+@
+text
+@d45 2
+a46 1
+print "<h2>How Long to Beat Data</h2><table>";
+d53 1
+a53 1
+    print "<tr><td>", $header, "</td><td>", $data, "</td></tr>";
+d61 1
+a61 1
+    print "<tr><td>", $header, "</td><td>", $data, "</td></tr>";
+d65 1
+a65 3
+print "<h1>", $title, "</h1>";
+
+
+@
+
+
+1.2
+log
+@Removed unnecessary debugging lines.
+@
+text
+@d11 3
+a13 1
+use Data::Dumper;
+d42 1
+d57 1
+a57 1
+    $header = $stream->get_trimmed_text;
+d59 1
+a59 1
+    $data = $stream->get_trimmed_text;
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d20 14
+a59 2
+#$tag = $stream->get_tag("li");    
+#print Dumper($tag);
+@

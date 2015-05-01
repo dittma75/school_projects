@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <title>AmazingBooks</title>
+    <meta charset="utf-8"/>
+    <meta name="Author" content = "Kevin Dittmar" />
+    <meta name="generator" content = "vim"/>
+    
+    <link rel="icon" href="../web/resources/black_mage.png">
+    <link rel="stylesheet" href="./CSS/menus.css"/>
+    <link rel="stylesheet" href="CSS/webline.css"/>
+    <!--Make sure mobile devices don't try to scale up-->
+    <meta name="viewport" content="width=device-width"/>
+    <meta name="viewport" content="initial-scale=1.0"/>
+</head>
+
+<h1>Welcome to Amazing Books</h1>
+
+<form action="./login.cgi">
+    <table>
+        <tr>
+            <td>customerID: <input type="text" name="ID"></td>
+            <td>password: <input type="password" name="pass"></td>
+            <td><input type="submit" value="Login"></td>
+        </tr>
+    </table>
+</form>
+
+
+<form action="./search.cgi">
+    <table>
+        <tr>
+            <td>Look for a book:  <input type="text" name="search"></td>
+            <td><input type="submit" value="Search"></td>
+        </tr>
+    </table>
+</form>
+
+<div>
+    <table>
+        <tr>
+            <td>Admin Management</td>
+            <td><a href="./SCRIPTS/book_index.cgi">Books</a></td>
+            <td><a href="./SCRIPTS/author_index.cgi">Authors</a></td>
+            <td><a href="./SCRIPTS/publisher_index.cgi">Publishers</a></td>
+            <td><a href="./SCRIPTS/genre_index.cgi">Genres</a></td>
+            <td><a href="./SCRIPTS/customer_index.cgi">All Customers</a></td>
+            <td><a href="./SCRIPTS/inventory.cgi">Inventory</a></td>
+            <td><a href="./SCRIPTS/DATA_MANAGEMENT/file_upload.html">Upload Data</a></td>
+        </tr>
+        <tr>
+            <td>Admin Metrics</td>
+            <td><a href="./SCRIPTS/active_customers.cgi">Star Customers</a></td>
+            <td><a href="./SCRIPTS/inactive_customers.cgi">Slacking Customers</a></td>
+            <td><a href="./SCRIPTS/not_selling_well.cgi">Poorly Selling Books</a></td>
+            <td><a href="./SCRIPTS/priced_too_high.cgi">Expensive Books</a></td>
+            <td><a href="./SCRIPTS/reorder.cgi">Books to Reorder</a></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Customer Functions</td>
+            <td><a href="./best_sellers.cgi">Our Best Sellers</a></td>
+            <td><a href="./prolific_authors.cgi">Our Most Prolific Authors</a></td>
+            <td><a href="./recommendations.cgi">Our Recommendations to You</a></td>
+            <td><a href="./order_list.cgi">Your Orders</a></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+
+<!-- Compatibilty and testing webline. -->
+<table id="webline">
+	<tr>
+		<th>Name</th>
+		<th colspan="2">Validation</th> 
+		<th colspan="7" 
+			title="Some features may not be supported in all browsers.">
+			Compatible Browsers
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<a class="text_link" title="Link to my Web Programming webpage" 
+				href="http://elvis.rowan.edu/~dittma75/web/hw1/hw1.html">	
+				<img src="http://elvis.rowan.edu/~dittma75/web/resources/black_mage.png"
+					alt="" /> 
+				Kevin Dittmar
+			</a>
+		</td>
+		<td>
+			<a href="http://validator.w3.org/check/referer">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/valid-xhtml10.png"
+					alt="XHTML1.0" />
+			</a>
+		</td>
+		<td>
+			<a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3">
+				<img class="valid_icon"
+					src="http://elvis.rowan.edu/~dittma75/web/resources/vcss.gif"
+					alt="CSS 3" />
+			</a>
+		</td>
+		<td>
+			<img class="browser_icon" title="Internet Explorer" 
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_IE.png" 
+				alt="Internet Explorer" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Mozilla Firefox"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_FF.png"
+				alt="Firefox" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Google Chrome"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_chrome.png" 
+				alt="Chrome" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Opera"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_opera.png"
+				alt="Opera" />
+		</td>
+		<td>
+			<img class="browser_icon" title="Konqueror"
+				src="http://elvis.rowan.edu/~dittma75/web/resources/logo_konqueror.png"
+				alt="Konqueror" />
+		</td> 
+		<td>W3M</td>
+		<td>Lynx</td>
+	</tr>
+</table>
+</html>

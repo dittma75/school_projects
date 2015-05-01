@@ -1,0 +1,155 @@
+head	1.5;
+access;
+symbols;
+locks
+	dittma75:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2014.05.04.14.53.08;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.05.02.22.43.47;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.05.02.02.31.06;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.04.29.14.39.59;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.04.17.14.30.25;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial commit of PHP file that loads the data from the
+Perl Scripts onto an HTML page for viewing.
+@
+
+
+1.5
+log
+@Added metacritic_search_parser call to make links from games
+that match search criteria.
+@
+text
+@<!DOCTYPE html>
+<?php
+
+session_start();
+
+$_SESSION['time'] = $_GET['gamename'];
+
+?>
+<link rel="stylesheet" href="reviews.css" />
+<!-- JQuery script inclusion from:  http://api.jqueryui.com/datepicker/
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>-->
+<script type="text/javascript"
+          src="http://code.jquery.com/jquery-1.9.0.min.js"> </script>
+<script type="text/javascript" src="reviews.js"> </script>
+<body onload="initialize();">
+     <?php  if (isset($_GET['gamename']) && !empty($_GET['gamename'])) {
+            echo '<a href = "./">Back</a>';
+	    echo "\n<br />";
+
+   	    $parameter = str_replace(" ", "+",trim($_GET['gamename']));
+	    $parameter = "http://www.metacritic.com/search/game/$parameter/results";
+	    
+        echo shell_exec("perl ./metacritic_search_parser.pl $parameter");
+	    $output = shell_exec("perl ./metacritic_scraper.pl");
+	    #$pattern = '\<h1\>+.\<\/h1\>';
+	    #preg_match($pattern,$output,$matches);
+	    #echo $matches;
+	    echo $output;
+        } else {	    
+            if (isset($_GET['gamename'])) { // must be empty
+                echo "You must enter a game title";
+            }
+	}
+    ?>
+</body>
+
+@
+
+
+1.4
+log
+@Added some HTML and JavaScript calls to handle the setup
+for the review pagination.
+@
+text
+@d24 1
+a24 1
+        #echo shell_exec("perl ./metacritic_search_parser.pl $parameter");
+@
+
+
+1.3
+log
+@Updated the game searcher PHP to run the metacritic_search_parser
+Perl script.
+@
+text
+@d1 1
+d10 7
+a16 1
+
+d21 1
+a21 1
+	    $parameter = str_replace(" ", "+",trim($_GET['gamename']));
+d24 2
+a25 2
+        echo shell_exec("perl ./metacritic_search_parser.pl $parameter");
+	    #$output = shell_exec("perl ./metacritic_scraper.pl");
+d29 1
+a29 1
+	    #echo $output;
+d36 1
+@
+
+
+1.2
+log
+@Changed the exec commands to shell_exec commands so newlines
+won't prevent the command from getting all of the output.
+@
+text
+@d1 22
+a22 8
+    <?php  if (isset($_POST['gamename']) && !empty($_POST['gamename'])) {
+           // $perl = new Perl();
+           // $perl->require("test1.pl");
+            //echo "<p>";
+	    echo "Searching for " . $_POST['gamename'] . "...\n<br />";
+	    $output = shell_exec("perl ./metacritic_scraper.pl");
+        $output .= shell_exec("perl ./how_long_to_beat_scraper.pl");
+	    echo $output;
+d24 1
+a24 2
+            if (isset($_POST['gamename'])) { // must be empty
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d6 2
+a7 2
+	    $output = exec("perl ./metacritic_scraper.pl");
+        $output .= exec("perl ./how_long_to_beat_scraper.pl");
+@

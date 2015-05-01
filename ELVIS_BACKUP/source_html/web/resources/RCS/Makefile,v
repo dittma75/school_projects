@@ -1,0 +1,144 @@
+head	1.5;
+access;
+symbols;
+locks
+	dittma75:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2014.03.25.22.43.37;	author dittma75;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2014.03.23.03.27.55;	author dittma75;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2014.03.06.15.50.12;	author dittma75;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2014.03.03.21.43.37;	author dittma75;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2014.03.03.21.24.18;	author dittma75;	state Exp;
+branches;
+next	;
+
+
+desc
+@Makefile for webline resources.
+@
+
+
+1.5
+log
+@Added JQuery stylesheet to the Makefile.
+@
+text
+@# Sample Makefile for Web Programming students
+#
+# by Darren Provine, 14 September 2002
+# modified by Kevin Dittmar, 3 March 2014
+
+# These lines should be the only ones you have to change for many
+# projects.
+
+DESTDIR = /export/home/dittma75/public_html/web/resources
+TARGETS = logo_FF.png logo_IE.png logo_opera.png logo_chrome.png \
+		  logo_konqueror.png black_mage.png HTML5_Logo.png vcss.gif \
+		  valid-xhtml10.png webline.txt webline.css jquery-ui.css
+SOURCES = logo_FF.png logo_IE.png logo_opera.png logo_chrome.png \
+          logo_konqueror.png black_mage.png HTML5_Logo.png vcss.gif \
+	 	  valid-xhtml10.png webline.txt webline.css jquery-ui.css
+# This target is just here to be the top target in the Makefile.
+# There's nothing to compile for this one.
+all: $(TARGETS)
+
+# You might want to look up mkdir(1) to see about that -p flag.
+install: $(TARGETS)
+	@@if [ ! -d $(DESTDIR) ] ; then mkdir -p $(DESTDIR); fi
+	@@for f in $(TARGETS)                 ; \
+	do                                     \
+		/usr/bin/install -v -t $(DESTDIR) -m 555 $$f ; \
+	done
+
+# Note that here we don't blow away the directory, and so we
+# be sure and tell the user.  The reason not to delete the
+# directory is that it may have other files in it.  Checking
+# for, and deleting, any such files will have to be done manually.
+# (How could this be improved?)
+#
+# Note also that the @@ sign keeps the echo lines from being echoed
+# before they are run.  (That could be confusing.)  This little
+# trick (and many more) can be discovered by consulting make(1).
+deinstall:
+	cd $(DESTDIR) ; /bin/rm -f $(TARGETS)
+	@@echo "   ==>   removed file(s): $(TARGETS)"
+	@@echo "   ==>   left directory : $(DESTDIR)"
+
+redo: deinstall install
+
+clean:
+	/bin/rm -f core $(TARGETS)
+@
+
+
+1.4
+log
+@Added webline.css to Makefile.
+@
+text
+@d12 1
+a12 1
+		  valid-xhtml10.png webline.txt webline.css
+d15 1
+a15 1
+	 	  valid-xhtml10.png webline.txt webline.css
+@
+
+
+1.3
+log
+@Makefile now exports webline.txt.
+@
+text
+@d11 2
+a12 2
+	  logo_konqueror.png black_mage.png HTML5_Logo.png vcss.gif \
+	  valid-xhtml10.png webline.txt
+d15 1
+a15 1
+	  valid-xhtml10.png webline.txt
+@
+
+
+1.2
+log
+@Changed modified date.
+@
+text
+@d12 1
+a12 1
+	  valid-xhtml10.png webline.cgi
+d15 1
+a15 1
+	  valid-xhtml10.png webline.cgi
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d4 1
+a4 1
+# modified by Kevin Dittmar, 2 March 2014
+@
