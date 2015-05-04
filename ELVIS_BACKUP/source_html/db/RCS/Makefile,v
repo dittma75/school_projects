@@ -1,10 +1,15 @@
-head	1.7;
+head	1.8;
 access;
 symbols;
 locks
-	dittma75:1.7; strict;
+	dittma75:1.8; strict;
 comment	@# @;
 
+
+1.8
+date	2015.05.04.02.21.19;	author dittma75;	state Exp;
+branches;
+next	1.7;
 
 1.7
 date	2015.04.30.05.55.33;	author dittma75;	state Exp;
@@ -47,9 +52,9 @@ desc
 @
 
 
-1.7
+1.8
 log
-@Added place_order.cgi.
+@Added script to display contents of orders.
 @
 text
 @# Sample Makefile for Web Programming students
@@ -62,9 +67,11 @@ text
 
 DESTDIR = /export/home/dittma75/public_html/db
 TARGETS = index.html prolific_authors.cgi best_sellers.cgi search.cgi \
-	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi \
+		  contents.cgi
 SOURCES = index.html prolific_authors.cgi best_sellers.cgi search.cgi \
-	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi \
+		  contents.cgi
 
 # This target is just here to be the top target in the Makefile.
 # There's nothing to compile for this one.
@@ -96,6 +103,20 @@ redo: deinstall install
 
 clean:
 	/bin/rm -f core $(TARGETS)
+@
+
+
+1.7
+log
+@Added place_order.cgi.
+@
+text
+@d11 2
+a12 1
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+d14 2
+a15 1
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
 @
 
 

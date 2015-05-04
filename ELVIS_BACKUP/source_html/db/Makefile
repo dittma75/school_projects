@@ -8,9 +8,11 @@
 
 DESTDIR = /export/home/dittma75/public_html/db
 TARGETS = index.html prolific_authors.cgi best_sellers.cgi search.cgi \
-	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi \
+		  contents.cgi
 SOURCES = index.html prolific_authors.cgi best_sellers.cgi search.cgi \
-	      login.cgi recommendations.cgi order_list.cgi place_order.cgi
+	      login.cgi recommendations.cgi order_list.cgi place_order.cgi \
+		  contents.cgi
 
 # This target is just here to be the top target in the Makefile.
 # There's nothing to compile for this one.

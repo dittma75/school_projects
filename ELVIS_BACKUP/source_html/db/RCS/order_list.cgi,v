@@ -1,10 +1,15 @@
-head	1.3;
+head	1.4;
 access;
 symbols;
 locks
-	dittma75:1.3; strict;
+	dittma75:1.4; strict;
 comment	@# @;
 
+
+1.4
+date	2015.05.04.02.21.19;	author dittma75;	state Exp;
+branches;
+next	1.3;
 
 1.3
 date	2015.04.30.21.01.19;	author dittma75;	state Exp;
@@ -27,9 +32,9 @@ desc
 @
 
 
-1.3
+1.4
 log
-@Added layers of safety for handling bad orders correctly.
+@Added script to display contents of orders.
 @
 text
 @#!/usr/bin/perl
@@ -70,7 +75,11 @@ if ($success)
     print "<tr><th>Order#</th><th>Date</th><th>Status</th></tr>\n";
     while (my @@order = $sth->fetchrow_array)
     {
-        print "<tr><td>$order[0]</td><td>$order[1]</td><td>$order[2]</td></tr>\n";
+        print "<tr><td>
+                   ".$CGI->a({-href=>"./contents.cgi?ID=$order[0]"},"$order[0]")."
+               </td>
+               <td>$order[1]</td>
+               <td>$order[2]</td></tr>\n";
     }
     print "</table>\n";
 }
@@ -82,6 +91,17 @@ $sth->finish();
 $dbh->disconnect();
 print $CGI->end_html, "\n";
 
+@
+
+
+1.3
+log
+@Added layers of safety for handling bad orders correctly.
+@
+text
+@d39 5
+a43 1
+        print "<tr><td>$order[0]</td><td>$order[1]</td><td>$order[2]</td></tr>\n";
 @
 
 

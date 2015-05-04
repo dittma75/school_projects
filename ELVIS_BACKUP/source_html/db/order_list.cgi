@@ -36,7 +36,11 @@ if ($success)
     print "<tr><th>Order#</th><th>Date</th><th>Status</th></tr>\n";
     while (my @order = $sth->fetchrow_array)
     {
-        print "<tr><td>$order[0]</td><td>$order[1]</td><td>$order[2]</td></tr>\n";
+        print "<tr><td>
+                   ".$CGI->a({-href=>"./contents.cgi?ID=$order[0]"},"$order[0]")."
+               </td>
+               <td>$order[1]</td>
+               <td>$order[2]</td></tr>\n";
     }
     print "</table>\n";
 }
